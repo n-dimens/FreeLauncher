@@ -19,7 +19,9 @@ namespace FreeLauncher
             ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LauncherForm(applicationContext));
+            var launcherForm = new LauncherForm(applicationContext);
+            launcherForm.StartPosition = FormStartPosition.CenterScreen;
+            Application.Run(launcherForm);
             applicationContext.SaveConfiguration();
         }
     }
