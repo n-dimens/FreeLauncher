@@ -6,15 +6,12 @@
 
 using System;
 
-namespace dotMCLauncher.Core
-{
-  public class VersionIsNotExists : Exception
-  {
-    public string Version;
+namespace dotMCLauncher.Core {
+    public class VersionNotExistException : Exception {
+        public string Version;
 
-    public VersionIsNotExists(string message)
-      : base(message)
-    {
+        public VersionNotExistException(string message)
+          : base(message) {
+        }
     }
-  }
 }

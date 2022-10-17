@@ -320,8 +320,8 @@ namespace FreeLauncher.Forms {
                             { "auth_player_name", userName },
                             { "version_name", _selectedProfile.ProfileName },
                             { "game_directory", _selectedProfile.WorkingDirectory ?? _applicationContext.McDirectory },
-                            { "assets_root", _applicationContext.McDirectory + "assets\\" },
-                            { "game_assets", _applicationContext.McDirectory + "assets\\legacy\\" },
+                            { "assets_root", _applicationContext.McAssets },
+                            { "game_assets", _applicationContext.McLegacyAssets },
                             { "assets_index_name", selectedVersion.AssetsIndex },
                             { "auth_session", _selectedUser.AccessToken ?? "sample_token" },
                             { "auth_access_token", _selectedUser.SessionToken ?? "sample_token" },
@@ -331,7 +331,7 @@ namespace FreeLauncher.Forms {
                         });
 
                         string classPath = _applicationContext.Libraries.Contains(' ') ? "\"" + _applicationContext.Libraries + "\"" : _applicationContext.Libraries;
-                        string nativeLibraries = _applicationContext.McDirectory + "natives\\";
+                        string nativeLibraries = _applicationContext.McNatives;
                         ProcessStartInfo proc = new ProcessStartInfo {
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
@@ -713,8 +713,7 @@ namespace FreeLauncher.Forms {
                         foreach (ZipEntry entry in zip.Where(entry => entry.FileName.EndsWith(".dll"))) {
                             AppendDebug($"Unzipping {entry.FileName}");
                             try {
-                                entry.Extract(_applicationContext.McDirectory + "natives\\",
-                                    ExtractExistingFileAction.OverwriteSilently);
+                                entry.Extract(_applicationContext.McNatives, ExtractExistingFileAction.OverwriteSilently);
                             }
                             catch (Exception ex) {
                                 AppendException(ex.Message);
@@ -739,8 +738,7 @@ namespace FreeLauncher.Forms {
             Version selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions +
                                   (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
-            string file = string.Format("{0}/assets/indexes/{1}.json", _applicationContext.McDirectory,
-                selectedVersion.AssetsIndex ?? "legacy");
+            string file = string.Format("{0}/indexes/{1}.json", _applicationContext.McAssets, selectedVersion.AssetsIndex ?? "legacy");
             if (!File.Exists(file)) {
                 if (!Directory.Exists(Path.GetDirectoryName(file))) {
                     Directory.CreateDirectory(Path.GetDirectoryName(file));
@@ -754,22 +752,21 @@ namespace FreeLauncher.Forms {
             StatusBarMaxValue = jo["objects"].Cast<JProperty>()
                 .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
                 .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
-                .Count(filename => !File.Exists(_applicationContext.McDirectory + "\\assets\\objects\\" + filename) || _restoreVersion) + 1;
+                .Count(filename => !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion) + 1;
             foreach (string resourseFile in jo["objects"].Cast<JProperty>()
                 .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
                 .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
                 .Where(
                     filename =>
-                        !File.Exists(_applicationContext.McDirectory + "\\assets\\objects\\" + filename) || _restoreVersion)) {
-                string path = _applicationContext.McDirectory + "\\assets\\objects\\" + resourseFile[0] + resourseFile[1] +
-                              "\\";
+                        !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion)) {
+                string path = _applicationContext.McObjectsAssets + resourseFile[0] + resourseFile[1] + "\\";
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }
                 try {
                     AppendDebug("Downloading " + resourseFile + "...");
                     new WebClient().DownloadFile(@"http://resources.download.minecraft.net/" + resourseFile,
-                        _applicationContext.McDirectory + "\\assets\\objects\\" + resourseFile);
+                        _applicationContext.McObjectsAssets + resourseFile);
                 }
                 catch (Exception ex) {
                     AppendException(ex.ToString());
@@ -780,24 +777,21 @@ namespace FreeLauncher.Forms {
             if (selectedVersion.AssetsIndex == null) {
                 StatusBarValue = 0;
                 StatusBarMaxValue = jo["objects"].Cast<JProperty>()
-                    .Count(res => !File.Exists(_applicationContext.McDirectory + "\\assets\\legacy\\" + res.Name)) + 1;
+                    .Count(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name)) + 1;
                 UpdateStatusBarAndLog("Converting assets...");
-                foreach (
-                    JProperty res in
-                        jo["objects"].Cast<JProperty>()
-                            .Where(res => !File.Exists(_applicationContext.McDirectory + "\\assets\\legacy\\" + res.Name) || _restoreVersion)) {
+                foreach (JProperty res in jo["objects"].Cast<JProperty>()
+                            .Where(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name) || _restoreVersion)) {
                     try {
-                        if (!Directory.Exists(
-                            new FileInfo(_applicationContext.McDirectory + "\\assets\\legacy\\" + res.Name).DirectoryName)) {
-                            Directory.CreateDirectory(
-                                new FileInfo(_applicationContext.McDirectory + "\\assets\\legacy\\" + res.Name).DirectoryName);
+                        FileInfo resFile = new FileInfo(_applicationContext.McLegacyAssets + res.Name);
+                        if (!resFile.Directory.Exists) {
+                            resFile.Directory.Create();
                         }
+
                         AppendDebug(
                             $"Converting \"{"\\assets\\objects\\" + res.Value["hash"].ToString()[0] + res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"]}\" to \"{"\\assets\\legacy\\" + res.Name}\"");
-                        File.Copy(
-                            _applicationContext.McDirectory + "\\assets\\objects\\" + res.Value["hash"].ToString()[0] +
+                        File.Copy(_applicationContext.McObjectsAssets + res.Value["hash"].ToString()[0] +
                             res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"],
-                            _applicationContext.McDirectory + "\\assets\\legacy\\" + res.Name);
+                            resFile.FullName);
                     }
                     catch (Exception ex) {
                         AppendLog(ex.ToString());
@@ -808,15 +802,6 @@ namespace FreeLauncher.Forms {
             }
             StatusBarVisible = false;
         }
-
-        //private string GetLatestVersion(Profile profile) {
-        //    JObject versionsList = JObject.Parse(File.ReadAllText(_applicationContext.McVersions + "\\versions.json"));
-        //    return profile.AllowedReleaseTypes != null
-        //        ? profile.AllowedReleaseTypes.Contains("snapshot")
-        //            ? versionsList["latest"]["snapshot"].ToString()
-        //            : versionsList["latest"]["release"].ToString()
-        //        : versionsList["latest"]["release"].ToString();
-        //}
 
         public object[] AddNewPage() {
             RadPageViewPage outputPage = new RadPageViewPage {

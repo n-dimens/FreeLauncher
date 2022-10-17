@@ -50,7 +50,7 @@
     <Compile Include="Lib.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="ArgumentCollection`2.cs" />
-    <Compile Include="VersionIsNotExists.cs" />
+    <Compile Include="VersionNotExistException.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
