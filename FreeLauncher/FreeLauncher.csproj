@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Forms\LauncherExtensions.cs" />
     <Compile Include="Forms\LauncherForm.cs">
       <SubType>Form</SubType>
     </Compile>
