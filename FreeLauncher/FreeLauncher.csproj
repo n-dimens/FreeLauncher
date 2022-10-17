@@ -110,22 +110,23 @@
   <ItemGroup>
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Forms\LauncherForm\LauncherForm.cs">
+    <Compile Include="Forms\LauncherForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\LauncherForm\LauncherForm.designer.cs">
+    <Compile Include="Forms\LauncherForm.designer.cs">
       <DependentUpon>LauncherForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ProfileForm\ProfileForm.cs">
+    <Compile Include="Forms\MinecraftProcess.cs" />
+    <Compile Include="Forms\ProfileForm.cs">
       <SubType>form</SubType>
     </Compile>
-    <Compile Include="Forms\ProfileForm\ProfileForm.Designer.cs">
+    <Compile Include="Forms\ProfileForm.Designer.cs">
       <DependentUpon>ProfileForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UsersForm\UsersForm.cs">
+    <Compile Include="Forms\UsersForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UsersForm\UsersForm.Designer.cs">
+    <Compile Include="Forms\UsersForm.Designer.cs">
       <DependentUpon>UsersForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Java.cs" />
@@ -133,13 +134,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApplicationContext.cs" />
-    <EmbeddedResource Include="Forms\LauncherForm\LauncherForm.resx">
+    <EmbeddedResource Include="Forms\LauncherForm.resx">
       <DependentUpon>LauncherForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProfileForm\ProfileForm.resx">
+    <EmbeddedResource Include="Forms\ProfileForm.resx">
       <DependentUpon>ProfileForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UsersForm\UsersForm.resx">
+    <EmbeddedResource Include="Forms\UsersForm.resx">
       <DependentUpon>UsersForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />

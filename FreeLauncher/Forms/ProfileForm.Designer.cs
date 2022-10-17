@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Windows.Forms;
+
 using Telerik.WinControls.UI;
 
 namespace FreeLauncher.Forms
@@ -34,6 +36,7 @@ namespace FreeLauncher.Forms
             Telerik.WinControls.UI.RadListDataItem radListDataItem1 = new Telerik.WinControls.UI.RadListDataItem();
             Telerik.WinControls.UI.RadListDataItem radListDataItem2 = new Telerik.WinControls.UI.RadListDataItem();
             Telerik.WinControls.UI.RadListDataItem radListDataItem3 = new Telerik.WinControls.UI.RadListDataItem();
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.radGroupBox3 = new Telerik.WinControls.UI.RadGroupBox();
             this.javaExecutableBox = new Telerik.WinControls.UI.RadTextBox();
             this.JavaExecutableCheckBox = new Telerik.WinControls.UI.RadCheckBox();
