@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
+
 using dotMCLauncher.Core;
+
 using Telerik.WinControls.Enumerations;
 using Telerik.WinControls.UI;
 
@@ -57,16 +59,7 @@ namespace FreeLauncher.Forms {
             }
             _outputReader?.Abort();
             _errorReader.Abort();
-            AppendLog(
-                string.Format("Process exited with error code {0}. Session since {1}({2} total)",
-                    _minecraftProcess.ExitCode +
-                    (_minecraftProcess.ExitCode == 0
-                        ? "(Stable)"
-                        : _minecraftProcess.ExitCode == -1 ? "(Killed)" : "(There could be problems)"),
-                    _minecraftProcess.StartTime.ToString("HH:mm:ss"),
-                    Math.Round(_minecraftProcess.StartTime.Subtract(DateTime.Now).TotalMinutes, 2)
-                        .ToString(CultureInfo.InvariantCulture)
-                        .Replace('-', ' ') + " min."), false);
+            AppendLog(GetExitLogMessage(), false);
             _launcherForm.Invoke((MethodInvoker)delegate {
                 _closePageButton.Enabled = true;
                 if (_launcherForm.CloseGameOutput.Checked &&
@@ -75,6 +68,31 @@ namespace FreeLauncher.Forms {
                 }
                 _killProcessButton.Enabled = false;
             });
+        }
+
+        private string GetExitLogMessage() {
+            return string.Format("Process exited with error code {0}({1}). Session since {2}({3} total)",
+                _minecraftProcess.ExitCode,
+                GetProcessExitDescription(_minecraftProcess.ExitCode),
+                _minecraftProcess.StartTime.ToString("HH:mm:ss"),
+                GetElapsedTime(_minecraftProcess.StartTime));
+        }
+        
+        private string GetProcessExitDescription(int exitCode) {
+            switch (exitCode) {
+                case 0:
+                    return "Stable";
+                case -1:
+                    return "Killed";
+                default:
+                    return "There could be problems";
+            }
+        }
+
+        private string GetElapsedTime(DateTime startTime) {
+            return Math.Round(startTime.Subtract(DateTime.Now).TotalMinutes, 2)
+                .ToString(CultureInfo.InvariantCulture)
+                .Replace('-', ' ') + " min.";
         }
 
         private void AppendLog(string text, bool iserror) {
@@ -86,10 +104,7 @@ namespace FreeLauncher.Forms {
             }
             else {
                 Color color = iserror ? Color.Red : Color.DarkSlateGray;
-                string line = (_launcherForm.UseGamePrefix.ToggleState ==
-                               ToggleState.On
-                    ? "[GAME]"
-                    : string.Empty) + text + "\n";
+                string line = (_launcherForm.UseGamePrefix.ToggleState == ToggleState.On ? "[GAME]" : string.Empty) + text + "\n";
                 int start = _gameLoggingBox.TextLength;
                 _gameLoggingBox.AppendText(line);
                 int end = _gameLoggingBox.TextLength;
@@ -143,6 +158,7 @@ namespace FreeLauncher.Forms {
             catch {
                 return false;
             }
+
             return true;
         }
     }

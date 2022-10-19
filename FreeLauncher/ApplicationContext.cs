@@ -26,6 +26,7 @@ namespace FreeLauncher
         public string McAssets { get; private set; }
         public string McLegacyAssets { get; private set; }
         public string McObjectsAssets { get; private set; }
+        public string LauncherProfiles { get; private set; }
 
         public string Libraries { get; set; }
 
@@ -48,6 +49,7 @@ namespace FreeLauncher
             McAssets = Path.Combine(McDirectory, "assets\\");
             McLegacyAssets = Path.Combine(McAssets, "legacy\\");
             McObjectsAssets = Path.Combine(McAssets, "objects\\");
+            LauncherProfiles = Path.Combine(McDirectory, "launcher_profiles.json");
 
             _configurationFile = McLauncher + "\\configuration.json";
             Configuration = GetConfiguration();

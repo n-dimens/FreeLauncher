@@ -9,23 +9,31 @@ using Newtonsoft.Json;
 namespace dotMCLauncher.Core {
     public class Profile {
         [JsonProperty("name")]
-        public string ProfileName;
+        public string ProfileName { get; set; }
+
         [JsonProperty("gameDir")]
-        public string WorkingDirectory;
+        public string WorkingDirectory { get; set; }
+
         [JsonProperty("lastVersionId")]
-        public string SelectedVersion;
+        public string SelectedVersion { get; set; }
+
         [JsonProperty("resolution")]
-        public MinecraftWindowSize WindowSize;
+        public MinecraftWindowSize WindowSize { get; set; }
+
         [JsonProperty("allowedReleaseTypes")]
-        public string[] AllowedReleaseTypes;
+        public string[] AllowedReleaseTypes { get; set; }
+
         [JsonProperty("launcherVisibilityOnGameClose")]
-        private string _launcherVisibilityOnGameClose;
+        private string _launcherVisibilityOnGameClose { get; set; }
+
         [JsonProperty("javaDir")]
-        public string JavaExecutable;
+        public string JavaExecutable { get; set; }
+
         [JsonProperty("javaArgs")]
-        public string JavaArguments;
+        public string JavaArguments { get; set; }
+
         [JsonProperty("connectionOptions")]
-        public ConnectionSettings FastConnectionSettigs;
+        public ConnectionSettings FastConnectionSettigs { get; set; }
 
         [JsonIgnore]
         public Profile.LauncherVisibility LauncherVisibilityOnGameClose {
@@ -50,9 +58,11 @@ namespace dotMCLauncher.Core {
             }
         }
 
-        public string ToString(Formatting formatting = 0) => JsonConvert.SerializeObject((object)this, formatting, new JsonSerializerSettings() {
-            NullValueHandling = (NullValueHandling)1
-        });
+        public string ToString(Formatting formatting = 0) {
+            return JsonConvert.SerializeObject(this, formatting, new JsonSerializerSettings() {
+                NullValueHandling = (NullValueHandling)1
+            });
+        }
 
         public static Profile ParseProfile(string json) {
             return JsonConvert.DeserializeObject<Profile>(json);

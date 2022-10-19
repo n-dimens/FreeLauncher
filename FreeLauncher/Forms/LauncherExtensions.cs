@@ -8,6 +8,7 @@
 
     using dotMCLauncher.Core;
 
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     internal static class LauncherExtensions {
@@ -22,6 +23,10 @@
                     ? versionsList["latest"]["snapshot"].ToString()
                     : versionsList["latest"]["release"].ToString()
                 : versionsList["latest"]["release"].ToString();
+        }
+
+        public static ProfileManager ParseProfile(string pathToFile) {
+            return JsonConvert.DeserializeObject<ProfileManager>(File.ReadAllText(pathToFile));
         }
     }
 }

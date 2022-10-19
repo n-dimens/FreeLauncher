@@ -2,13 +2,12 @@
 // Type: dotMCLauncher.Core.ArgumentCollection`2
 // Assembly: dotMCLauncher.Core, Version=0.0.4.84, Culture=neutral, PublicKeyToken=null
 // MVID: 3319DB9D-31E6-4AD0-8FD9-640DCB0404A7
-// Assembly location: D:\projects\minecraft\FreeLauncher\lib\dotMCLauncher\Core\0.0.4.84\dotMCLauncher.Core.dll
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace dotMCLauncher.Core {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
     public class ArgumentCollection<T1, T2> : Dictionary<string, string> {
         private string _argLine;
 

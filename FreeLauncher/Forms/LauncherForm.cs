@@ -533,25 +533,23 @@ namespace FreeLauncher.Forms {
         private void UpdateProfileList() {
             profilesDropDownBox.Items.Clear();
             try {
-                _profileManager =
-                    ProfileManager.ParseProfile(_applicationContext.McDirectory +
-                                                      "/launcher_profiles.json");
+                _profileManager = LauncherExtensions.ParseProfile(_applicationContext.McDirectory + "/launcher_profiles.json");
                 if (!_profileManager.Profiles.Any()) {
                     throw new Exception("Someone broke my profiles>:(");
                 }
             }
             catch (Exception ex) {
-                AppendException("Reading profile list: an exception has occurred\n" + ex.Message +
-                                "\nCreating a new one.");
-                if (File.Exists(_applicationContext.McDirectory +
-                                "/launcher_profiles.json")) {
+                AppendException("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
+                
+                // restore backup
+                if (File.Exists(_applicationContext.LauncherProfiles)) {
                     string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
                     AppendLog("A copy of old profile list has been created: " + fileName);
-                    File.Move(_applicationContext.McDirectory +
-                              "/launcher_profiles.json", _applicationContext.McDirectory +
-                                                         "/" + fileName);
+                    File.Move(_applicationContext.LauncherProfiles, _applicationContext.McDirectory + "/" + fileName);
                 }
-                File.WriteAllText(_applicationContext.McDirectory + "/launcher_profiles.json", new JObject {
+
+                // write default content file
+                File.WriteAllText(_applicationContext.LauncherProfiles, new JObject {
                     {
                         "profiles", new JObject {
                             {
@@ -569,10 +567,11 @@ namespace FreeLauncher.Forms {
                     },
                     {"selectedProfile", ProductName}
                 }.ToString());
-                _profileManager = ProfileManager.ParseProfile(_applicationContext.McDirectory +
-                                                                    "/launcher_profiles.json");
+
+                _profileManager = LauncherExtensions.ParseProfile(_applicationContext.LauncherProfiles);
                 SaveProfiles();
             }
+
             DeleteProfileButton.Enabled = _profileManager.Profiles.Count > 1;
             profilesDropDownBox.Items.AddRange(_profileManager.Profiles.Keys);
             profilesDropDownBox.SelectedItem = profilesDropDownBox.FindItemExact(_profileManager.LastUsedProfile, true);
