@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="Forms\MinecraftProcessPage.cs" />
     <Compile Include="Forms\MinecraftProcessPageContext.cs" />
+    <Compile Include="Forms\ProcessInfoBuilder.cs" />
     <Compile Include="Forms\ProfileForm.cs">
       <SubType>form</SubType>
     </Compile>
