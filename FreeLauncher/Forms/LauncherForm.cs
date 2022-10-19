@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 using dotMCLauncher.Core;
@@ -22,7 +19,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Telerik.WinControls;
-using Telerik.WinControls.Enumerations;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Data;
 
@@ -30,6 +26,7 @@ using Version = dotMCLauncher.Core.Version;
 
 namespace FreeLauncher.Forms {
     public partial class LauncherForm : RadForm {
+
         #region Variables
 
         private readonly ApplicationContext _applicationContext;
@@ -55,6 +52,8 @@ namespace FreeLauncher.Forms {
             get { return StatusBar.Visible; }
             set { SetStatusBarVisibility(value); }
         }
+
+        public string VersionToLaunch => _versionToLaunch;
 
         private bool BlockControls {
             set {
@@ -347,7 +346,8 @@ namespace FreeLauncher.Forms {
                         AppendLog($"Command line: \"{proc.FileName}\" {proc.Arguments}");
                         AppendLog($"Version {selectedVersion.VersionId} successfuly launched.");
 
-                        new MinecraftProcess(new Process { StartInfo = proc, EnableRaisingEvents = true }, this, _selectedProfile).Launch();
+                        CreateMinecraftProcessPage(proc).Launch();
+                        
                         BlockControls = false;
                         UpdateVersionListView();
                         _versionToLaunch = null;
@@ -358,6 +358,34 @@ namespace FreeLauncher.Forms {
                 bgw1.RunWorkerAsync();
             };
             bgw.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// Создание вкладки для нового процесса Minecraft
+        /// </summary>
+        private MinecraftProcessPage CreateMinecraftProcessPage(ProcessStartInfo processInfo) {
+            var context = new MinecraftProcessPageContext(this, _selectedProfile, _applicationContext);
+            var mcProcessPage = new MinecraftProcessPage(new Process { StartInfo = processInfo, EnableRaisingEvents = true }, context);
+            mcProcessPage.PageCreated += (o, page) => {
+                mainPageView.Pages.Add(page);
+                mainPageView.SelectedPage = page;
+            };
+            mcProcessPage.PageClosed += (o, page) => { mainPageView.Pages.Remove(page); };
+            mcProcessPage.ProcessLaunched += (o, args) => {
+                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.CLOSED) {
+                    Close();
+                }
+
+                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
+                    Hide();
+                }
+            };
+            mcProcessPage.ProcessExited += (o, args) => {
+                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
+                    Invoke((MethodInvoker) Show);
+                }
+            };
+            return mcProcessPage;
         }
 
         private void logBox_TextChanged(object sender, EventArgs e) {
@@ -800,45 +828,6 @@ namespace FreeLauncher.Forms {
                 AppendLog("Finished converting assets.");
             }
             StatusBarVisible = false;
-        }
-
-        public object[] AddNewPage() {
-            RadPageViewPage outputPage = new RadPageViewPage {
-                Text =
-                    string.Format("{0} ({1})", _applicationContext.ProgramLocalization.GameOutput,
-                        _versionToLaunch ?? _selectedProfile.ProfileName)
-            };
-            RadButton killProcessButton = new RadButton {
-                Text = _applicationContext.ProgramLocalization.KillProcess,
-                Anchor = (AnchorStyles.Right | AnchorStyles.Top)
-            };
-            RadPanel panel = new RadPanel {
-                Text = _versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext),
-                Dock = DockStyle.Top
-            };
-            panel.Size = new Size(panel.Size.Width, 60);
-            RadButton closeButton = new RadButton {
-                Text = _applicationContext.ProgramLocalization.Close,
-                Anchor = (AnchorStyles.Right | AnchorStyles.Top),
-                Enabled = false
-            };
-            RichTextBox reportBox = new RichTextBox { Dock = DockStyle.Fill, ReadOnly = true };
-            closeButton.Location = new Point(panel.Size.Width - (closeButton.Size.Width + 5), 5);
-            closeButton.Click += (sender, e) => mainPageView.Pages.Remove(outputPage);
-            killProcessButton.Location = new Point(panel.Size.Width - (killProcessButton.Size.Width + 5),
-                closeButton.Location.Y + closeButton.Size.Height + 5);
-            panel.Controls.Add(closeButton);
-            panel.Controls.Add(killProcessButton);
-            outputPage.Controls.Add(reportBox);
-            outputPage.Controls.Add(panel);
-            mainPageView.Pages.Add(outputPage);
-            mainPageView.SelectedPage = outputPage;
-            reportBox.LinkClicked += (sender, e) => Process.Start(e.LinkText);
-            return new object[] {
-                reportBox,
-                killProcessButton,
-                closeButton
-            };
         }
 
         private void LoadLocalization() {

@@ -4,49 +4,92 @@ using System.Drawing;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
-
 using dotMCLauncher.Core;
-
-using Telerik.WinControls.Enumerations;
 using Telerik.WinControls.UI;
 
 namespace FreeLauncher.Forms {
-    internal class MinecraftProcess {
-        private readonly LauncherForm _launcherForm;
-        private readonly Profile _profile;
-        private readonly Process _minecraftProcess;
-        private RichTextBox _gameLoggingBox;
-        private RadButton _closePageButton, _killProcessButton;
+    /// <summary>
+    /// Вкладка для управления процессом.
+    /// </summary>
+    // TODO: Потенциально вкладка подходит для произвольного процесса, возможно абстрагировать от Minecraft
+    internal sealed class MinecraftProcessPage {
         private static Thread _outputReader, _errorReader;
+        private readonly MinecraftProcessPageContext _context;
+        private readonly Process _minecraftProcess;
+        private RadPageViewPage _viewPage;
+        private RichTextBox _gameLoggingBox;
+        private RadButton _closePageButton;
+        private RadButton _killProcessButton;
+        public event EventHandler<RadPageViewPage> PageCreated;
+        public event EventHandler<RadPageViewPage> PageClosed;
+        public event EventHandler ProcessLaunched;
+        public event EventHandler ProcessExited;
 
-        public MinecraftProcess(Process minecraftProcess, LauncherForm launcherForm, Profile profile) {
-            _launcherForm = launcherForm;
-            _profile = profile;
+        public MinecraftProcessPage(Process minecraftProcess, MinecraftProcessPageContext context) {
+            _context = context;
             _minecraftProcess = minecraftProcess;
         }
 
         public void Launch() {
-            if (_profile.LauncherVisibilityOnGameClose != Profile.LauncherVisibility.CLOSED) {
-                if (_launcherForm.EnableMinecraftLogging.Checked) {
+            if (_context.Profile.LauncherVisibilityOnGameClose != Profile.LauncherVisibility.CLOSED) {
+                if (_context.IsMinecraftLoggingEnabled) {
                     _outputReader = new Thread(o_reader);
                     _outputReader.Start();
                 }
+
                 _errorReader = new Thread(e_reader);
                 _errorReader.Start();
-                object[] obj = _launcherForm.AddNewPage();
-                _gameLoggingBox = (RichTextBox)obj[0];
-                _closePageButton = (RadButton)obj[2];
-                _killProcessButton = (RadButton)obj[1];
-                _killProcessButton.Click += KillProcessButton_Click;
+                AddNewPage();
                 _minecraftProcess.Exited += MinecraftProcess_Exited;
             }
+
             _minecraftProcess.Start();
-            if (_profile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.CLOSED) {
-                _launcherForm.Close();
-            }
-            if (_profile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
-                _launcherForm.Hide();
-            }
+            OnProcessLaunched();
+        }
+        
+        private void AddNewPage() {
+            _viewPage = new RadPageViewPage {
+                Text =
+                    string.Format("{0} ({1})", _context.ApplicationContext.ProgramLocalization.GameOutput,
+                        _context.VersionToLaunch ?? _context.Profile.ProfileName)
+            };
+            
+            var panel = new RadPanel {
+                Text = _context.VersionToLaunch ?? _context.Profile.GetSelectedVersion(_context.ApplicationContext),
+                Dock = DockStyle.Top,
+            };
+            panel.Size = new Size(panel.Size.Width, 60);
+            
+            _closePageButton = new RadButton {
+                Text = _context.ApplicationContext.ProgramLocalization.Close,
+                Anchor = (AnchorStyles.Right | AnchorStyles.Top),
+                Enabled = false
+            };
+            _closePageButton.Location = new Point(panel.Size.Width - (_closePageButton.Size.Width + 5), 5);
+            _closePageButton.Click += ClosePageButtonOnClick;
+            
+            _killProcessButton = new RadButton {
+                Text = _context.ApplicationContext.ProgramLocalization.KillProcess,
+                Anchor = (AnchorStyles.Right | AnchorStyles.Top)
+            };
+            _killProcessButton.Click += KillProcessButton_Click;
+            _killProcessButton.Location = new Point(panel.Size.Width - (_killProcessButton.Size.Width + 5),
+                _closePageButton.Location.Y + _closePageButton.Size.Height + 5);
+
+            _gameLoggingBox = new RichTextBox { Dock = DockStyle.Fill, ReadOnly = true };
+            _gameLoggingBox.LinkClicked += (sender, e) => Process.Start(e.LinkText);
+            
+            panel.Controls.Add(_closePageButton);
+            panel.Controls.Add(_killProcessButton);
+            
+            _viewPage.Controls.Add(_gameLoggingBox);
+            _viewPage.Controls.Add(panel);
+            
+            OnPageCreated(_viewPage);
+        }
+
+        private void ClosePageButtonOnClick(object sender, EventArgs e) {
+            OnPageClosed(_viewPage);
         }
 
         private void KillProcessButton_Click(object sender, EventArgs e) {
@@ -54,18 +97,17 @@ namespace FreeLauncher.Forms {
         }
 
         private void MinecraftProcess_Exited(object sender, EventArgs e) {
-            if (_profile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
-                _launcherForm.Invoke((MethodInvoker)(() => _launcherForm.Show()));
-            }
+            OnProcessExited();
+           
             _outputReader?.Abort();
             _errorReader.Abort();
             AppendLog(GetExitLogMessage(), false);
-            _launcherForm.Invoke((MethodInvoker)delegate {
+            _context.LauncherForm.Invoke((MethodInvoker) delegate {
                 _closePageButton.Enabled = true;
-                if (_launcherForm.CloseGameOutput.Checked &&
-                    (_minecraftProcess.ExitCode == 0 || _minecraftProcess.ExitCode == -1)) {
+                if (_context.IsAutoClosePage && (_minecraftProcess.ExitCode == 0 || _minecraftProcess.ExitCode == -1)) {
                     _closePageButton.PerformClick();
                 }
+
                 _killProcessButton.Enabled = false;
             });
         }
@@ -77,7 +119,7 @@ namespace FreeLauncher.Forms {
                 _minecraftProcess.StartTime.ToString("HH:mm:ss"),
                 GetElapsedTime(_minecraftProcess.StartTime));
         }
-        
+
         private string GetProcessExitDescription(int exitCode) {
             switch (exitCode) {
                 case 0:
@@ -99,12 +141,13 @@ namespace FreeLauncher.Forms {
             if (_gameLoggingBox.IsDisposed) {
                 return;
             }
+
             if (_gameLoggingBox.InvokeRequired) {
                 _gameLoggingBox.Invoke(new Action<string, bool>(AppendLog), text, iserror);
             }
             else {
                 Color color = iserror ? Color.Red : Color.DarkSlateGray;
-                string line = (_launcherForm.UseGamePrefix.ToggleState == ToggleState.On ? "[GAME]" : string.Empty) + text + "\n";
+                string line = (_context.IsUseGamePrefix ? "[GAME]" : string.Empty) + text + "\n";
                 int start = _gameLoggingBox.TextLength;
                 _gameLoggingBox.AppendText(line);
                 int end = _gameLoggingBox.TextLength;
@@ -122,11 +165,14 @@ namespace FreeLauncher.Forms {
                     if (string.IsNullOrEmpty(line)) {
                         continue;
                     }
+
                     AppendLog(line, false);
                 }
+
                 if (_gameLoggingBox == null || !_gameLoggingBox.IsDisposed) {
                     continue;
                 }
+
                 _minecraftProcess.EnableRaisingEvents = false;
                 _outputReader.Abort();
                 _errorReader.Abort();
@@ -140,11 +186,14 @@ namespace FreeLauncher.Forms {
                     if (string.IsNullOrEmpty(line)) {
                         continue;
                     }
+
                     AppendLog(line, true);
                 }
+
                 if (_gameLoggingBox == null || !_gameLoggingBox.IsDisposed) {
                     continue;
                 }
+
                 _minecraftProcess.EnableRaisingEvents = false;
                 _outputReader.Abort();
                 _errorReader.Abort();
@@ -160,6 +209,22 @@ namespace FreeLauncher.Forms {
             }
 
             return true;
+        }
+
+        private void OnPageCreated(RadPageViewPage e) {
+            PageCreated?.Invoke(this, e);
+        }
+
+        private void OnPageClosed(RadPageViewPage e) {
+            PageClosed?.Invoke(this, e);
+        }
+
+        private void OnProcessLaunched() {
+            ProcessLaunched?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnProcessExited() {
+            ProcessExited?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -117,7 +117,8 @@
     <Compile Include="Forms\LauncherForm.designer.cs">
       <DependentUpon>LauncherForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MinecraftProcess.cs" />
+    <Compile Include="Forms\MinecraftProcessPage.cs" />
+    <Compile Include="Forms\MinecraftProcessPageContext.cs" />
     <Compile Include="Forms\ProfileForm.cs">
       <SubType>form</SubType>
     </Compile>
