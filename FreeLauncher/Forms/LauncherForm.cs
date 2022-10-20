@@ -31,19 +31,8 @@ namespace FreeLauncher.Forms {
         private string _versionToLaunch;
         private bool _restoreVersion;
 
-        private int StatusBarValue {
-            get { return StatusBar.Value1; }
-            set { SetStatusBarValue(value); }
-        }
-
         private int StatusBarMaxValue {
-            get { return StatusBar.Maximum; }
-            set { SetStatusBarMaxValue(value); }
-        }
-
-        private bool StatusBarVisible {
-            get { return StatusBar.Visible; }
-            set { SetStatusBarVisibility(value); }
+            set => SetStatusBarMaxValue(value);
         }
 
         public string VersionToLaunch => _versionToLaunch;
@@ -67,6 +56,10 @@ namespace FreeLauncher.Forms {
             }
         }
 
+        private void IncStatusBarValue() {
+            SetStatusBarValue(StatusBar.Value1 + 1);
+        }
+
         private void SetStatusBarValue(int i) {
             if (logBox.InvokeRequired) {
                 logBox.Invoke(new Action<int>(SetStatusBarValue), i);
@@ -76,12 +69,12 @@ namespace FreeLauncher.Forms {
             }
         }
 
-        private void SetStatusBarMaxValue(int i) {
+        private void SetStatusBarMaxValue(int value) {
             if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<int>(SetStatusBarMaxValue), i);
+                logBox.Invoke(new Action<int>(SetStatusBarMaxValue), value);
             }
             else {
-                StatusBar.Maximum = i;
+                StatusBar.Maximum = value;
             }
         }
         
@@ -278,10 +271,10 @@ namespace FreeLauncher.Forms {
         private void CheckVersionAvailability() {
             long state = 0;
             WebClient downloader = new WebClient();
-            downloader.DownloadProgressChanged += (sender, e) => { StatusBarValue = e.ProgressPercentage; };
+            downloader.DownloadProgressChanged += (sender, e) => { SetStatusBarValue(e.ProgressPercentage); };
             downloader.DownloadFileCompleted += delegate { state++; };
-            StatusBarMaxValue = 100;
-            StatusBarValue = 0;
+            SetStatusBarMaxValue(100);
+            SetStatusBarValue(0);
             string version = _versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext);
             UpdateStatusBarText(string.Format(_applicationContext.ProgramLocalization.CheckingVersionAvailability, version));
             AppendLog($"Checking '{version}' version availability...");
@@ -300,12 +293,10 @@ namespace FreeLauncher.Forms {
             else {
                 state++;
             }
-
-            StatusBarValue++;
-            StatusBarValue = 0;
+            
+            SetStatusBarValue(0);
             while (state != 1) ;
-            Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + version), false);
+            Version selectedVersion = Version.ParseVersion(new DirectoryInfo(_applicationContext.McVersions + version), false);
             if ((!File.Exists(path + "/" + version + ".jar") || _restoreVersion) &&
                 selectedVersion.InheritsFrom == null) {
                 string filename = version + ".jar";
@@ -376,15 +367,12 @@ namespace FreeLauncher.Forms {
             Version selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions +
                                   (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
-            StatusBarValue = 0;
-            StatusBarMaxValue = selectedVersion.Libs.Count(a => a.IsForWindows()) + 1;
+            SetStatusBarValue(0);
+            SetStatusBarMaxValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
             UpdateStatusBarText(_applicationContext.ProgramLocalization.CheckingLibraries);
             AppendLog("Checking libraries...");
-            foreach (
-                Lib lib in
-                selectedVersion
-                    .Libs.Where(a => a.IsForWindows())) {
-                StatusBarValue++;
+            foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
+                IncStatusBarValue();
                 if (!File.Exists(_applicationContext.McLibs + lib.ToPath()) || _restoreVersion) {
                     UpdateStatusBarAndLog("Downloading " + lib.Name + "...");
                     AppendDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
@@ -442,17 +430,13 @@ namespace FreeLauncher.Forms {
             }
 
             JObject jo = JObject.Parse(File.ReadAllText(file));
-            StatusBarValue = 0;
-            StatusBarMaxValue = jo["objects"].Cast<JProperty>()
+            var something = jo["objects"].Cast<JProperty>()
                 .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
-                .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
-                .Count(filename => !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion) + 1;
-            foreach (string resourseFile in jo["objects"].Cast<JProperty>()
-                         .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
-                         .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
-                         .Where(
-                             filename =>
-                                 !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion)) {
+                .Select(c => c[0] + c[1] + "\\" + c)
+                .Where(filename => !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion).ToList();
+            SetStatusBarValue(0);
+            SetStatusBarMaxValue(something.Count + 1);
+            foreach (string resourseFile in something) {
                 string path = _applicationContext.McObjectsAssets + resourseFile[0] + resourseFile[1] + "\\";
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
@@ -467,12 +451,12 @@ namespace FreeLauncher.Forms {
                     AppendException(ex.ToString());
                 }
 
-                StatusBarValue++;
+                IncStatusBarValue();
             }
 
             AppendLog("Finished checking game assets.");
             if (selectedVersion.AssetsIndex == null) {
-                StatusBarValue = 0;
+                SetStatusBarValue(0);
                 StatusBarMaxValue = jo["objects"].Cast<JProperty>()
                     .Count(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name)) + 1;
                 UpdateStatusBarAndLog("Converting assets...");
@@ -494,7 +478,7 @@ namespace FreeLauncher.Forms {
                         AppendLog(ex.ToString());
                     }
 
-                    StatusBarValue++;
+                    IncStatusBarValue();
                 }
 
                 AppendLog("Finished converting assets.");
@@ -787,7 +771,7 @@ namespace FreeLauncher.Forms {
             catch (Exception ex) {
                 AppendException("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
 
-                // restore backup
+                // save backup
                 if (File.Exists(_applicationContext.LauncherProfiles)) {
                     string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
                     AppendLog("A copy of old profile list has been created: " + fileName);
@@ -841,8 +825,7 @@ namespace FreeLauncher.Forms {
         }
 
         private void SaveProfiles() {
-            File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                              "/.minecraft/launcher_profiles.json", _profileManager.ToJson());
+            File.WriteAllText(_applicationContext.McDirectory + "/launcher_profiles.json", _profileManager.ToJson());
         }
 
         private void SaveUsers() {
