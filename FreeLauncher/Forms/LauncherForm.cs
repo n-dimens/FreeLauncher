@@ -737,8 +737,6 @@ namespace FreeLauncher.Forms {
             ConsolePage.Text = _applicationContext.ProgramLocalization.ConsoleTabText;
             EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
             AboutPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
-            AboutPageViewPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
-            LicensesPage.Text = _applicationContext.ProgramLocalization.LicensesTabText;
             SettingsPage.Text = _applicationContext.ProgramLocalization.SettingsTabText;
 
             LaunchButton.Text = _applicationContext.ProgramLocalization.LaunchButtonText;

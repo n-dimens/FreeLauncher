@@ -49,7 +49,6 @@ namespace FreeLauncher.Forms
             this.versionsListView = new Telerik.WinControls.UI.RadListView();
             this.AboutPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.AboutPageView = new Telerik.WinControls.UI.RadPageView();
-            this.AboutPageViewPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.radScrollablePanel2 = new Telerik.WinControls.UI.RadScrollablePanel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -65,12 +64,6 @@ namespace FreeLauncher.Forms
             this.GratitudesDescLabel = new System.Windows.Forms.Label();
             this.GratitudesLabel = new Telerik.WinControls.UI.RadLabel();
             this.radLabel3 = new Telerik.WinControls.UI.RadLabel();
-            this.LicensesPage = new Telerik.WinControls.UI.RadPageViewPage();
-            this.licensePageView = new Telerik.WinControls.UI.RadPageView();
-            this.FreeLauncherLicense = new Telerik.WinControls.UI.RadPageViewPage();
-            this.FreeLauncherLicenseText = new Telerik.WinControls.UI.RadLabel();
-            this.dotMCLauncherLicense = new Telerik.WinControls.UI.RadPageViewPage();
-            this.dotMCLauncherLicenseText = new Telerik.WinControls.UI.RadLabel();
             this.SettingsPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.radScrollablePanel1 = new Telerik.WinControls.UI.RadScrollablePanel();
             this.radGroupBox2 = new Telerik.WinControls.UI.RadGroupBox();
@@ -105,7 +98,6 @@ namespace FreeLauncher.Forms
             this.AboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).BeginInit();
             this.AboutPageView.SuspendLayout();
-            this.AboutPageViewPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel2)).BeginInit();
             this.radScrollablePanel2.PanelContainer.SuspendLayout();
             this.radScrollablePanel2.SuspendLayout();
@@ -114,13 +106,6 @@ namespace FreeLauncher.Forms
             ((System.ComponentModel.ISupportInitialize)(this.PartnersLabel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GratitudesLabel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLabel3)).BeginInit();
-            this.LicensesPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.licensePageView)).BeginInit();
-            this.licensePageView.SuspendLayout();
-            this.FreeLauncherLicense.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FreeLauncherLicenseText)).BeginInit();
-            this.dotMCLauncherLicense.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dotMCLauncherLicenseText)).BeginInit();
             this.SettingsPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).BeginInit();
             this.radScrollablePanel1.PanelContainer.SuspendLayout();
@@ -289,8 +274,6 @@ namespace FreeLauncher.Forms
             // 
             // AboutPageView
             // 
-            this.AboutPageView.Controls.Add(this.AboutPageViewPage);
-            this.AboutPageView.Controls.Add(this.LicensesPage);
             this.AboutPageView.Controls.Add(this.SettingsPage);
             this.AboutPageView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AboutPageView.Location = new System.Drawing.Point(0, 0);
@@ -303,7 +286,7 @@ namespace FreeLauncher.Forms
             this.AboutPageView.RootElement.FlipText = false;
             this.AboutPageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
             this.AboutPageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.AboutPageView.SelectedPage = this.AboutPageViewPage;
+            this.AboutPageView.SelectedPage = this.SettingsPage;
             this.AboutPageView.Size = new System.Drawing.Size(848, 328);
             this.AboutPageView.TabIndex = 9;
             this.AboutPageView.ThemeName = "VisualStudio2012Dark";
@@ -311,14 +294,6 @@ namespace FreeLauncher.Forms
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).ItemAlignment = Telerik.WinControls.UI.StripViewItemAlignment.Center;
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).ItemFitMode = Telerik.WinControls.UI.StripViewItemFitMode.Fill;
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).StripAlignment = Telerik.WinControls.UI.StripViewAlignment.Bottom;
-            // 
-            // AboutPageViewPage
-            // 
-            this.AboutPageViewPage.Controls.Add(this.radScrollablePanel2);
-            this.AboutPageViewPage.Location = new System.Drawing.Point(5, 5);
-            this.AboutPageViewPage.Name = "AboutPageViewPage";
-            this.AboutPageViewPage.Size = new System.Drawing.Size(838, 293);
-            this.AboutPageViewPage.Text = "О ЛАУНЧЕРЕ";
             // 
             // radScrollablePanel2
             // 
@@ -587,79 +562,6 @@ namespace FreeLauncher.Forms
             this.radLabel3.ThemeName = "VisualStudio2012Dark";
             ((Telerik.WinControls.UI.RadLabelElement)(this.radLabel3.GetChildAt(0))).Text = "by Space Earth Studio";
             ((Telerik.WinControls.Primitives.FillPrimitive)(this.radLabel3.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // LicensesPage
-            // 
-            this.LicensesPage.Controls.Add(this.licensePageView);
-            this.LicensesPage.Location = new System.Drawing.Point(5, 5);
-            this.LicensesPage.Name = "LicensesPage";
-            this.LicensesPage.Size = new System.Drawing.Size(838, 293);
-            this.LicensesPage.Text = "ЛИЦЕНЗИИ";
-            // 
-            // licensePageView
-            // 
-            this.licensePageView.Controls.Add(this.FreeLauncherLicense);
-            this.licensePageView.Controls.Add(this.dotMCLauncherLicense);
-            this.licensePageView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.licensePageView.Location = new System.Drawing.Point(0, 0);
-            this.licensePageView.Name = "licensePageView";
-            // 
-            // 
-            // 
-            this.licensePageView.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.licensePageView.RootElement.AngleTransform = 0F;
-            this.licensePageView.RootElement.FlipText = false;
-            this.licensePageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.licensePageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.licensePageView.SelectedPage = this.FreeLauncherLicense;
-            this.licensePageView.Size = new System.Drawing.Size(838, 293);
-            this.licensePageView.TabIndex = 0;
-            this.licensePageView.Text = "radPageView3";
-            this.licensePageView.ThemeName = "VisualStudio2012Dark";
-            this.licensePageView.ViewMode = Telerik.WinControls.UI.PageViewMode.Backstage;
-            ((Telerik.WinControls.UI.StripViewItemContainer)(this.licensePageView.GetChildAt(0).GetChildAt(0))).MinSize = new System.Drawing.Size(150, 0);
-            // 
-            // FreeLauncherLicense
-            // 
-            this.FreeLauncherLicense.AutoScroll = true;
-            this.FreeLauncherLicense.Controls.Add(this.FreeLauncherLicenseText);
-            this.FreeLauncherLicense.Location = new System.Drawing.Point(155, 4);
-            this.FreeLauncherLicense.Name = "FreeLauncherLicense";
-            this.FreeLauncherLicense.Size = new System.Drawing.Size(679, 285);
-            this.FreeLauncherLicense.Text = "FreeLauncher";
-            // 
-            // FreeLauncherLicenseText
-            // 
-            this.FreeLauncherLicenseText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FreeLauncherLicenseText.Location = new System.Drawing.Point(0, 0);
-            this.FreeLauncherLicenseText.Name = "FreeLauncherLicenseText";
-            this.FreeLauncherLicenseText.Size = new System.Drawing.Size(679, 285);
-            this.FreeLauncherLicenseText.TabIndex = 2;
-            this.FreeLauncherLicenseText.Text = resources.GetString("FreeLauncherLicenseText.Text");
-            this.FreeLauncherLicenseText.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.FreeLauncherLicenseText.GetChildAt(0))).Text = resources.GetString("resource.Text");
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.FreeLauncherLicenseText.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // dotMCLauncherLicense
-            // 
-            this.dotMCLauncherLicense.AutoScroll = true;
-            this.dotMCLauncherLicense.Controls.Add(this.dotMCLauncherLicenseText);
-            this.dotMCLauncherLicense.Location = new System.Drawing.Point(155, 4);
-            this.dotMCLauncherLicense.Name = "dotMCLauncherLicense";
-            this.dotMCLauncherLicense.Size = new System.Drawing.Size(679, 285);
-            this.dotMCLauncherLicense.Text = "dotMCLauncher";
-            // 
-            // dotMCLauncherLicenseText
-            // 
-            this.dotMCLauncherLicenseText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dotMCLauncherLicenseText.Location = new System.Drawing.Point(0, 0);
-            this.dotMCLauncherLicenseText.Name = "dotMCLauncherLicenseText";
-            this.dotMCLauncherLicenseText.Size = new System.Drawing.Size(679, 285);
-            this.dotMCLauncherLicenseText.TabIndex = 1;
-            this.dotMCLauncherLicenseText.Text = resources.GetString("dotMCLauncherLicenseText.Text");
-            this.dotMCLauncherLicenseText.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.dotMCLauncherLicenseText.GetChildAt(0))).Text = resources.GetString("resource.Text1");
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.dotMCLauncherLicenseText.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
             // 
             // SettingsPage
             // 
@@ -1101,7 +1003,6 @@ namespace FreeLauncher.Forms
             this.AboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).EndInit();
             this.AboutPageView.ResumeLayout(false);
-            this.AboutPageViewPage.ResumeLayout(false);
             this.radScrollablePanel2.PanelContainer.ResumeLayout(false);
             this.radScrollablePanel2.PanelContainer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel2)).EndInit();
@@ -1111,15 +1012,6 @@ namespace FreeLauncher.Forms
             ((System.ComponentModel.ISupportInitialize)(this.PartnersLabel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GratitudesLabel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLabel3)).EndInit();
-            this.LicensesPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.licensePageView)).EndInit();
-            this.licensePageView.ResumeLayout(false);
-            this.FreeLauncherLicense.ResumeLayout(false);
-            this.FreeLauncherLicense.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FreeLauncherLicenseText)).EndInit();
-            this.dotMCLauncherLicense.ResumeLayout(false);
-            this.dotMCLauncherLicense.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dotMCLauncherLicenseText)).EndInit();
             this.SettingsPage.ResumeLayout(false);
             this.radScrollablePanel1.PanelContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).EndInit();
@@ -1164,7 +1056,6 @@ namespace FreeLauncher.Forms
         private RadListView versionsListView;
         private RadPageViewPage AboutPage;
         private RadPageView AboutPageView;
-        private RadPageViewPage AboutPageViewPage;
         private RadScrollablePanel radScrollablePanel2;
         private Label label6;
         private Label MCofflineDescLabel;
@@ -1178,8 +1069,6 @@ namespace FreeLauncher.Forms
         private Label GratitudesDescLabel;
         private RadLabel GratitudesLabel;
         private RadLabel radLabel3;
-        private RadPageViewPage LicensesPage;
-        private RadPageView licensePageView;
         private RadPageViewPage SettingsPage;
         private RadScrollablePanel radScrollablePanel1;
         private RadGroupBox radGroupBox2;
@@ -1199,10 +1088,6 @@ namespace FreeLauncher.Forms
         public RadDropDownList profilesDropDownBox;
         private RadButton EditProfile;
         private RadButton AddProfile;
-        private RadPageViewPage dotMCLauncherLicense;
-        private RadPageViewPage FreeLauncherLicense;
-        private RadLabel FreeLauncherLicenseText;
-        private RadLabel dotMCLauncherLicenseText;
         private RadProgressBar StatusBar;
         private RadPanel ConsoleOptionsPanel;
         public RadCheckBox CloseGameOutput;
