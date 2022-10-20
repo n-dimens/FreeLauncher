@@ -5,13 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Windows.Forms;
 using dotMCLauncher.Core;
-using dotMCLauncher.YaDra4il;
 using Ionic.Zip;
 using Microsoft.VisualBasic.Devices;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
@@ -19,14 +16,11 @@ using Telerik.WinControls.UI.Data;
 using Version = dotMCLauncher.Core.Version;
 
 namespace FreeLauncher.Forms {
-    public partial class LauncherForm : RadForm {
-        #region Variables
-
+    public partial class LauncherForm : RadForm, ILauncherLogger {
+        private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
         private ProfileManager _profileManager;
         private Profile _selectedProfile;
-        private UserManager _userManager;
-        private User _selectedUser;
         private readonly Configuration _cfg;
         private string _versionToLaunch;
         private bool _restoreVersion;
@@ -78,9 +72,8 @@ namespace FreeLauncher.Forms {
             }
         }
         
-        #endregion
-
         public LauncherForm(ApplicationContext appContext) {
+            _presenter = new LauncherFormPresenter(this, appContext);
             _applicationContext = appContext;
             InitializeComponent();
             // Loading configuration
@@ -163,9 +156,8 @@ namespace FreeLauncher.Forms {
                 return;
             }
 
-            _userManager.SelectedUsername = NicknameDropDownList.SelectedItem.Text;
-            _selectedUser = _userManager.Accounts[NicknameDropDownList.SelectedItem.Text];
-            SaveUsers();
+            _presenter.SelectUser(NicknameDropDownList.SelectedItem.Text);
+            _presenter.SaveUsers();
         }
 
         private void EditProfile_Click(object sender, EventArgs e) {
@@ -187,7 +179,7 @@ namespace FreeLauncher.Forms {
                 _profileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
             }
 
-            SaveProfiles();
+            _presenter.SaveProfiles(_profileManager);
             UpdateProfileList();
         }
 
@@ -209,7 +201,7 @@ namespace FreeLauncher.Forms {
                 _profileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
             }
 
-            SaveProfiles();
+            _presenter.SaveProfiles(_profileManager);
             UpdateProfileList();
         }
 
@@ -225,7 +217,7 @@ namespace FreeLauncher.Forms {
 
             _profileManager.Profiles.Remove(_profileManager.LastUsedProfile);
             _profileManager.LastUsedProfile = _profileManager.Profiles.FirstOrDefault().Key;
-            SaveProfiles();
+            _presenter.SaveProfiles(_profileManager);
             UpdateProfileList();
         }
 
@@ -486,45 +478,8 @@ namespace FreeLauncher.Forms {
         }
         
         private void Launch() {
-            if (!_userManager.Accounts.ContainsKey(NicknameDropDownList.Text)) {
-                User user = new User {
-                    Username = NicknameDropDownList.Text,
-                    Type = "offline"
-                };
-                _userManager.Accounts.Add(user.Username, user);
-                _selectedUser = user;
-            }
-            else {
-                _selectedUser = _userManager.Accounts[NicknameDropDownList.Text];
-                if (_selectedUser.Type != "offline") {
-                    AuthManager am = new AuthManager {
-                        SessionToken = _selectedUser.SessionToken,
-                        Uuid = _selectedUser.Uuid
-                    };
-                    bool check = am.CheckSessionToken();
-                    if (!check) {
-                        RadMessageBox.Show(
-                            "Session token is not valid. Please, head up to user manager and re-add your account.",
-                            _applicationContext.ProgramLocalization.Error, MessageBoxButtons.OK,
-                            RadMessageIcon.Exclamation);
-                        User user = new User {
-                            Username = NicknameDropDownList.Text,
-                            Type = "offline"
-                        };
-                        _selectedUser = user;
-                    }
-                    else {
-                        Refresh refresh = new Refresh(_selectedUser.SessionToken,
-                            _selectedUser.AccessToken);
-                        _selectedUser.UserProperties = (JArray) refresh.user["properties"];
-                        _selectedUser.SessionToken = refresh.accessToken;
-                        _userManager.Accounts[NicknameDropDownList.Text] = _selectedUser;
-                    }
-                }
-            }
-
-            _userManager.SelectedUsername = _selectedUser.Username;
-            SaveUsers();
+            _presenter.SelectUserForLaunch(NicknameDropDownList.Text);
+            _presenter.SaveUsers();
             UpdateUserList();
             var selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions + (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
@@ -540,7 +495,7 @@ namespace FreeLauncher.Forms {
 
             var proc = ProcessInfoBuilder.Create(_applicationContext)
                 .Profile(_selectedProfile)
-                .User(_selectedUser)
+                .User(_presenter.SelectedUser)
                 .Version(selectedVersion)
                 .OfflineNickname(NicknameDropDownList.Text)
                 .Build();
@@ -799,7 +754,7 @@ namespace FreeLauncher.Forms {
                 }.ToString());
 
                 _profileManager = LauncherExtensions.ParseProfile(_applicationContext.LauncherProfiles);
-                SaveProfiles();
+                _presenter.SaveProfiles(_profileManager);
             }
 
             DeleteProfileButton.Enabled = _profileManager.Profiles.Count > 1;
@@ -809,29 +764,9 @@ namespace FreeLauncher.Forms {
 
         private void UpdateUserList() {
             NicknameDropDownList.Items.Clear();
-            try {
-                _userManager = File.Exists(_applicationContext.McLauncher + "users.json")
-                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_applicationContext.McLauncher + "users.json"))
-                    : new UserManager();
-            }
-            catch (Exception ex) {
-                AppendException("Reading user list: an exception has occurred\n" + ex.Message);
-                _userManager = new UserManager();
-                SaveUsers();
-            }
-
-            NicknameDropDownList.Items.AddRange(_userManager.Accounts.Keys);
-            NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(_userManager.SelectedUsername, true);
-        }
-
-        private void SaveProfiles() {
-            File.WriteAllText(_applicationContext.McDirectory + "/launcher_profiles.json", _profileManager.ToJson());
-        }
-
-        private void SaveUsers() {
-            File.WriteAllText(_applicationContext.McLauncher + "users.json",
-                JsonConvert.SerializeObject(_userManager, Formatting.Indented,
-                    new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore}));
+            _presenter.ReloadUserManager();
+            NicknameDropDownList.Items.AddRange(_presenter.UserManager.Accounts.Keys);
+            NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(_presenter.UserManager.SelectedUsername, true);
         }
 
         private void LoadLocalization() {
@@ -880,7 +815,7 @@ namespace FreeLauncher.Forms {
             }
         }
 
-        private void AppendLog(string text, string methodName = null) {
+        public void AppendLog(string text, string methodName = null) {
             if (logBox.InvokeRequired) {
                 logBox.Invoke(new Action<string, string>(AppendLog), text, new StackFrame(1).GetMethod().Name);
             }
@@ -892,7 +827,7 @@ namespace FreeLauncher.Forms {
             }
         }
 
-        private void AppendException(string text, string methodName = null) {
+        public void AppendException(string text, string methodName = null) {
             if (logBox.InvokeRequired) {
                 logBox.Invoke(new Action<string, string>(AppendException), text, new StackFrame(1).GetMethod().Name);
             }
@@ -904,7 +839,7 @@ namespace FreeLauncher.Forms {
             }
         }
 
-        private void AppendDebug(string text, string methodName = null) {
+        public void AppendDebug(string text, string methodName = null) {
             if (!DebugModeButton.IsChecked) {
                 return;
             }

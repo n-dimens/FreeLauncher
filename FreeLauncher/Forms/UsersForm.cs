@@ -152,20 +152,4 @@ namespace FreeLauncher.Forms
             AddUserButton.Text = _applicationContext.ProgramLocalization.AddNewUserButton;
         }
     }
-
-    public class UserManager
-    {
-        [JsonProperty("selectedUsername")] public string SelectedUsername;
-        [JsonProperty("users")] public Dictionary<string, User> Accounts = new Dictionary<string, User>();
-    }
-
-    public class User
-    {
-        [JsonProperty("username")] public string Username;
-        [JsonProperty("type")] public string Type;
-        [JsonProperty("uuid")] public string Uuid;
-        [JsonProperty("sessionToken")] public string SessionToken;
-        [JsonProperty("accessToken")] public string AccessToken;
-        [JsonProperty("properties")] public JArray UserProperties;
-    }
 }

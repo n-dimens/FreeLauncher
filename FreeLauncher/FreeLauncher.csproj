@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Forms\ILauncherLogger.cs" />
     <Compile Include="Forms\LauncherExtensions.cs" />
     <Compile Include="Forms\LauncherForm.cs">
       <SubType>Form</SubType>
@@ -117,6 +118,7 @@
     <Compile Include="Forms\LauncherForm.designer.cs">
       <DependentUpon>LauncherForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\LauncherFormPresenter.cs" />
     <Compile Include="Forms\MinecraftProcessPage.cs" />
     <Compile Include="Forms\MinecraftProcessPageContext.cs" />
     <Compile Include="Forms\ProcessInfoBuilder.cs" />
@@ -137,6 +139,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApplicationContext.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserManager.cs" />
     <EmbeddedResource Include="Forms\LauncherForm.resx">
       <DependentUpon>LauncherForm.cs</DependentUpon>
     </EmbeddedResource>

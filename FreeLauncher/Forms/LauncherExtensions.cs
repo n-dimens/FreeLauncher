@@ -16,7 +16,7 @@
             return profile.SelectedVersion ?? profile.GetLatestVersion(appContext);
         }
 
-        internal static string GetLatestVersion(this Profile profile, ApplicationContext appContext) {
+        private static string GetLatestVersion(this Profile profile, ApplicationContext appContext) {
             JObject versionsList = JObject.Parse(File.ReadAllText(appContext.McVersions + "\\versions.json"));
             return profile.AllowedReleaseTypes != null
                 ? profile.AllowedReleaseTypes.Contains("snapshot")
