@@ -40,11 +40,6 @@ namespace FreeLauncher.Forms
             Telerik.WinControls.UI.RadListDataItem radListDataItem1 = new Telerik.WinControls.UI.RadListDataItem();
             this.vs12theme = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
-            this.News = new Telerik.WinControls.UI.RadPageViewPage();
-            this.newsBrowser = new System.Windows.Forms.WebBrowser();
-            this.webPanel = new Telerik.WinControls.UI.RadPanel();
-            this.BackWebButton = new Telerik.WinControls.UI.RadButton();
-            this.ForwardWebButton = new Telerik.WinControls.UI.RadButton();
             this.ConsolePage = new Telerik.WinControls.UI.RadPageViewPage();
             this.logBox = new System.Windows.Forms.RichTextBox();
             this.ConsoleOptionsPanel = new Telerik.WinControls.UI.RadPanel();
@@ -100,11 +95,6 @@ namespace FreeLauncher.Forms
             this.AddProfile = new Telerik.WinControls.UI.RadButton();
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).BeginInit();
             this.mainPageView.SuspendLayout();
-            this.News.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webPanel)).BeginInit();
-            this.webPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.BackWebButton)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ForwardWebButton)).BeginInit();
             this.ConsolePage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ConsoleOptionsPanel)).BeginInit();
             this.ConsoleOptionsPanel.SuspendLayout();
@@ -162,7 +152,6 @@ namespace FreeLauncher.Forms
             // 
             // mainPageView
             // 
-            this.mainPageView.Controls.Add(this.News);
             this.mainPageView.Controls.Add(this.ConsolePage);
             this.mainPageView.Controls.Add(this.EditVersions);
             this.mainPageView.Controls.Add(this.AboutPage);
@@ -182,87 +171,6 @@ namespace FreeLauncher.Forms
             this.mainPageView.TabIndex = 2;
             this.mainPageView.ThemeName = "VisualStudio2012Dark";
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.mainPageView.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
-            // 
-            // News
-            // 
-            this.News.Controls.Add(this.newsBrowser);
-            this.News.Controls.Add(this.webPanel);
-            this.News.ItemSize = new System.Drawing.SizeF(65F, 24F);
-            this.News.Location = new System.Drawing.Point(5, 30);
-            this.News.Name = "News";
-            this.News.Size = new System.Drawing.Size(848, 328);
-            this.News.Text = "НОВОСТИ";
-            // 
-            // newsBrowser
-            // 
-            this.newsBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.newsBrowser.Location = new System.Drawing.Point(0, 0);
-            this.newsBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.newsBrowser.Name = "newsBrowser";
-            this.newsBrowser.ScriptErrorsSuppressed = true;
-            this.newsBrowser.Size = new System.Drawing.Size(848, 308);
-            this.newsBrowser.TabIndex = 0;
-            this.newsBrowser.Url = new System.Uri("http://mcupdate.tumblr.com/", System.UriKind.Absolute);
-            this.newsBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.newsBrowser_Navigated);
-            this.newsBrowser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.newsBrowser_Navigating);
-            // 
-            // webPanel
-            // 
-            this.webPanel.Controls.Add(this.BackWebButton);
-            this.webPanel.Controls.Add(this.ForwardWebButton);
-            this.webPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.webPanel.Location = new System.Drawing.Point(0, 308);
-            this.webPanel.Name = "webPanel";
-            // 
-            // 
-            // 
-            this.webPanel.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.webPanel.RootElement.AngleTransform = 0F;
-            this.webPanel.RootElement.FlipText = false;
-            this.webPanel.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.webPanel.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.webPanel.Size = new System.Drawing.Size(848, 20);
-            this.webPanel.TabIndex = 1;
-            this.webPanel.ThemeName = "VisualStudio2012Dark";
-            this.webPanel.Visible = false;
-            // 
-            // BackWebButton
-            // 
-            this.BackWebButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BackWebButton.Location = new System.Drawing.Point(720, 0);
-            this.BackWebButton.Name = "BackWebButton";
-            // 
-            // 
-            // 
-            this.BackWebButton.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.BackWebButton.RootElement.AngleTransform = 0F;
-            this.BackWebButton.RootElement.FlipText = false;
-            this.BackWebButton.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.BackWebButton.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.BackWebButton.Size = new System.Drawing.Size(64, 17);
-            this.BackWebButton.TabIndex = 1;
-            this.BackWebButton.Text = "<";
-            this.BackWebButton.ThemeName = "VisualStudio2012Dark";
-            this.BackWebButton.Click += new System.EventHandler(this.backWebButton_Click);
-            // 
-            // ForwardWebButton
-            // 
-            this.ForwardWebButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ForwardWebButton.Location = new System.Drawing.Point(784, 0);
-            this.ForwardWebButton.Name = "ForwardWebButton";
-            // 
-            // 
-            // 
-            this.ForwardWebButton.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.ForwardWebButton.RootElement.AngleTransform = 0F;
-            this.ForwardWebButton.RootElement.FlipText = false;
-            this.ForwardWebButton.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.ForwardWebButton.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ForwardWebButton.Size = new System.Drawing.Size(64, 17);
-            this.ForwardWebButton.TabIndex = 0;
-            this.ForwardWebButton.Text = ">";
-            this.ForwardWebButton.ThemeName = "VisualStudio2012Dark";
-            this.ForwardWebButton.Click += new System.EventHandler(this.forwardWebButton_Click);
             // 
             // ConsolePage
             // 
@@ -1183,11 +1091,6 @@ namespace FreeLauncher.Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LauncherForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).EndInit();
             this.mainPageView.ResumeLayout(false);
-            this.News.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webPanel)).EndInit();
-            this.webPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.BackWebButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ForwardWebButton)).EndInit();
             this.ConsolePage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ConsoleOptionsPanel)).EndInit();
             this.ConsoleOptionsPanel.ResumeLayout(false);
@@ -1255,11 +1158,6 @@ namespace FreeLauncher.Forms
 
         private VisualStudio2012DarkTheme vs12theme;
         private RadPageView mainPageView;
-        private RadPageViewPage News;
-        private WebBrowser newsBrowser;
-        private RadPanel webPanel;
-        private RadButton BackWebButton;
-        private RadButton ForwardWebButton;
         private RadPageViewPage ConsolePage;
         public RichTextBox logBox;
         private RadPageViewPage EditVersions;

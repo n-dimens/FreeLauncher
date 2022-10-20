@@ -539,42 +539,6 @@ namespace FreeLauncher.Forms {
             logBox.ScrollToCaret();
         }
 
-        #region newsBrowser
-
-        private void newsBrowser_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
-            if (newsBrowser.Url != new Uri("http://mcupdate.tumblr.com/")) {
-                BackWebButton.Enabled = newsBrowser.CanGoBack;
-                ForwardWebButton.Enabled = newsBrowser.CanGoForward;
-                webPanel.Text = newsBrowser.Url.ToString();
-                webPanel.Visible = true;
-            }
-            else {
-                webPanel.Visible = false;
-            }
-        }
-
-        private void newsBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e) {
-            if (newsBrowser.Url != new Uri("http://mcupdate.tumblr.com/")) {
-                BackWebButton.Enabled = newsBrowser.CanGoBack;
-                ForwardWebButton.Enabled = newsBrowser.CanGoForward;
-                webPanel.Text = newsBrowser.Url.ToString();
-                webPanel.Visible = true;
-            }
-            else {
-                webPanel.Visible = false;
-            }
-        }
-
-        private void backWebButton_Click(object sender, EventArgs e) {
-            newsBrowser.GoBack();
-        }
-
-        private void forwardWebButton_Click(object sender, EventArgs e) {
-            newsBrowser.GoForward();
-        }
-
-        #endregion
-
         private void versionsListView_ItemMouseClick(object sender, ListViewItemEventArgs e) {
             versionsListView.SelectedItem = e.Item;
             Version ver =
@@ -770,7 +734,6 @@ namespace FreeLauncher.Forms {
         }
 
         private void LoadLocalization() {
-            News.Text = _applicationContext.ProgramLocalization.NewsTabText;
             ConsolePage.Text = _applicationContext.ProgramLocalization.ConsoleTabText;
             EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
             AboutPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
