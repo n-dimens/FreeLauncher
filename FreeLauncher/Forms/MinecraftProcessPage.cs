@@ -50,12 +50,11 @@ namespace FreeLauncher.Forms {
         private void AddNewPage() {
             _viewPage = new RadPageViewPage {
                 Text =
-                    string.Format("{0} ({1})", _context.ApplicationContext.ProgramLocalization.GameOutput,
-                        _context.VersionToLaunch ?? _context.Profile.ProfileName)
+                    string.Format("{0} ({1})", _context.ApplicationContext.ProgramLocalization.GameOutput, _context.Profile.ProfileName)
             };
             
             var panel = new RadPanel {
-                Text = _context.VersionToLaunch ?? _context.Profile.GetSelectedVersion(_context.ApplicationContext),
+                Text = _context.Profile.GetSelectedVersion(_context.ApplicationContext),
                 Dock = DockStyle.Top,
             };
             panel.Size = new Size(panel.Size.Width, 60);

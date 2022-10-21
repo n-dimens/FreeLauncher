@@ -22,14 +22,10 @@ namespace FreeLauncher.Forms {
         private ProfileManager _profileManager;
         private Profile _selectedProfile;
         private readonly Configuration _cfg;
-        private string _versionToLaunch;
-        private bool _restoreVersion;
-
+        
         private int StatusBarMaxValue {
             set => SetStatusBarMaxValue(value);
         }
-
-        public string VersionToLaunch => _versionToLaunch;
 
         private void DisableControls() {
             BlockControls = true;
@@ -124,7 +120,6 @@ namespace FreeLauncher.Forms {
             }
 
             UpdateProfileList();
-            UpdateVersionListView();
             UpdateUserList();
         }
 
@@ -236,7 +231,6 @@ namespace FreeLauncher.Forms {
             bgw.DoWork += (o, args) => {
                 ShowStatusBar();
                 CheckVersionAvailability();
-                UpdateVersionListView();
                 CheckLibraries();
                 CheckGameResources();
                 HideStatusBar();
@@ -244,10 +238,7 @@ namespace FreeLauncher.Forms {
             bgw.RunWorkerCompleted += (o, args) => {
                 // запуск в UI потоке
                 Launch();
-                UpdateVersionListView();
                 EnableControls();
-                _versionToLaunch = null;
-                _restoreVersion = false;
             };
             bgw.RunWorkerAsync();
         }
@@ -267,7 +258,7 @@ namespace FreeLauncher.Forms {
             downloader.DownloadFileCompleted += delegate { state++; };
             SetStatusBarMaxValue(100);
             SetStatusBarValue(0);
-            string version = _versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext);
+            string version = _selectedProfile.GetSelectedVersion(_applicationContext);
             UpdateStatusBarText(string.Format(_applicationContext.ProgramLocalization.CheckingVersionAvailability, version));
             AppendLog($"Checking '{version}' version availability...");
             string path = Path.Combine(_applicationContext.McVersions, version + "\\");
@@ -275,7 +266,7 @@ namespace FreeLauncher.Forms {
                 Directory.CreateDirectory(path);
             }
 
-            if (!File.Exists(path + "/" + version + ".json") || _restoreVersion) {
+            if (!File.Exists(path + "/" + version + ".json")) {
                 string filename = version + ".json";
                 UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
                 downloader.DownloadFileAsync(new Uri(string.Format(
@@ -289,7 +280,7 @@ namespace FreeLauncher.Forms {
             SetStatusBarValue(0);
             while (state != 1) ;
             Version selectedVersion = Version.ParseVersion(new DirectoryInfo(_applicationContext.McVersions + version), false);
-            if ((!File.Exists(path + "/" + version + ".jar") || _restoreVersion) &&
+            if ((!File.Exists(path + "/" + version + ".jar")) &&
                 selectedVersion.InheritsFrom == null) {
                 string filename = version + ".jar";
                 UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
@@ -312,7 +303,7 @@ namespace FreeLauncher.Forms {
                 Directory.CreateDirectory(path);
             }
 
-            if (!File.Exists(string.Format("{0}/{1}/{1}.jar", _applicationContext.McVersions, selectedVersion.InheritsFrom)) || _restoreVersion) {
+            if (!File.Exists(string.Format("{0}/{1}/{1}.jar", _applicationContext.McVersions, selectedVersion.InheritsFrom))) {
                 string filename = selectedVersion.InheritsFrom + ".jar";
                 UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
                 downloader.DownloadFileAsync(new Uri(string.Format(
@@ -324,7 +315,7 @@ namespace FreeLauncher.Forms {
             }
 
             while (state != 3) ;
-            if (!File.Exists(string.Format("{0}/{1}/{1}.json", _applicationContext.McVersions, selectedVersion.InheritsFrom)) || _restoreVersion) {
+            if (!File.Exists(string.Format("{0}/{1}/{1}.json", _applicationContext.McVersions, selectedVersion.InheritsFrom))) {
                 string filename = selectedVersion.InheritsFrom + ".json";
                 UpdateStatusBarAndLog("Downloading " + filename + "...");
                 downloader.DownloadFileAsync(new Uri(string.Format(
@@ -338,34 +329,18 @@ namespace FreeLauncher.Forms {
             while (state != 4) ;
             AppendLog("Finished checking version avalability.");
         }
-
-        private void UpdateVersionListView() {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action(UpdateVersionListView));
-            }
-            else {
-                versionsListView.Items.Clear();
-                foreach (Version version in Directory.GetDirectories(_applicationContext.McVersions)
-                        .Select(versionDir => new DirectoryInfo(versionDir))
-                        .Select(info => Version.ParseVersion(info, false))) {
-                    versionsListView.Items.Add(version.VersionId, version.ReleaseType,
-                        version.InheritsFrom ?? _applicationContext.ProgramLocalization.Independent);
-                }
-            }
-        }
         
         private void CheckLibraries() {
             string libraries = string.Empty;
             Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions +
-                                  (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
+                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
             SetStatusBarValue(0);
             SetStatusBarMaxValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
             UpdateStatusBarText(_applicationContext.ProgramLocalization.CheckingLibraries);
             AppendLog("Checking libraries...");
             foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
                 IncStatusBarValue();
-                if (!File.Exists(_applicationContext.McLibs + lib.ToPath()) || _restoreVersion) {
+                if (!File.Exists(_applicationContext.McLibs + lib.ToPath())) {
                     UpdateStatusBarAndLog("Downloading " + lib.Name + "...");
                     AppendDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
                     string directory = Path.GetDirectoryName(_applicationContext.McLibs + lib.ToPath());
@@ -399,8 +374,7 @@ namespace FreeLauncher.Forms {
             }
 
             libraries += string.Format("{0}{1}\\{1}.jar", _applicationContext.McVersions,
-                selectedVersion.InheritsFrom ??
-                (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext)));
+                selectedVersion.InheritsFrom ?? _selectedProfile.GetSelectedVersion(_applicationContext));
             _applicationContext.Libraries = libraries;
             AppendLog("Finished checking libraries.");
         }
@@ -408,8 +382,7 @@ namespace FreeLauncher.Forms {
         private void CheckGameResources() {
             UpdateStatusBarAndLog("Checking game assets...");
             Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions +
-                                  (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
+                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
             string file = string.Format("{0}/indexes/{1}.json", _applicationContext.McAssets, selectedVersion.AssetsIndex ?? "legacy");
             if (!File.Exists(file)) {
                 if (!Directory.Exists(Path.GetDirectoryName(file))) {
@@ -425,7 +398,7 @@ namespace FreeLauncher.Forms {
             var something = jo["objects"].Cast<JProperty>()
                 .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
                 .Select(c => c[0] + c[1] + "\\" + c)
-                .Where(filename => !File.Exists(_applicationContext.McObjectsAssets + filename) || _restoreVersion).ToList();
+                .Where(filename => !File.Exists(_applicationContext.McObjectsAssets + filename)).ToList();
             SetStatusBarValue(0);
             SetStatusBarMaxValue(something.Count + 1);
             foreach (string resourseFile in something) {
@@ -453,7 +426,7 @@ namespace FreeLauncher.Forms {
                     .Count(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name)) + 1;
                 UpdateStatusBarAndLog("Converting assets...");
                 foreach (JProperty res in jo["objects"].Cast<JProperty>()
-                             .Where(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name) || _restoreVersion)) {
+                             .Where(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name))) {
                     try {
                         FileInfo resFile = new FileInfo(_applicationContext.McLegacyAssets + res.Name);
                         if (!resFile.Directory.Exists) {
@@ -482,7 +455,7 @@ namespace FreeLauncher.Forms {
             _presenter.SaveUsers();
             UpdateUserList();
             var selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + (_versionToLaunch ?? _selectedProfile.GetSelectedVersion(_applicationContext))));
+                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
 
             if (_selectedProfile.FastConnectionSettigs != null) {
                 selectedVersion.ArgumentCollection.Add("server", _selectedProfile.FastConnectionSettigs.ServerIP);
@@ -537,88 +510,6 @@ namespace FreeLauncher.Forms {
         private void logBox_TextChanged(object sender, EventArgs e) {
             logBox.SelectionStart = logBox.Text.Length;
             logBox.ScrollToCaret();
-        }
-
-        private void versionsListView_ItemMouseClick(object sender, ListViewItemEventArgs e) {
-            versionsListView.SelectedItem = e.Item;
-            Version ver =
-                Version.ParseVersion(
-                    new DirectoryInfo(Path.Combine(_applicationContext.McVersions, versionsListView.SelectedItem[0].ToString() + "\\")), false);
-            RadMenuItem launchVerButton = new RadMenuItem {Text = _applicationContext.ProgramLocalization.Launch};
-            launchVerButton.Click += delegate {
-                if (versionsListView.SelectedItem == null) {
-                    return;
-                }
-
-                _versionToLaunch = versionsListView.SelectedItem[0].ToString();
-                LaunchButton.PerformClick();
-            };
-            bool enableRestoreButton = false;
-            switch (ver.ReleaseType) {
-                case "release":
-                case "snapshot":
-                case "old_beta":
-                case "old_alpha":
-                    enableRestoreButton = true;
-                    break;
-            }
-
-            RadMenuItem restoreVerButton = new RadMenuItem {Text = "Restore and launch", Enabled = enableRestoreButton};
-            restoreVerButton.Click += delegate {
-                _restoreVersion = true;
-                _versionToLaunch = versionsListView.SelectedItem[0].ToString();
-                LaunchButton.PerformClick();
-            };
-            RadMenuItem openVerButton = new RadMenuItem {Text = _applicationContext.ProgramLocalization.OpenLocation};
-            openVerButton.Click += delegate {
-                if (versionsListView.SelectedItem == null) {
-                    return;
-                }
-
-                Process.Start(Path.Combine(_applicationContext.McVersions, versionsListView.SelectedItem[0].ToString() + "\\"));
-            };
-            RadMenuItem delVerButton = new RadMenuItem {Text = _applicationContext.ProgramLocalization.DeleteVersion};
-            delVerButton.Click += delegate {
-                if (versionsListView.SelectedItem == null) {
-                    return;
-                }
-
-                DialogResult dr =
-                    RadMessageBox.Show(
-                        string.Format(_applicationContext.ProgramLocalization.DeleteConfirmationText,
-                            versionsListView.SelectedItem[0].ToString()),
-                        _applicationContext.ProgramLocalization.DeleteConfirmationTitle,
-                        MessageBoxButtons.YesNo, RadMessageIcon.Question);
-                if (dr != DialogResult.Yes) {
-                    return;
-                }
-
-                try {
-                    Directory.Delete(
-                        Path.Combine(_applicationContext.McVersions, versionsListView.SelectedItem[0].ToString() + "\\"), true);
-                    AppendLog($"Version '{versionsListView.SelectedItem[0].ToString()}' has been deleted successfuly.");
-                    UpdateVersionListView();
-                }
-                catch (Exception ex) {
-                    AppendException($"An error has occurred during version deletion: {ex.ToString()}");
-                }
-
-                string path = Path.Combine(_applicationContext.McVersions, _selectedProfile.GetSelectedVersion(_applicationContext) + "\\");
-                string state = _applicationContext.ProgramLocalization.ReadyToLaunch;
-                if (!File.Exists(string.Format("{0}/{1}.json", path, _selectedProfile.GetSelectedVersion(_applicationContext)))) {
-                    state = _applicationContext.ProgramLocalization.ReadyToDownload;
-                }
-
-                SelectedVersion.Text = string.Format(state, _selectedProfile.GetSelectedVersion(_applicationContext));
-            };
-            RadContextMenu verListMenuStrip = new RadContextMenu();
-            verListMenuStrip.Items.Add(launchVerButton);
-            verListMenuStrip.Items.Add(new RadMenuSeparatorItem());
-            verListMenuStrip.Items.Add(restoreVerButton);
-            verListMenuStrip.Items.Add(new RadMenuSeparatorItem());
-            verListMenuStrip.Items.Add(openVerButton);
-            verListMenuStrip.Items.Add(delVerButton);
-            new RadContextMenuManager().SetRadContextMenu(versionsListView, verListMenuStrip);
         }
 
         private void SetToClipboardButton_Click(object sender, EventArgs e) {
@@ -735,7 +626,7 @@ namespace FreeLauncher.Forms {
 
         private void LoadLocalization() {
             ConsolePage.Text = _applicationContext.ProgramLocalization.ConsoleTabText;
-            EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
+            // EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
             AboutPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
             SettingsPage.Text = _applicationContext.ProgramLocalization.SettingsTabText;
 

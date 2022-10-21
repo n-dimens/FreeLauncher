@@ -33,9 +33,9 @@ namespace FreeLauncher.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Версия");
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Тип");
-            Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 2", "Зависимость");
+            // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Версия");
+            // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Тип");
+            // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 2", "Зависимость");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             Telerik.WinControls.UI.RadListDataItem radListDataItem1 = new Telerik.WinControls.UI.RadListDataItem();
             this.vs12theme = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
@@ -45,8 +45,8 @@ namespace FreeLauncher.Forms
             this.ConsoleOptionsPanel = new Telerik.WinControls.UI.RadPanel();
             this.SetToClipboardButton = new Telerik.WinControls.UI.RadButton();
             this.DebugModeButton = new Telerik.WinControls.UI.RadToggleButton();
-            this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
-            this.versionsListView = new Telerik.WinControls.UI.RadListView();
+            // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
+            // this.versionsListView = new Telerik.WinControls.UI.RadListView();
             this.AboutPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.AboutPageView = new Telerik.WinControls.UI.RadPageView();
             this.radScrollablePanel2 = new Telerik.WinControls.UI.RadScrollablePanel();
@@ -93,8 +93,8 @@ namespace FreeLauncher.Forms
             this.ConsoleOptionsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SetToClipboardButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DebugModeButton)).BeginInit();
-            this.EditVersions.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
+            // this.EditVersions.SuspendLayout();
+            // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
             this.AboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).BeginInit();
             this.AboutPageView.SuspendLayout();
@@ -138,7 +138,7 @@ namespace FreeLauncher.Forms
             // mainPageView
             // 
             this.mainPageView.Controls.Add(this.ConsolePage);
-            this.mainPageView.Controls.Add(this.EditVersions);
+            // this.mainPageView.Controls.Add(this.EditVersions);
             this.mainPageView.Controls.Add(this.AboutPage);
             this.mainPageView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPageView.Location = new System.Drawing.Point(0, 0);
@@ -151,7 +151,7 @@ namespace FreeLauncher.Forms
             this.mainPageView.RootElement.FlipText = false;
             this.mainPageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
             this.mainPageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.mainPageView.SelectedPage = this.EditVersions;
+            this.mainPageView.SelectedPage = this.ConsolePage;
             this.mainPageView.Size = new System.Drawing.Size(858, 363);
             this.mainPageView.TabIndex = 2;
             this.mainPageView.ThemeName = "VisualStudio2012Dark";
@@ -214,54 +214,54 @@ namespace FreeLauncher.Forms
             // 
             // EditVersions
             // 
-            this.EditVersions.Controls.Add(this.versionsListView);
-            this.EditVersions.ItemSize = new System.Drawing.SizeF(145F, 24F);
-            this.EditVersions.Location = new System.Drawing.Point(5, 30);
-            this.EditVersions.Name = "EditVersions";
-            this.EditVersions.Size = new System.Drawing.Size(848, 328);
-            this.EditVersions.Text = "УПРАВЛЕНИЕ ВЕРСИЯМИ";
+            // this.EditVersions.Controls.Add(this.versionsListView);
+            // this.EditVersions.ItemSize = new System.Drawing.SizeF(145F, 24F);
+            // this.EditVersions.Location = new System.Drawing.Point(5, 30);
+            // this.EditVersions.Name = "EditVersions";
+            // this.EditVersions.Size = new System.Drawing.Size(848, 328);
+            // this.EditVersions.Text = "УПРАВЛЕНИЕ ВЕРСИЯМИ";
             // 
             // versionsListView
             // 
-            this.versionsListView.AllowColumnReorder = false;
-            this.versionsListView.AllowColumnResize = false;
-            this.versionsListView.AllowEdit = false;
-            this.versionsListView.AllowRemove = false;
-            this.versionsListView.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.versionsListView.CheckOnClickMode = Telerik.WinControls.UI.CheckOnClickMode.FirstClick;
-            listViewDetailColumn1.HeaderText = "Версия";
-            listViewDetailColumn2.HeaderText = "Тип";
-            listViewDetailColumn2.Width = 100F;
-            listViewDetailColumn3.HeaderText = "Зависимость";
-            listViewDetailColumn3.Width = 100F;
-            this.versionsListView.Columns.AddRange(new Telerik.WinControls.UI.ListViewDetailColumn[] {
-            listViewDetailColumn1,
-            listViewDetailColumn2,
-            listViewDetailColumn3});
-            this.versionsListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.versionsListView.EnableColumnSort = true;
-            this.versionsListView.EnableFiltering = true;
-            this.versionsListView.EnableSorting = true;
-            this.versionsListView.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
-            this.versionsListView.ItemSpacing = -1;
-            this.versionsListView.Location = new System.Drawing.Point(0, 0);
-            this.versionsListView.Name = "versionsListView";
+            // this.versionsListView.AllowColumnReorder = false;
+            // this.versionsListView.AllowColumnResize = false;
+            // this.versionsListView.AllowEdit = false;
+            // this.versionsListView.AllowRemove = false;
+            // this.versionsListView.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            // this.versionsListView.CheckOnClickMode = Telerik.WinControls.UI.CheckOnClickMode.FirstClick;
+            // listViewDetailColumn1.HeaderText = "Версия";
+            // listViewDetailColumn2.HeaderText = "Тип";
+            // listViewDetailColumn2.Width = 100F;
+            // listViewDetailColumn3.HeaderText = "Зависимость";
+            // listViewDetailColumn3.Width = 100F;
+            // this.versionsListView.Columns.AddRange(new Telerik.WinControls.UI.ListViewDetailColumn[] {
+            // listViewDetailColumn1,
+            // listViewDetailColumn2,
+            // listViewDetailColumn3});
+            // this.versionsListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            // this.versionsListView.EnableColumnSort = true;
+            // this.versionsListView.EnableFiltering = true;
+            // this.versionsListView.EnableSorting = true;
+            // this.versionsListView.HorizontalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysHide;
+            // this.versionsListView.ItemSpacing = -1;
+            // this.versionsListView.Location = new System.Drawing.Point(0, 0);
+            // this.versionsListView.Name = "versionsListView";
             // 
             // 
             // 
-            this.versionsListView.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.versionsListView.RootElement.AngleTransform = 0F;
-            this.versionsListView.RootElement.FlipText = false;
-            this.versionsListView.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.versionsListView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.versionsListView.SelectLastAddedItem = false;
-            this.versionsListView.ShowItemToolTips = false;
-            this.versionsListView.Size = new System.Drawing.Size(848, 328);
-            this.versionsListView.TabIndex = 0;
-            this.versionsListView.ThemeName = "VisualStudio2012Dark";
-            this.versionsListView.VerticalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysShow;
-            this.versionsListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
-            this.versionsListView.ItemMouseClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.versionsListView_ItemMouseClick);
+            // this.versionsListView.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
+            // this.versionsListView.RootElement.AngleTransform = 0F;
+            // this.versionsListView.RootElement.FlipText = false;
+            // this.versionsListView.RootElement.Margin = new System.Windows.Forms.Padding(0);
+            // this.versionsListView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
+            // this.versionsListView.SelectLastAddedItem = false;
+            // this.versionsListView.ShowItemToolTips = false;
+            // this.versionsListView.Size = new System.Drawing.Size(848, 328);
+            // this.versionsListView.TabIndex = 0;
+            // this.versionsListView.ThemeName = "VisualStudio2012Dark";
+            // this.versionsListView.VerticalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysShow;
+            // this.versionsListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
+            // this.versionsListView.ItemMouseClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.versionsListView_ItemMouseClick);
             // 
             // AboutPage
             // 
@@ -998,8 +998,8 @@ namespace FreeLauncher.Forms
             this.ConsoleOptionsPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SetToClipboardButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DebugModeButton)).EndInit();
-            this.EditVersions.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
+            // this.EditVersions.ResumeLayout(false);
+            // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
             this.AboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).EndInit();
             this.AboutPageView.ResumeLayout(false);
@@ -1052,8 +1052,8 @@ namespace FreeLauncher.Forms
         private RadPageView mainPageView;
         private RadPageViewPage ConsolePage;
         public RichTextBox logBox;
-        private RadPageViewPage EditVersions;
-        private RadListView versionsListView;
+        // private RadPageViewPage EditVersions;
+        // private RadListView versionsListView;
         private RadPageViewPage AboutPage;
         private RadPageView AboutPageView;
         private RadScrollablePanel radScrollablePanel2;
