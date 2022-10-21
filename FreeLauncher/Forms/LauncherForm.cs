@@ -379,7 +379,7 @@ namespace FreeLauncher.Forms {
             JObject jo = JObject.Parse(File.ReadAllText(file));
             var something = jo["objects"].Cast<JProperty>()
                 .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
-                .Select(c => c[0] + c[1] + "\\" + c)
+                .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
                 .Where(filename => !File.Exists(_applicationContext.McObjectsAssets + filename)).ToList();
             SetStatusBarValue(0);
             SetStatusBarMaxValue(something.Count + 1);
