@@ -37,7 +37,6 @@ namespace FreeLauncher.Forms
             // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Тип");
             // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 2", "Зависимость");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
-            Telerik.WinControls.UI.RadListDataItem radListDataItem1 = new Telerik.WinControls.UI.RadListDataItem();
             this.vs12theme = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
             this.ConsolePage = new Telerik.WinControls.UI.RadPageViewPage();
@@ -49,32 +48,13 @@ namespace FreeLauncher.Forms
             // this.versionsListView = new Telerik.WinControls.UI.RadListView();
             this.AboutPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.AboutPageView = new Telerik.WinControls.UI.RadPageView();
-            this.radScrollablePanel2 = new Telerik.WinControls.UI.RadScrollablePanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.AboutVersion = new Telerik.WinControls.UI.RadLabel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.MCofflineDescLabel = new System.Windows.Forms.Label();
-            this.radLabel1 = new Telerik.WinControls.UI.RadLabel();
-            this.PartnersLabel = new Telerik.WinControls.UI.RadLabel();
-            this.CopyrightInfoLabel = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.DevInfoLabel = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.GratitudesDescLabel = new System.Windows.Forms.Label();
-            this.GratitudesLabel = new Telerik.WinControls.UI.RadLabel();
-            this.radLabel3 = new Telerik.WinControls.UI.RadLabel();
             this.SettingsPage = new Telerik.WinControls.UI.RadPageViewPage();
             this.radScrollablePanel1 = new Telerik.WinControls.UI.RadScrollablePanel();
             this.radGroupBox2 = new Telerik.WinControls.UI.RadGroupBox();
             this.CloseGameOutput = new Telerik.WinControls.UI.RadCheckBox();
             this.UseGamePrefix = new Telerik.WinControls.UI.RadCheckBox();
             this.EnableMinecraftLogging = new Telerik.WinControls.UI.RadCheckBox();
-            this.radGroupBox1 = new Telerik.WinControls.UI.RadGroupBox();
-            this.radLabel4 = new Telerik.WinControls.UI.RadLabel();
-            this.LangDropDownList = new Telerik.WinControls.UI.RadDropDownList();
-            this.EnableMinecraftUpdateAlerts = new Telerik.WinControls.UI.RadCheckBox();
-            this.radCheckBox1 = new Telerik.WinControls.UI.RadCheckBox();
             this.StatusBar = new Telerik.WinControls.UI.RadProgressBar();
             this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
             this.DeleteProfileButton = new Telerik.WinControls.UI.RadButton();
@@ -98,14 +78,7 @@ namespace FreeLauncher.Forms
             this.AboutPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).BeginInit();
             this.AboutPageView.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel2)).BeginInit();
-            this.radScrollablePanel2.PanelContainer.SuspendLayout();
-            this.radScrollablePanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AboutVersion)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PartnersLabel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.GratitudesLabel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel3)).BeginInit();
             this.SettingsPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).BeginInit();
             this.radScrollablePanel1.PanelContainer.SuspendLayout();
@@ -115,12 +88,6 @@ namespace FreeLauncher.Forms
             ((System.ComponentModel.ISupportInitialize)(this.CloseGameOutput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UseGamePrefix)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftLogging)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radGroupBox1)).BeginInit();
-            this.radGroupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LangDropDownList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftUpdateAlerts)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radCheckBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
             this.radPanel1.SuspendLayout();
@@ -295,68 +262,6 @@ namespace FreeLauncher.Forms
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).ItemFitMode = Telerik.WinControls.UI.StripViewItemFitMode.Fill;
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).StripAlignment = Telerik.WinControls.UI.StripViewAlignment.Bottom;
             // 
-            // radScrollablePanel2
-            // 
-            this.radScrollablePanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radScrollablePanel2.Location = new System.Drawing.Point(0, 0);
-            this.radScrollablePanel2.Name = "radScrollablePanel2";
-            // 
-            // radScrollablePanel2.PanelContainer
-            // 
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.label1);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.label2);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.AboutVersion);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.label6);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.MCofflineDescLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.radLabel1);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.PartnersLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.CopyrightInfoLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.label3);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.DevInfoLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.label5);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.GratitudesDescLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.GratitudesLabel);
-            this.radScrollablePanel2.PanelContainer.Controls.Add(this.radLabel3);
-            this.radScrollablePanel2.PanelContainer.Size = new System.Drawing.Size(819, 291);
-            // 
-            // 
-            // 
-            this.radScrollablePanel2.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radScrollablePanel2.RootElement.AngleTransform = 0F;
-            this.radScrollablePanel2.RootElement.FlipText = false;
-            this.radScrollablePanel2.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radScrollablePanel2.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radScrollablePanel2.Size = new System.Drawing.Size(838, 293);
-            this.radScrollablePanel2.TabIndex = 9;
-            this.radScrollablePanel2.Text = "radScrollablePanel2";
-            this.radScrollablePanel2.ThemeName = "VisualStudio2012Dark";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label1.ForeColor = System.Drawing.Color.Gray;
-            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(14, 261);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 13);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "http://vk.com/vmine";
-            this.label1.Click += new System.EventHandler(this.urlLabel_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.label2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label2.Location = new System.Drawing.Point(14, 244);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(283, 17);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "Юмор и приколы по Minecraft и Minecraft PE!";
-            // 
             // AboutVersion
             // 
             this.AboutVersion.BackColor = System.Drawing.Color.Transparent;
@@ -382,187 +287,6 @@ namespace FreeLauncher.Forms
             ((Telerik.WinControls.UI.RadLabelElement)(this.AboutVersion.GetChildAt(0))).Text = "0.0.0.000";
             ((Telerik.WinControls.Primitives.FillPrimitive)(this.AboutVersion.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label6.ForeColor = System.Drawing.Color.Gray;
-            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label6.Location = new System.Drawing.Point(14, 224);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 13);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "http://vk.com/mcoffline";
-            this.label6.Click += new System.EventHandler(this.urlLabel_Click);
-            // 
-            // MCofflineDescLabel
-            // 
-            this.MCofflineDescLabel.AutoSize = true;
-            this.MCofflineDescLabel.BackColor = System.Drawing.Color.Transparent;
-            this.MCofflineDescLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.MCofflineDescLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.MCofflineDescLabel.Location = new System.Drawing.Point(14, 207);
-            this.MCofflineDescLabel.Name = "MCofflineDescLabel";
-            this.MCofflineDescLabel.Size = new System.Drawing.Size(402, 17);
-            this.MCofflineDescLabel.TabIndex = 9;
-            this.MCofflineDescLabel.Text = "MCoffline - лучшая программа для серверных администраторов!";
-            // 
-            // radLabel1
-            // 
-            this.radLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.radLabel1.Font = new System.Drawing.Font("Segoe UI", 20.25F);
-            this.radLabel1.ForeColor = System.Drawing.Color.Transparent;
-            this.radLabel1.Location = new System.Drawing.Point(3, 3);
-            this.radLabel1.Name = "radLabel1";
-            // 
-            // 
-            // 
-            this.radLabel1.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radLabel1.RootElement.AngleTransform = 0F;
-            this.radLabel1.RootElement.FlipText = false;
-            this.radLabel1.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radLabel1.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radLabel1.Size = new System.Drawing.Size(175, 41);
-            this.radLabel1.TabIndex = 0;
-            this.radLabel1.Text = "FreeLauncher";
-            this.radLabel1.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.radLabel1.GetChildAt(0))).Text = "FreeLauncher";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.radLabel1.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // PartnersLabel
-            // 
-            this.PartnersLabel.BackColor = System.Drawing.Color.Transparent;
-            this.PartnersLabel.Font = new System.Drawing.Font("Segoe UI", 20.25F);
-            this.PartnersLabel.ForeColor = System.Drawing.Color.Transparent;
-            this.PartnersLabel.Location = new System.Drawing.Point(3, 170);
-            this.PartnersLabel.Name = "PartnersLabel";
-            // 
-            // 
-            // 
-            this.PartnersLabel.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.PartnersLabel.RootElement.AngleTransform = 0F;
-            this.PartnersLabel.RootElement.FlipText = false;
-            this.PartnersLabel.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.PartnersLabel.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.PartnersLabel.Size = new System.Drawing.Size(140, 41);
-            this.PartnersLabel.TabIndex = 10;
-            this.PartnersLabel.Text = "Партнёры";
-            this.PartnersLabel.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.PartnersLabel.GetChildAt(0))).Text = "Партнёры";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.PartnersLabel.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // CopyrightInfoLabel
-            // 
-            this.CopyrightInfoLabel.AutoSize = true;
-            this.CopyrightInfoLabel.BackColor = System.Drawing.Color.Transparent;
-            this.CopyrightInfoLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.CopyrightInfoLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.CopyrightInfoLabel.Location = new System.Drawing.Point(14, 288);
-            this.CopyrightInfoLabel.Name = "CopyrightInfoLabel";
-            this.CopyrightInfoLabel.Size = new System.Drawing.Size(602, 51);
-            this.CopyrightInfoLabel.TabIndex = 4;
-            this.CopyrightInfoLabel.Text = resources.GetString("CopyrightInfoLabel.Text");
-            this.CopyrightInfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.label3.ForeColor = System.Drawing.Color.Gray;
-            this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label3.Location = new System.Drawing.Point(14, 97);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(119, 15);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "http://vk.com/sesmc";
-            this.label3.Click += new System.EventHandler(this.urlLabel_Click);
-            // 
-            // DevInfoLabel
-            // 
-            this.DevInfoLabel.AutoSize = true;
-            this.DevInfoLabel.BackColor = System.Drawing.Color.Transparent;
-            this.DevInfoLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.DevInfoLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.DevInfoLabel.Location = new System.Drawing.Point(14, 55);
-            this.DevInfoLabel.Name = "DevInfoLabel";
-            this.DevInfoLabel.Size = new System.Drawing.Size(336, 34);
-            this.DevInfoLabel.TabIndex = 3;
-            this.DevInfoLabel.Text = "Разработано dedepete из Space Earth Studio Minecraft\r\nИздано Space Earth Studio";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label5.ForeColor = System.Drawing.Color.Gray;
-            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label5.Location = new System.Drawing.Point(14, 158);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(117, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "http://ru-minecraft.ru";
-            this.label5.Click += new System.EventHandler(this.urlLabel_Click);
-            // 
-            // GratitudesDescLabel
-            // 
-            this.GratitudesDescLabel.AutoSize = true;
-            this.GratitudesDescLabel.BackColor = System.Drawing.Color.Transparent;
-            this.GratitudesDescLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F);
-            this.GratitudesDescLabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.GratitudesDescLabel.Location = new System.Drawing.Point(14, 141);
-            this.GratitudesDescLabel.Name = "GratitudesDescLabel";
-            this.GratitudesDescLabel.Size = new System.Drawing.Size(449, 17);
-            this.GratitudesDescLabel.TabIndex = 6;
-            this.GratitudesDescLabel.Text = "Большое спасибо администрации портала ru-minecraft.ru за хост файлов";
-            // 
-            // GratitudesLabel
-            // 
-            this.GratitudesLabel.BackColor = System.Drawing.Color.Transparent;
-            this.GratitudesLabel.Font = new System.Drawing.Font("Segoe UI", 20.25F);
-            this.GratitudesLabel.ForeColor = System.Drawing.Color.Transparent;
-            this.GratitudesLabel.Location = new System.Drawing.Point(3, 104);
-            this.GratitudesLabel.Name = "GratitudesLabel";
-            // 
-            // 
-            // 
-            this.GratitudesLabel.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.GratitudesLabel.RootElement.AngleTransform = 0F;
-            this.GratitudesLabel.RootElement.FlipText = false;
-            this.GratitudesLabel.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.GratitudesLabel.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.GratitudesLabel.Size = new System.Drawing.Size(202, 41);
-            this.GratitudesLabel.TabIndex = 7;
-            this.GratitudesLabel.Text = "Благодарности";
-            this.GratitudesLabel.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.GratitudesLabel.GetChildAt(0))).Text = "Благодарности";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.GratitudesLabel.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // radLabel3
-            // 
-            this.radLabel3.BackColor = System.Drawing.Color.Transparent;
-            this.radLabel3.Font = new System.Drawing.Font("Segoe UI", 20.25F);
-            this.radLabel3.ForeColor = System.Drawing.Color.Transparent;
-            this.radLabel3.Location = new System.Drawing.Point(172, 3);
-            this.radLabel3.Name = "radLabel3";
-            // 
-            // 
-            // 
-            this.radLabel3.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radLabel3.RootElement.AngleTransform = 0F;
-            this.radLabel3.RootElement.FlipText = false;
-            this.radLabel3.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radLabel3.RootElement.Opacity = 0.2D;
-            this.radLabel3.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radLabel3.Size = new System.Drawing.Size(279, 41);
-            this.radLabel3.TabIndex = 2;
-            this.radLabel3.Text = "by Space Earth Studio";
-            this.radLabel3.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.radLabel3.GetChildAt(0))).Text = "by Space Earth Studio";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.radLabel3.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
             // SettingsPage
             // 
             this.SettingsPage.Controls.Add(this.radScrollablePanel1);
@@ -580,7 +304,6 @@ namespace FreeLauncher.Forms
             // radScrollablePanel1.PanelContainer
             // 
             this.radScrollablePanel1.PanelContainer.Controls.Add(this.radGroupBox2);
-            this.radScrollablePanel1.PanelContainer.Controls.Add(this.radGroupBox1);
             this.radScrollablePanel1.PanelContainer.Size = new System.Drawing.Size(836, 291);
             // 
             // 
@@ -603,7 +326,7 @@ namespace FreeLauncher.Forms
             this.radGroupBox2.Controls.Add(this.UseGamePrefix);
             this.radGroupBox2.Controls.Add(this.EnableMinecraftLogging);
             this.radGroupBox2.HeaderText = "Логирование";
-            this.radGroupBox2.Location = new System.Drawing.Point(402, 18);
+            this.radGroupBox2.Location = new System.Drawing.Point(22, 5);
             this.radGroupBox2.Name = "radGroupBox2";
             // 
             // 
@@ -672,111 +395,6 @@ namespace FreeLauncher.Forms
             this.EnableMinecraftLogging.Text = "Выводить лог игры в консоль";
             this.EnableMinecraftLogging.ThemeName = "VisualStudio2012Dark";
             this.EnableMinecraftLogging.ToggleState = Telerik.WinControls.Enumerations.ToggleState.On;
-            // 
-            // radGroupBox1
-            // 
-            this.radGroupBox1.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-            this.radGroupBox1.BackColor = System.Drawing.Color.Transparent;
-            this.radGroupBox1.Controls.Add(this.radLabel4);
-            this.radGroupBox1.Controls.Add(this.LangDropDownList);
-            this.radGroupBox1.Controls.Add(this.EnableMinecraftUpdateAlerts);
-            this.radGroupBox1.Controls.Add(this.radCheckBox1);
-            this.radGroupBox1.HeaderText = "Основные";
-            this.radGroupBox1.Location = new System.Drawing.Point(17, 18);
-            this.radGroupBox1.Name = "radGroupBox1";
-            // 
-            // 
-            // 
-            this.radGroupBox1.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radGroupBox1.RootElement.AngleTransform = 0F;
-            this.radGroupBox1.RootElement.FlipText = false;
-            this.radGroupBox1.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radGroupBox1.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radGroupBox1.Size = new System.Drawing.Size(357, 121);
-            this.radGroupBox1.TabIndex = 0;
-            this.radGroupBox1.Text = "Основные";
-            this.radGroupBox1.ThemeName = "VisualStudio2012Dark";
-            // 
-            // radLabel4
-            // 
-            this.radLabel4.Location = new System.Drawing.Point(5, 69);
-            this.radLabel4.Name = "radLabel4";
-            // 
-            // 
-            // 
-            this.radLabel4.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radLabel4.RootElement.AngleTransform = 0F;
-            this.radLabel4.RootElement.FlipText = false;
-            this.radLabel4.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radLabel4.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radLabel4.Size = new System.Drawing.Size(87, 18);
-            this.radLabel4.TabIndex = 5;
-            this.radLabel4.Text = "Язык/Language:";
-            this.radLabel4.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.radLabel4.GetChildAt(0))).Text = "Язык/Language:";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.radLabel4.GetChildAt(0).GetChildAt(0))).Visibility = Telerik.WinControls.ElementVisibility.Collapsed;
-            // 
-            // LangDropDownList
-            // 
-            this.LangDropDownList.AutoCompleteDisplayMember = null;
-            this.LangDropDownList.AutoCompleteValueMember = null;
-            this.LangDropDownList.DropDownStyle = Telerik.WinControls.RadDropDownStyle.DropDownList;
-            radListDataItem1.Tag = "ru-RU";
-            radListDataItem1.Text = "Русский (ru-default)";
-            this.LangDropDownList.Items.Add(radListDataItem1);
-            this.LangDropDownList.Location = new System.Drawing.Point(150, 69);
-            this.LangDropDownList.Name = "LangDropDownList";
-            // 
-            // 
-            // 
-            this.LangDropDownList.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.LangDropDownList.RootElement.AngleTransform = 0F;
-            this.LangDropDownList.RootElement.FlipText = false;
-            this.LangDropDownList.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.LangDropDownList.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.LangDropDownList.Size = new System.Drawing.Size(202, 24);
-            this.LangDropDownList.TabIndex = 3;
-            this.LangDropDownList.Text = "Русский (ru-RU)";
-            this.LangDropDownList.ThemeName = "VisualStudio2012Dark";
-            this.LangDropDownList.SelectedIndexChanged += new Telerik.WinControls.UI.Data.PositionChangedEventHandler(this.LangDropDownList_SelectedIndexChanged);
-            // 
-            // EnableMinecraftUpdateAlerts
-            // 
-            this.EnableMinecraftUpdateAlerts.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.EnableMinecraftUpdateAlerts.Enabled = false;
-            this.EnableMinecraftUpdateAlerts.Location = new System.Drawing.Point(5, 45);
-            this.EnableMinecraftUpdateAlerts.Name = "EnableMinecraftUpdateAlerts";
-            // 
-            // 
-            // 
-            this.EnableMinecraftUpdateAlerts.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.EnableMinecraftUpdateAlerts.RootElement.AngleTransform = 0F;
-            this.EnableMinecraftUpdateAlerts.RootElement.FlipText = false;
-            this.EnableMinecraftUpdateAlerts.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.EnableMinecraftUpdateAlerts.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.EnableMinecraftUpdateAlerts.Size = new System.Drawing.Size(340, 18);
-            this.EnableMinecraftUpdateAlerts.TabIndex = 2;
-            this.EnableMinecraftUpdateAlerts.Text = "Показывать уведомления о наличии новых версий Minecraft";
-            this.EnableMinecraftUpdateAlerts.ThemeName = "VisualStudio2012Dark";
-            this.EnableMinecraftUpdateAlerts.ToggleState = Telerik.WinControls.Enumerations.ToggleState.On;
-            // 
-            // radCheckBox1
-            // 
-            this.radCheckBox1.Enabled = false;
-            this.radCheckBox1.Location = new System.Drawing.Point(5, 21);
-            this.radCheckBox1.Name = "radCheckBox1";
-            // 
-            // 
-            // 
-            this.radCheckBox1.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radCheckBox1.RootElement.AngleTransform = 0F;
-            this.radCheckBox1.RootElement.FlipText = false;
-            this.radCheckBox1.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radCheckBox1.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radCheckBox1.Size = new System.Drawing.Size(257, 18);
-            this.radCheckBox1.TabIndex = 0;
-            this.radCheckBox1.Text = "Проверять наличие обновлений программы";
-            this.radCheckBox1.ThemeName = "VisualStudio2012Dark";
             // 
             // StatusBar
             // 
@@ -1003,15 +621,7 @@ namespace FreeLauncher.Forms
             this.AboutPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).EndInit();
             this.AboutPageView.ResumeLayout(false);
-            this.radScrollablePanel2.PanelContainer.ResumeLayout(false);
-            this.radScrollablePanel2.PanelContainer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel2)).EndInit();
-            this.radScrollablePanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AboutVersion)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PartnersLabel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.GratitudesLabel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel3)).EndInit();
             this.SettingsPage.ResumeLayout(false);
             this.radScrollablePanel1.PanelContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).EndInit();
@@ -1022,13 +632,6 @@ namespace FreeLauncher.Forms
             ((System.ComponentModel.ISupportInitialize)(this.CloseGameOutput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UseGamePrefix)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftLogging)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radGroupBox1)).EndInit();
-            this.radGroupBox1.ResumeLayout(false);
-            this.radGroupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radLabel4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LangDropDownList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftUpdateAlerts)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radCheckBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).EndInit();
             this.radPanel1.ResumeLayout(false);
@@ -1056,29 +659,12 @@ namespace FreeLauncher.Forms
         // private RadListView versionsListView;
         private RadPageViewPage AboutPage;
         private RadPageView AboutPageView;
-        private RadScrollablePanel radScrollablePanel2;
-        private Label label6;
-        private Label MCofflineDescLabel;
-        private RadLabel PartnersLabel;
         private RadLabel AboutVersion;
-        private RadLabel radLabel1;
-        private Label CopyrightInfoLabel;
-        private Label label3;
-        private Label DevInfoLabel;
-        private Label label5;
-        private Label GratitudesDescLabel;
-        private RadLabel GratitudesLabel;
-        private RadLabel radLabel3;
         private RadPageViewPage SettingsPage;
         private RadScrollablePanel radScrollablePanel1;
         private RadGroupBox radGroupBox2;
         public RadCheckBox UseGamePrefix;
         public RadCheckBox EnableMinecraftLogging;
-        private RadGroupBox radGroupBox1;
-        public RadLabel radLabel4;
-        private RadDropDownList LangDropDownList;
-        public RadCheckBox EnableMinecraftUpdateAlerts;
-        public RadCheckBox radCheckBox1;
         private RadPanel radPanel1;
         private RadButton ManageUsersButton;
         public RadDropDownList NicknameDropDownList;
@@ -1094,7 +680,5 @@ namespace FreeLauncher.Forms
         private RadToggleButton DebugModeButton;
         private RadButton DeleteProfileButton;
         private RadButton SetToClipboardButton;
-        private Label label1;
-        private Label label2;
     }
 }

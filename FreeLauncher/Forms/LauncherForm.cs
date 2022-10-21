@@ -81,8 +81,7 @@ namespace FreeLauncher.Forms {
             //
             Text = ProductName + " " + ProductVersion;
             AboutVersion.Text = ProductVersion;
-            AppendLog($"Application: {ProductName} v.{ProductVersion}" +
-                      (!_applicationContext.ProgramArguments.NotAStandalone ? "-standalone" : string.Empty));
+            AppendLog($"Application: {ProductName} v.{ProductVersion}");
             AppendLog($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
             AppendLog("==============");
             AppendLog("System info:");
@@ -90,21 +89,6 @@ namespace FreeLauncher.Forms {
             AppendLog($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
             AppendLog($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
             AppendLog("==============");
-            if (_applicationContext.LocalizationsList.Count != 0) {
-                foreach (KeyValuePair<string, Localization> keyvalue in _applicationContext.LocalizationsList) {
-                    LangDropDownList.Items.Add(new RadListDataItem {
-                        Text = $"{keyvalue.Value.Name} ({keyvalue.Key})",
-                        Tag = keyvalue.Key
-                    });
-                }
-
-                foreach (RadListDataItem item in LangDropDownList.Items.Where(a => a.Tag.ToString() == _cfg.SelectedLanguage)) {
-                    LangDropDownList.SelectedItem = item;
-                }
-            }
-            else {
-                LangDropDownList.Enabled = false;
-            }
 
             if (!Directory.Exists(_applicationContext.McDirectory)) {
                 Directory.CreateDirectory(_applicationContext.McDirectory);
@@ -115,10 +99,8 @@ namespace FreeLauncher.Forms {
             }
 
             Focus();
-            if (!_applicationContext.ProgramArguments.NotAStandalone) {
-                UpdateVersions();
-            }
-
+            
+            UpdateVersions();
             UpdateProfileList();
             UpdateUserList();
         }
@@ -516,26 +498,6 @@ namespace FreeLauncher.Forms {
             Clipboard.SetText(logBox.Text);
         }
 
-        private void urlLabel_Click(object sender, EventArgs e) {
-            Process.Start((sender as Label).Text);
-        }
-
-        private void LangDropDownList_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
-            if (LangDropDownList.SelectedItem.Tag.ToString() == _cfg.SelectedLanguage) {
-                return;
-            }
-
-            var selectedLocalization = LangDropDownList.SelectedItem.Tag;
-            if (LangDropDownList.SelectedIndex == 0)
-                _applicationContext.SetLocalization(string.Empty);
-            else
-                _applicationContext.SetLocalization(selectedLocalization.ToString());
-
-            _cfg.SelectedLanguage = selectedLocalization.ToString();
-            AppendLog($"Application language changed to {selectedLocalization}");
-            LoadLocalization();
-        }
-
         private void UpdateVersions() {
             AppendLog("Checking version.json...");
             string jsonVersionList = new WebClient().DownloadString(
@@ -633,15 +595,7 @@ namespace FreeLauncher.Forms {
             LaunchButton.Text = _applicationContext.ProgramLocalization.LaunchButtonText;
             AddProfile.Text = _applicationContext.ProgramLocalization.AddProfileButtonText;
             EditProfile.Text = _applicationContext.ProgramLocalization.EditProfileButtonText;
-
-            DevInfoLabel.Text = _applicationContext.ProgramLocalization.DevInfo;
-            GratitudesLabel.Text = _applicationContext.ProgramLocalization.GratitudesText;
-            GratitudesDescLabel.Text = _applicationContext.ProgramLocalization.GratitudesDescription;
-            PartnersLabel.Text = _applicationContext.ProgramLocalization.PartnersText;
-            MCofflineDescLabel.Text = _applicationContext.ProgramLocalization.MCofflineDescription;
-            CopyrightInfoLabel.Text = _applicationContext.ProgramLocalization.CopyrightInfo;
-
-            EnableMinecraftUpdateAlerts.Text = _applicationContext.ProgramLocalization.EnableMinecraftUpdateAlertsText;
+            
             EnableMinecraftLogging.Text = _applicationContext.ProgramLocalization.EnableMinecraftLoggingText;
             UseGamePrefix.Text = _applicationContext.ProgramLocalization.UseGamePrefixText;
             CloseGameOutput.Text = _applicationContext.ProgramLocalization.CloseGameOutputText;
