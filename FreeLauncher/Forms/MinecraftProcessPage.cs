@@ -75,7 +75,11 @@ namespace FreeLauncher.Forms {
             _killProcessButton.Location = new Point(panel.Size.Width - (_killProcessButton.Size.Width + 5),
                 _closePageButton.Location.Y + _closePageButton.Size.Height + 5);
 
-            _gameLoggingBox = new RichTextBox { Dock = DockStyle.Fill, ReadOnly = true };
+            _gameLoggingBox = new RichTextBox {
+                Dock = DockStyle.Fill, 
+                ReadOnly = true,
+                Font = new System.Drawing.Font("Consolas", 9F)
+            };
             _gameLoggingBox.LinkClicked += (sender, e) => Process.Start(e.LinkText);
             
             panel.Controls.Add(_closePageButton);

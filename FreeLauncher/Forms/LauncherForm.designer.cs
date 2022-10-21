@@ -138,7 +138,7 @@ namespace FreeLauncher.Forms
             // 
             this.logBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.logBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.logBox.Font = new System.Drawing.Font("Consolas", 9F);
             this.logBox.Location = new System.Drawing.Point(0, 0);
             this.logBox.Name = "logBox";
             this.logBox.ReadOnly = true;

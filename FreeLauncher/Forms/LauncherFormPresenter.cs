@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using dotMCLauncher.Core;
 using dotMCLauncher.YaDra4il;
@@ -8,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
     public class LauncherFormPresenter {
+        public static readonly string ProductName = "FreeLauncher";
         private readonly ILauncherLogger _logger;
         private readonly ApplicationContext _applicationContext;
 
@@ -15,6 +17,8 @@ namespace FreeLauncher.Forms {
         public User SelectedUser { get; private set; }
 
         public UserManager UserManager { get; private set; }
+        
+        public ProfileManager ProfileManager { get; private set; }
 
         public LauncherFormPresenter(ILauncherLogger viewLogger, ApplicationContext applicationContext) {
             _logger = viewLogger;
@@ -76,8 +80,50 @@ namespace FreeLauncher.Forms {
             UserManager.SelectedUsername = SelectedUser.Username;
         }
 
-        public void SaveProfiles(ProfileManager manager) {
-            File.WriteAllText(_applicationContext.McDirectory + "launcher_profiles.json", manager.ToJson());
+        public void ReloadProfileManager() {
+            try {
+                ProfileManager = LauncherExtensions.ParseProfile(_applicationContext.McDirectory + "/launcher_profiles.json");
+                if (!ProfileManager.Profiles.Any()) {
+                    throw new Exception("Someone broke my profiles>:(");
+                }
+            }
+            catch (Exception ex) {
+                _logger.AppendException("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
+
+                // save backup
+                if (File.Exists(_applicationContext.LauncherProfiles)) {
+                    string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
+                    _logger.AppendLog("A copy of old profile list has been created: " + fileName);
+                    File.Move(_applicationContext.LauncherProfiles, _applicationContext.McDirectory + "/" + fileName);
+                }
+
+                // write default content file
+                File.WriteAllText(_applicationContext.LauncherProfiles, new JObject {
+                    {
+                        "profiles", new JObject {
+                            {
+                                ProductName, new JObject {
+                                    {"name", ProductName}, {
+                                        "allowedReleaseTypes", new JArray {
+                                            "release",
+                                            "other"
+                                        }
+                                    },
+                                    {"launcherVisibilityOnGameClose", "keep the launcher open"}
+                                }
+                            }
+                        }
+                    },
+                    {"selectedProfile", ProductName}
+                }.ToString());
+
+                ProfileManager = LauncherExtensions.ParseProfile(_applicationContext.LauncherProfiles);
+                SaveProfiles();
+            }
+        }
+
+        public void SaveProfiles() {
+            File.WriteAllText(_applicationContext.McDirectory + "launcher_profiles.json", ProfileManager.ToJson());
         }
 
         public void SaveUsers() {
@@ -89,7 +135,7 @@ namespace FreeLauncher.Forms {
         /// <summary>
         /// Обновление локального файла versions.json при сравнении с файлом в облаке
         /// </summary>
-        public void UpdateVersions() {
+        public void UpdateVersionsList() {
             _logger.AppendLog("Checking version.json...");
             if (!Directory.Exists(_applicationContext.McVersions)) {
                 Directory.CreateDirectory(_applicationContext.McVersions);

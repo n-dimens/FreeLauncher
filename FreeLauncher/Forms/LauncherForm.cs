@@ -19,7 +19,6 @@ namespace FreeLauncher.Forms {
     public partial class LauncherForm : RadForm, ILauncherLogger {
         private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
-        private ProfileManager _profileManager;
         private Profile _selectedProfile;
         private readonly Configuration _cfg;
         
@@ -39,7 +38,7 @@ namespace FreeLauncher.Forms {
             set {
                 LaunchButton.Enabled = !value;
                 profilesDropDownBox.Enabled = !value;
-                DeleteProfileButton.Enabled = !value && (_profileManager.Profiles.Count > 1);
+                DeleteProfileButton.Enabled = !value && (_presenter.ProfileManager.Profiles.Count > 1);
                 EditProfile.Enabled = !value;
                 AddProfile.Enabled = !value;
                 NicknameDropDownList.Enabled = !value;
@@ -100,9 +99,11 @@ namespace FreeLauncher.Forms {
 
             Focus();
             
-            _presenter.UpdateVersions();
+            _presenter.UpdateVersionsList();
             UpdateProfileList();
-            UpdateUserList();
+            
+            _presenter.ReloadUserManager();
+            UpdateNicknameDropDownList(_presenter.UserManager);
         }
 
         private void LauncherForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -117,8 +118,8 @@ namespace FreeLauncher.Forms {
                 return;
             }
 
-            _profileManager.LastUsedProfile = profilesDropDownBox.SelectedItem.Text;
-            _selectedProfile = _profileManager.Profiles[profilesDropDownBox.SelectedItem.Text];
+            _presenter.ProfileManager.LastUsedProfile = profilesDropDownBox.SelectedItem.Text;
+            _selectedProfile = _presenter.ProfileManager.Profiles[profilesDropDownBox.SelectedItem.Text];
             string path = Path.Combine(_applicationContext.McVersions, _selectedProfile.GetSelectedVersion(_applicationContext) + "\\");
             string state = _applicationContext.ProgramLocalization.ReadyToLaunch;
             if (!File.Exists(string.Format("{0}/{1}.json", path, _selectedProfile.GetSelectedVersion(_applicationContext)))) {
@@ -143,8 +144,8 @@ namespace FreeLauncher.Forms {
             };
             pf.ShowDialog();
             if (pf.DialogResult == DialogResult.OK) {
-                _profileManager.Profiles.Remove(_profileManager.LastUsedProfile);
-                if (_profileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
+                _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
+                if (_presenter.ProfileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
                     RadMessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
                         _applicationContext.ProgramLocalization.Error,
                         MessageBoxButtons.OK, RadMessageIcon.Error);
@@ -152,11 +153,11 @@ namespace FreeLauncher.Forms {
                     return;
                 }
 
-                _profileManager.Profiles.Add(pf.CurrentProfile.ProfileName, pf.CurrentProfile);
-                _profileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+                _presenter.ProfileManager.Profiles.Add(pf.CurrentProfile.ProfileName, pf.CurrentProfile);
+                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
             }
 
-            _presenter.SaveProfiles(_profileManager);
+            _presenter.SaveProfiles();
             UpdateProfileList();
         }
 
@@ -167,18 +168,18 @@ namespace FreeLauncher.Forms {
             ProfileForm pf = new ProfileForm(editedProfile, _applicationContext) {Text = _applicationContext.ProgramLocalization.AddingProfileTitle};
             pf.ShowDialog();
             if (pf.DialogResult == DialogResult.OK) {
-                if (_profileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
+                if (_presenter.ProfileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
                     RadMessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
                         _applicationContext.ProgramLocalization.Error,
                         MessageBoxButtons.OK, RadMessageIcon.Error);
                     return;
                 }
 
-                _profileManager.Profiles.Add(editedProfile.ProfileName, editedProfile);
-                _profileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+                _presenter.ProfileManager.Profiles.Add(editedProfile.ProfileName, editedProfile);
+                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
             }
 
-            _presenter.SaveProfiles(_profileManager);
+            _presenter.SaveProfiles();
             UpdateProfileList();
         }
 
@@ -186,21 +187,22 @@ namespace FreeLauncher.Forms {
             DialogResult dr =
                 RadMessageBox.Show(
                     string.Format(_applicationContext.ProgramLocalization.ProfileDeleteConfirmationText,
-                        _profileManager.LastUsedProfile), _applicationContext.ProgramLocalization.DeleteConfirmationTitle,
+                        _presenter.ProfileManager.LastUsedProfile), _applicationContext.ProgramLocalization.DeleteConfirmationTitle,
                     MessageBoxButtons.YesNo, RadMessageIcon.Question);
             if (dr != DialogResult.Yes) {
                 return;
             }
 
-            _profileManager.Profiles.Remove(_profileManager.LastUsedProfile);
-            _profileManager.LastUsedProfile = _profileManager.Profiles.FirstOrDefault().Key;
-            _presenter.SaveProfiles(_profileManager);
+            _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
+            _presenter.ProfileManager.LastUsedProfile = _presenter.ProfileManager.Profiles.FirstOrDefault().Key;
+            _presenter.SaveProfiles();
             UpdateProfileList();
         }
 
         private void ManageUsersButton_Click(object sender, EventArgs e) {
             new UsersForm(_applicationContext).ShowDialog();
-            UpdateUserList();
+            _presenter.ReloadUserManager();
+            UpdateNicknameDropDownList(_presenter.UserManager);
         }
 
         private void LaunchButton_Click(object sender, EventArgs e) {
@@ -435,7 +437,8 @@ namespace FreeLauncher.Forms {
         private void Launch() {
             _presenter.SelectUserForLaunch(NicknameDropDownList.Text);
             _presenter.SaveUsers();
-            UpdateUserList();
+            _presenter.ReloadUserManager();
+            UpdateNicknameDropDownList(_presenter.UserManager);
             var selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
 
@@ -499,57 +502,17 @@ namespace FreeLauncher.Forms {
         }
 
         private void UpdateProfileList() {
+            _presenter.ReloadProfileManager();
             profilesDropDownBox.Items.Clear();
-            try {
-                _profileManager = LauncherExtensions.ParseProfile(_applicationContext.McDirectory + "/launcher_profiles.json");
-                if (!_profileManager.Profiles.Any()) {
-                    throw new Exception("Someone broke my profiles>:(");
-                }
-            }
-            catch (Exception ex) {
-                AppendException("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
-
-                // save backup
-                if (File.Exists(_applicationContext.LauncherProfiles)) {
-                    string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
-                    AppendLog("A copy of old profile list has been created: " + fileName);
-                    File.Move(_applicationContext.LauncherProfiles, _applicationContext.McDirectory + "/" + fileName);
-                }
-
-                // write default content file
-                File.WriteAllText(_applicationContext.LauncherProfiles, new JObject {
-                    {
-                        "profiles", new JObject {
-                            {
-                                ProductName, new JObject {
-                                    {"name", ProductName}, {
-                                        "allowedReleaseTypes", new JArray {
-                                            "release",
-                                            "other"
-                                        }
-                                    },
-                                    {"launcherVisibilityOnGameClose", "keep the launcher open"}
-                                }
-                            }
-                        }
-                    },
-                    {"selectedProfile", ProductName}
-                }.ToString());
-
-                _profileManager = LauncherExtensions.ParseProfile(_applicationContext.LauncherProfiles);
-                _presenter.SaveProfiles(_profileManager);
-            }
-
-            DeleteProfileButton.Enabled = _profileManager.Profiles.Count > 1;
-            profilesDropDownBox.Items.AddRange(_profileManager.Profiles.Keys);
-            profilesDropDownBox.SelectedItem = profilesDropDownBox.FindItemExact(_profileManager.LastUsedProfile, true);
+            DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
+            profilesDropDownBox.Items.AddRange(_presenter.ProfileManager.Profiles.Keys);
+            profilesDropDownBox.SelectedItem = profilesDropDownBox.FindItemExact(_presenter.ProfileManager.LastUsedProfile, true);
         }
 
-        private void UpdateUserList() {
+        private void UpdateNicknameDropDownList(UserManager userManager) {
             NicknameDropDownList.Items.Clear();
-            _presenter.ReloadUserManager();
-            NicknameDropDownList.Items.AddRange(_presenter.UserManager.Accounts.Keys);
-            NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(_presenter.UserManager.SelectedUsername, true);
+            NicknameDropDownList.Items.AddRange(userManager.Accounts.Keys);
+            NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(userManager.SelectedUsername, true);
         }
 
         private void LoadLocalization() {
@@ -593,7 +556,7 @@ namespace FreeLauncher.Forms {
             }
             else {
                 logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}][{1}][{2}] {3}" : "\n[{0}][{1}][{2}] {3}",
+                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
                     DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "INFO",
                     methodName ?? new StackFrame(1, false).GetMethod().Name, text));
             }
@@ -605,7 +568,7 @@ namespace FreeLauncher.Forms {
             }
             else {
                 logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}][{1}][{2}] {3}" : "\n[{0}][{1}][{2}] {3}",
+                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
                     DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "ERR",
                     methodName ?? new StackFrame(1, false).GetMethod().Name, text));
             }
@@ -621,7 +584,7 @@ namespace FreeLauncher.Forms {
             }
             else {
                 logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}][{1}][{2}] {3}" : "\n[{0}][{1}][{2}] {3}",
+                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
                     DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "DEBUG",
                     methodName ?? new StackFrame(1, false).GetMethod().Name, text));
             }

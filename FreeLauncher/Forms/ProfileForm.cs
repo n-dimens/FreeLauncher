@@ -206,10 +206,10 @@ namespace FreeLauncher.Forms
             versionsDropDownList.Items.Clear();
             versionsDropDownList.Items.Add(_applicationContext.ProgramLocalization.UseLatestVersion);
             List<string> list = new List<string>();
-            JObject json = JObject.Parse(File.ReadAllText(_applicationContext.McVersions + "/versions.json"));
+            JObject json = JObject.Parse(File.ReadAllText(_applicationContext.McVersionsFile));
             foreach (JObject ver in json["versions"]) {
-                string id = ver["id"].ToString(),
-                    type = ver["type"].ToString();
+                string id = ver["id"].ToString();
+                string type = ver["type"].ToString();
                 list.Add(string.Format("{0} {1}", type, id));
                 RadListDataItem ritem = new RadListDataItem {Text = type + " " + id, Tag = id};
                 switch (type) {
