@@ -100,7 +100,7 @@ namespace FreeLauncher.Forms {
 
             Focus();
             
-            UpdateVersions();
+            _presenter.UpdateVersions();
             UpdateProfileList();
             UpdateUserList();
         }
@@ -496,40 +496,6 @@ namespace FreeLauncher.Forms {
 
         private void SetToClipboardButton_Click(object sender, EventArgs e) {
             Clipboard.SetText(logBox.Text);
-        }
-
-        private void UpdateVersions() {
-            AppendLog("Checking version.json...");
-            string jsonVersionList = new WebClient().DownloadString(
-                new Uri("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json"));
-            if (!Directory.Exists(_applicationContext.McVersions)) {
-                Directory.CreateDirectory(_applicationContext.McVersions);
-            }
-
-            if (!File.Exists(_applicationContext.McVersions + "\\versions.json")) {
-                File.WriteAllText(_applicationContext.McVersions + "\\versions.json", jsonVersionList);
-                return;
-            }
-
-            JObject jb =
-                JObject.Parse(jsonVersionList);
-            string remoteSnapshotVersion = jb["latest"]["snapshot"].ToString(),
-                remoteReleaseVersion = jb["latest"]["release"].ToString();
-            AppendLog("Latest snapshot: " + remoteSnapshotVersion);
-            AppendLog("Latest release: " + remoteReleaseVersion);
-            JObject ver = JObject.Parse(File.ReadAllText(_applicationContext.McVersions + "/versions.json"));
-            string localSnapshotVersion = ver["latest"]["snapshot"].ToString(),
-                localReleaseVersion = ver["latest"]["release"].ToString();
-            AppendLog("Local versions: " + ((JArray) jb["versions"]).Count + ". Remote versions: " +
-                      ((JArray) ver["versions"]).Count);
-            if (((JArray) jb["versions"]).Count == ((JArray) ver["versions"]).Count &&
-                remoteReleaseVersion == localReleaseVersion && remoteSnapshotVersion == localSnapshotVersion) {
-                AppendLog("No update found.");
-                return;
-            }
-
-            AppendLog("Writting new list... ");
-            File.WriteAllText(_applicationContext.McVersions + "\\versions.json", jsonVersionList);
         }
 
         private void UpdateProfileList() {

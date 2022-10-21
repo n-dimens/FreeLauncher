@@ -10,23 +10,26 @@ namespace FreeLauncher {
     public class ApplicationContext {
         private readonly string _configurationFile;
 
-        public Arguments ProgramArguments { get; private set; }
+        public static readonly string VersionsFileUrl = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+
+        public Arguments ProgramArguments { get; }
 
         public Localization ProgramLocalization { get; } = new Localization();
 
-        public string McDirectory { get; private set; }
-        public string McLauncher { get; private set; }
-        public string McVersions { get; private set; }
-        public string McLibs { get; private set; }
-        public string McNatives { get; private set; }
-        public string McAssets { get; private set; }
-        public string McLegacyAssets { get; private set; }
-        public string McObjectsAssets { get; private set; }
-        public string LauncherProfiles { get; private set; }
+        public string McDirectory { get; }
+        public string McLauncher { get; }
+        public string McVersions { get; }
+        public string McVersionsFile { get; }
+        public string McLibs { get; }
+        public string McNatives { get; }
+        public string McAssets { get; }
+        public string McLegacyAssets { get; }
+        public string McObjectsAssets { get; }
+        public string LauncherProfiles { get; }
 
         public string Libraries { get; set; }
 
-        public Configuration Configuration { get; private set; }
+        public Configuration Configuration { get; }
 
         public ApplicationContext(string[] args) {
             Libraries = string.Empty;
@@ -37,6 +40,7 @@ namespace FreeLauncher {
                               ".minecraft\\");
             McLauncher = Path.Combine(McDirectory, "freelauncher\\");
             McVersions = Path.Combine(McDirectory, "versions\\");
+            McVersionsFile = Path.Combine(McVersions, "versions.json");
             McLibs = Path.Combine(McDirectory, "libraries\\");
             McNatives = Path.Combine(McDirectory, "natives\\");
             McAssets = Path.Combine(McDirectory, "assets\\");
