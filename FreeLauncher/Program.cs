@@ -22,7 +22,6 @@ namespace FreeLauncher {
             Application.SetCompatibleTextRenderingDefault(false);
             var frmMain = new MainForm(applicationContext);
             Application.Run(frmMain);
-            applicationContext.SaveConfiguration();
         }
     }
 }

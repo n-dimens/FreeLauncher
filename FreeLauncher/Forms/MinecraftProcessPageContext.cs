@@ -14,9 +14,9 @@ namespace FreeLauncher.Forms {
             LauncherForm = launcherForm;
             Profile = profile;
             ApplicationContext = appContext;
-            IsMinecraftLoggingEnabled = launcherForm.EnableMinecraftLogging.Checked;
-            IsUseGamePrefix = launcherForm.UseGamePrefix.ToggleState == ToggleState.On;
-            IsAutoClosePage = launcherForm.CloseGameOutput.Checked;
+            IsMinecraftLoggingEnabled = appContext.Configuration.EnableGameLogging;
+            IsUseGamePrefix = appContext.Configuration.ShowGamePrefix;
+            IsAutoClosePage = appContext.Configuration.CloseTabAfterSuccessfulExitCode;
         }
     }
 }

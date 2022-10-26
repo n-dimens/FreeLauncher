@@ -10,6 +10,8 @@
     using System.Threading.Tasks;
     using System.Windows.Forms;
 
+    using Microsoft.VisualBasic.Devices;
+
     public partial class MainForm : Form, ILauncherLogger {
         private readonly FreeLauncher.ApplicationContext _applicationContext;
         private readonly LauncherFormPresenter _presenter;
@@ -19,15 +21,34 @@
             _applicationContext = appContext;
             _presenter = new LauncherFormPresenter(this, _applicationContext);
             InitializeComponent();
+            PrintAppInfo();
             frmLauncher = new LauncherForm(_presenter);
+            frmLauncher.ShowInTaskbar = false;
+            frmLauncher.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             frmLauncher.Show();
+
+            chbEnableGameLogging.Checked = appContext.Configuration.EnableGameLogging;
+            chbUseLogPrefix.Checked = appContext.Configuration.ShowGamePrefix;
+            chbCloseOutput.Checked = appContext.Configuration.CloseTabAfterSuccessfulExitCode;
+
             LoadProfilesList();
+        }
+
+        private void PrintAppInfo() {
+            _presenter.LogInfo($"Application: {ProductName} v.{ProductVersion}");
+            _presenter.LogInfo($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
+            _presenter.LogInfo("==============");
+            _presenter.LogInfo("System info:");
+            _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
+            _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+            _presenter.LogInfo($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
+            _presenter.LogInfo("==============");
         }
 
         private void LoadProfilesList() {
             cbProfiles.Items.Clear();
-            cbProfiles.Items.AddRange(frmLauncher.Presenter.ProfileManager.Profiles.Select(p => p.Key).ToArray());
-            cbProfiles.SelectedItem = frmLauncher.Presenter.ProfileManager.LastUsedProfile;
+            cbProfiles.Items.AddRange(_presenter.ProfileManager.Profiles.Select(p => p.Key).ToArray());
+            cbProfiles.SelectedItem = _presenter.ProfileManager.LastUsedProfile;
         }
 
         private void btnLaunch_Click(object sender, EventArgs e) {
@@ -43,6 +64,7 @@
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            SaveConfiguration();
             frmLauncher.Close();
         }
 
@@ -73,6 +95,17 @@
         private void txtLog_TextChanged(object sender, EventArgs e) {
             txtLog.SelectionStart = txtLog.Text.Length;
             txtLog.ScrollToCaret();
+        }
+
+        private void btnSaveSettings_Click(object sender, EventArgs e) {
+            SaveConfiguration();
+        }
+
+        private void SaveConfiguration() {
+            _applicationContext.Configuration.EnableGameLogging = chbEnableGameLogging.Checked;
+            _applicationContext.Configuration.ShowGamePrefix = chbUseLogPrefix.Checked;
+            _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode = chbCloseOutput.Checked;
+            _applicationContext.SaveConfiguration();
         }
     }
 }

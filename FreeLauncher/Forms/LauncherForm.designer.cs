@@ -41,17 +41,8 @@ namespace FreeLauncher.Forms
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
             // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
             // this.versionsListView = new Telerik.WinControls.UI.RadListView();
-            this.AboutPage = new Telerik.WinControls.UI.RadPageViewPage();
-            this.AboutPageView = new Telerik.WinControls.UI.RadPageView();
-            this.AboutVersion = new Telerik.WinControls.UI.RadLabel();
-            this.SettingsPage = new Telerik.WinControls.UI.RadPageViewPage();
-            this.radScrollablePanel1 = new Telerik.WinControls.UI.RadScrollablePanel();
-            this.radGroupBox2 = new Telerik.WinControls.UI.RadGroupBox();
-            this.CloseGameOutput = new Telerik.WinControls.UI.RadCheckBox();
-            this.UseGamePrefix = new Telerik.WinControls.UI.RadCheckBox();
-            this.EnableMinecraftLogging = new Telerik.WinControls.UI.RadCheckBox();
             this.StatusBar = new Telerik.WinControls.UI.RadProgressBar();
-            this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
+            this.BottomToolbarPanel = new Telerik.WinControls.UI.RadPanel();
             this.DeleteProfileButton = new Telerik.WinControls.UI.RadButton();
             this.ManageUsersButton = new Telerik.WinControls.UI.RadButton();
             this.NicknameDropDownList = new Telerik.WinControls.UI.RadDropDownList();
@@ -65,22 +56,9 @@ namespace FreeLauncher.Forms
             this.mainPageView.SuspendLayout();
             // this.EditVersions.SuspendLayout();
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
-            this.AboutPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).BeginInit();
-            this.AboutPageView.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AboutVersion)).BeginInit();
-            this.SettingsPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).BeginInit();
-            this.radScrollablePanel1.PanelContainer.SuspendLayout();
-            this.radScrollablePanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radGroupBox2)).BeginInit();
-            this.radGroupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CloseGameOutput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UseGamePrefix)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftLogging)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
-            this.radPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).BeginInit();
+            this.BottomToolbarPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DeleteProfileButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ManageUsersButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NicknameDropDownList)).BeginInit();
@@ -95,7 +73,6 @@ namespace FreeLauncher.Forms
             // mainPageView
             // 
             // this.mainPageView.Controls.Add(this.EditVersions);
-            this.mainPageView.Controls.Add(this.AboutPage);
             this.mainPageView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPageView.Location = new System.Drawing.Point(0, 0);
             this.mainPageView.Name = "mainPageView";
@@ -107,7 +84,6 @@ namespace FreeLauncher.Forms
             this.mainPageView.RootElement.FlipText = false;
             this.mainPageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
             this.mainPageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.mainPageView.SelectedPage = this.AboutPage;
             this.mainPageView.Size = new System.Drawing.Size(858, 363);
             this.mainPageView.TabIndex = 2;
             this.mainPageView.ThemeName = "VisualStudio2012Dark";
@@ -164,172 +140,6 @@ namespace FreeLauncher.Forms
             // this.versionsListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
             // this.versionsListView.ItemMouseClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.versionsListView_ItemMouseClick);
             // 
-            // AboutPage
-            // 
-            this.AboutPage.Controls.Add(this.AboutPageView);
-            this.AboutPage.ItemSize = new System.Drawing.SizeF(79F, 24F);
-            this.AboutPage.Location = new System.Drawing.Point(5, 30);
-            this.AboutPage.Name = "AboutPage";
-            this.AboutPage.Size = new System.Drawing.Size(848, 328);
-            this.AboutPage.Text = "О ЛАУНЧЕРЕ";
-            // 
-            // AboutPageView
-            // 
-            this.AboutPageView.Controls.Add(this.SettingsPage);
-            this.AboutPageView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AboutPageView.Location = new System.Drawing.Point(0, 0);
-            this.AboutPageView.Name = "AboutPageView";
-            // 
-            // 
-            // 
-            this.AboutPageView.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.AboutPageView.RootElement.AngleTransform = 0F;
-            this.AboutPageView.RootElement.FlipText = false;
-            this.AboutPageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.AboutPageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.AboutPageView.SelectedPage = this.SettingsPage;
-            this.AboutPageView.Size = new System.Drawing.Size(848, 328);
-            this.AboutPageView.TabIndex = 9;
-            this.AboutPageView.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
-            ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).ItemAlignment = Telerik.WinControls.UI.StripViewItemAlignment.Center;
-            ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).ItemFitMode = Telerik.WinControls.UI.StripViewItemFitMode.Fill;
-            ((Telerik.WinControls.UI.RadPageViewStripElement)(this.AboutPageView.GetChildAt(0))).StripAlignment = Telerik.WinControls.UI.StripViewAlignment.Bottom;
-            // 
-            // AboutVersion
-            // 
-            this.AboutVersion.BackColor = System.Drawing.Color.Transparent;
-            this.AboutVersion.ForeColor = System.Drawing.Color.DimGray;
-            this.AboutVersion.Location = new System.Drawing.Point(122, 34);
-            this.AboutVersion.MinimumSize = new System.Drawing.Size(58, 18);
-            this.AboutVersion.Name = "AboutVersion";
-            // 
-            // 
-            // 
-            this.AboutVersion.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.AboutVersion.RootElement.AngleTransform = 0F;
-            this.AboutVersion.RootElement.FlipText = false;
-            this.AboutVersion.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.AboutVersion.RootElement.MinSize = new System.Drawing.Size(58, 18);
-            this.AboutVersion.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.AboutVersion.Size = new System.Drawing.Size(58, 18);
-            this.AboutVersion.TabIndex = 1;
-            this.AboutVersion.Text = "0.0.0.000";
-            this.AboutVersion.TextAlignment = System.Drawing.ContentAlignment.MiddleRight;
-            this.AboutVersion.ThemeName = "VisualStudio2012Dark";
-            ((Telerik.WinControls.UI.RadLabelElement)(this.AboutVersion.GetChildAt(0))).TextAlignment = System.Drawing.ContentAlignment.MiddleRight;
-            ((Telerik.WinControls.UI.RadLabelElement)(this.AboutVersion.GetChildAt(0))).Text = "0.0.0.000";
-            ((Telerik.WinControls.Primitives.FillPrimitive)(this.AboutVersion.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.Transparent;
-            // 
-            // SettingsPage
-            // 
-            this.SettingsPage.Controls.Add(this.radScrollablePanel1);
-            this.SettingsPage.Location = new System.Drawing.Point(5, 5);
-            this.SettingsPage.Name = "SettingsPage";
-            this.SettingsPage.Size = new System.Drawing.Size(838, 293);
-            this.SettingsPage.Text = "НАСТРОЙКИ";
-            // 
-            // radScrollablePanel1
-            // 
-            this.radScrollablePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radScrollablePanel1.Location = new System.Drawing.Point(0, 0);
-            this.radScrollablePanel1.Name = "radScrollablePanel1";
-            // 
-            // radScrollablePanel1.PanelContainer
-            // 
-            this.radScrollablePanel1.PanelContainer.Controls.Add(this.radGroupBox2);
-            this.radScrollablePanel1.PanelContainer.Size = new System.Drawing.Size(836, 291);
-            // 
-            // 
-            // 
-            this.radScrollablePanel1.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radScrollablePanel1.RootElement.AngleTransform = 0F;
-            this.radScrollablePanel1.RootElement.FlipText = false;
-            this.radScrollablePanel1.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radScrollablePanel1.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radScrollablePanel1.Size = new System.Drawing.Size(838, 293);
-            this.radScrollablePanel1.TabIndex = 1;
-            this.radScrollablePanel1.Text = "radScrollablePanel1";
-            this.radScrollablePanel1.ThemeName = "VisualStudio2012Dark";
-            // 
-            // radGroupBox2
-            // 
-            this.radGroupBox2.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-            this.radGroupBox2.BackColor = System.Drawing.Color.Transparent;
-            this.radGroupBox2.Controls.Add(this.CloseGameOutput);
-            this.radGroupBox2.Controls.Add(this.UseGamePrefix);
-            this.radGroupBox2.Controls.Add(this.EnableMinecraftLogging);
-            this.radGroupBox2.HeaderText = "Логирование";
-            this.radGroupBox2.Location = new System.Drawing.Point(22, 5);
-            this.radGroupBox2.Name = "radGroupBox2";
-            // 
-            // 
-            // 
-            this.radGroupBox2.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radGroupBox2.RootElement.AngleTransform = 0F;
-            this.radGroupBox2.RootElement.FlipText = false;
-            this.radGroupBox2.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radGroupBox2.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radGroupBox2.Size = new System.Drawing.Size(357, 121);
-            this.radGroupBox2.TabIndex = 1;
-            this.radGroupBox2.Text = "Логирование";
-            this.radGroupBox2.ThemeName = "VisualStudio2012Dark";
-            // 
-            // CloseGameOutput
-            // 
-            this.CloseGameOutput.Location = new System.Drawing.Point(5, 69);
-            this.CloseGameOutput.Name = "CloseGameOutput";
-            // 
-            // 
-            // 
-            this.CloseGameOutput.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.CloseGameOutput.RootElement.AngleTransform = 0F;
-            this.CloseGameOutput.RootElement.FlipText = false;
-            this.CloseGameOutput.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.CloseGameOutput.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.CloseGameOutput.Size = new System.Drawing.Size(327, 18);
-            this.CloseGameOutput.TabIndex = 2;
-            this.CloseGameOutput.Text = "Закрывать вкладку, если завершение прошло без ошибок";
-            this.CloseGameOutput.ThemeName = "VisualStudio2012Dark";
-            // 
-            // UseGamePrefix
-            // 
-            this.UseGamePrefix.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.UseGamePrefix.Location = new System.Drawing.Point(5, 45);
-            this.UseGamePrefix.Name = "UseGamePrefix";
-            // 
-            // 
-            // 
-            this.UseGamePrefix.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.UseGamePrefix.RootElement.AngleTransform = 0F;
-            this.UseGamePrefix.RootElement.FlipText = false;
-            this.UseGamePrefix.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.UseGamePrefix.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.UseGamePrefix.Size = new System.Drawing.Size(288, 18);
-            this.UseGamePrefix.TabIndex = 1;
-            this.UseGamePrefix.Text = "Использовать префикс [GAME] для логов Minecraft";
-            this.UseGamePrefix.ThemeName = "VisualStudio2012Dark";
-            this.UseGamePrefix.ToggleState = Telerik.WinControls.Enumerations.ToggleState.On;
-            // 
-            // EnableMinecraftLogging
-            // 
-            this.EnableMinecraftLogging.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.EnableMinecraftLogging.Location = new System.Drawing.Point(5, 21);
-            this.EnableMinecraftLogging.Name = "EnableMinecraftLogging";
-            // 
-            // 
-            // 
-            this.EnableMinecraftLogging.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.EnableMinecraftLogging.RootElement.AngleTransform = 0F;
-            this.EnableMinecraftLogging.RootElement.FlipText = false;
-            this.EnableMinecraftLogging.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.EnableMinecraftLogging.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.EnableMinecraftLogging.Size = new System.Drawing.Size(177, 18);
-            this.EnableMinecraftLogging.TabIndex = 0;
-            this.EnableMinecraftLogging.Text = "Выводить лог игры в консоль";
-            this.EnableMinecraftLogging.ThemeName = "VisualStudio2012Dark";
-            this.EnableMinecraftLogging.ToggleState = Telerik.WinControls.Enumerations.ToggleState.On;
-            // 
             // StatusBar
             // 
             this.StatusBar.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -343,30 +153,30 @@ namespace FreeLauncher.Forms
             // 
             // radPanel1
             // 
-            this.radPanel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("radPanel1.BackgroundImage")));
-            this.radPanel1.Controls.Add(this.DeleteProfileButton);
-            this.radPanel1.Controls.Add(this.ManageUsersButton);
-            this.radPanel1.Controls.Add(this.NicknameDropDownList);
-            this.radPanel1.Controls.Add(this.SelectedVersion);
-            this.radPanel1.Controls.Add(this.LogoBox);
-            this.radPanel1.Controls.Add(this.LaunchButton);
-            this.radPanel1.Controls.Add(this.profilesDropDownBox);
-            this.radPanel1.Controls.Add(this.EditProfile);
-            this.radPanel1.Controls.Add(this.AddProfile);
-            this.radPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.radPanel1.Location = new System.Drawing.Point(0, 387);
-            this.radPanel1.Name = "radPanel1";
+            this.BottomToolbarPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("radPanel1.BackgroundImage")));
+            this.BottomToolbarPanel.Controls.Add(this.DeleteProfileButton);
+            this.BottomToolbarPanel.Controls.Add(this.ManageUsersButton);
+            this.BottomToolbarPanel.Controls.Add(this.NicknameDropDownList);
+            this.BottomToolbarPanel.Controls.Add(this.SelectedVersion);
+            this.BottomToolbarPanel.Controls.Add(this.LogoBox);
+            this.BottomToolbarPanel.Controls.Add(this.LaunchButton);
+            this.BottomToolbarPanel.Controls.Add(this.profilesDropDownBox);
+            this.BottomToolbarPanel.Controls.Add(this.EditProfile);
+            this.BottomToolbarPanel.Controls.Add(this.AddProfile);
+            this.BottomToolbarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.BottomToolbarPanel.Location = new System.Drawing.Point(0, 387);
+            this.BottomToolbarPanel.Name = "radPanel1";
             // 
             // 
             // 
-            this.radPanel1.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.radPanel1.RootElement.AngleTransform = 0F;
-            this.radPanel1.RootElement.FlipText = false;
-            this.radPanel1.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.radPanel1.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.radPanel1.Size = new System.Drawing.Size(858, 59);
-            this.radPanel1.TabIndex = 3;
-            this.radPanel1.ThemeName = "VisualStudio2012Dark";
+            this.BottomToolbarPanel.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
+            this.BottomToolbarPanel.RootElement.AngleTransform = 0F;
+            this.BottomToolbarPanel.RootElement.FlipText = false;
+            this.BottomToolbarPanel.RootElement.Margin = new System.Windows.Forms.Padding(0);
+            this.BottomToolbarPanel.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
+            this.BottomToolbarPanel.Size = new System.Drawing.Size(858, 59);
+            this.BottomToolbarPanel.TabIndex = 3;
+            this.BottomToolbarPanel.ThemeName = "VisualStudio2012Dark";
             // 
             // DeleteProfileButton
             // 
@@ -533,7 +343,7 @@ namespace FreeLauncher.Forms
             this.ClientSize = new System.Drawing.Size(858, 446);
             this.Controls.Add(this.mainPageView);
             this.Controls.Add(this.StatusBar);
-            this.Controls.Add(this.radPanel1);
+            this.Controls.Add(this.BottomToolbarPanel);
             this.MinimumSize = new System.Drawing.Size(712, 446);
             this.Name = "LauncherForm";
             // 
@@ -542,29 +352,14 @@ namespace FreeLauncher.Forms
             this.RootElement.ApplyShapeToControl = true;
             this.Text = "FreeLauncher";
             this.ThemeName = "VisualStudio2012Dark";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LauncherForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).EndInit();
             this.mainPageView.ResumeLayout(false);
             // this.EditVersions.ResumeLayout(false);
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
-            this.AboutPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.AboutPageView)).EndInit();
-            this.AboutPageView.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.AboutVersion)).EndInit();
-            this.SettingsPage.ResumeLayout(false);
-            this.radScrollablePanel1.PanelContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.radScrollablePanel1)).EndInit();
-            this.radScrollablePanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.radGroupBox2)).EndInit();
-            this.radGroupBox2.ResumeLayout(false);
-            this.radGroupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CloseGameOutput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UseGamePrefix)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EnableMinecraftLogging)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).EndInit();
-            this.radPanel1.ResumeLayout(false);
-            this.radPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).EndInit();
+            this.BottomToolbarPanel.ResumeLayout(false);
+            this.BottomToolbarPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DeleteProfileButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ManageUsersButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NicknameDropDownList)).EndInit();
@@ -584,15 +379,8 @@ namespace FreeLauncher.Forms
         private RadPageView mainPageView;
         // private RadPageViewPage EditVersions;
         // private RadListView versionsListView;
-        private RadPageViewPage AboutPage;
-        private RadPageView AboutPageView;
-        private RadLabel AboutVersion;
-        private RadPageViewPage SettingsPage;
-        private RadScrollablePanel radScrollablePanel1;
-        private RadGroupBox radGroupBox2;
-        public RadCheckBox UseGamePrefix;
-        public RadCheckBox EnableMinecraftLogging;
-        private RadPanel radPanel1;
+
+        private RadPanel BottomToolbarPanel;
         private RadButton ManageUsersButton;
         public RadDropDownList NicknameDropDownList;
         private Label SelectedVersion;
@@ -602,7 +390,6 @@ namespace FreeLauncher.Forms
         private RadButton EditProfile;
         private RadButton AddProfile;
         private RadProgressBar StatusBar;
-        public RadCheckBox CloseGameOutput;
         private RadButton DeleteProfileButton;
     }
 }

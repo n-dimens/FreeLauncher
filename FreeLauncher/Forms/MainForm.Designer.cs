@@ -27,12 +27,17 @@
             this.tpLog = new System.Windows.Forms.TabPage();
             this.txtLog = new System.Windows.Forms.RichTextBox();
             this.tpSettings = new System.Windows.Forms.TabPage();
+            this.chbCloseOutput = new System.Windows.Forms.CheckBox();
+            this.chbUseLogPrefix = new System.Windows.Forms.CheckBox();
+            this.chbEnableGameLogging = new System.Windows.Forms.CheckBox();
             this.btnLaunch = new System.Windows.Forms.Button();
             this.cbProfiles = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSaveSettings = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tpLog.SuspendLayout();
+            this.tpSettings.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -73,13 +78,47 @@
             // 
             // tpSettings
             // 
+            this.tpSettings.Controls.Add(this.btnSaveSettings);
+            this.tpSettings.Controls.Add(this.chbCloseOutput);
+            this.tpSettings.Controls.Add(this.chbUseLogPrefix);
+            this.tpSettings.Controls.Add(this.chbEnableGameLogging);
             this.tpSettings.Location = new System.Drawing.Point(4, 22);
             this.tpSettings.Name = "tpSettings";
             this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSettings.Size = new System.Drawing.Size(768, 369);
+            this.tpSettings.Size = new System.Drawing.Size(1050, 606);
             this.tpSettings.TabIndex = 1;
             this.tpSettings.Text = "Настройки";
             this.tpSettings.UseVisualStyleBackColor = true;
+            // 
+            // chbCloseOutput
+            // 
+            this.chbCloseOutput.AutoSize = true;
+            this.chbCloseOutput.Location = new System.Drawing.Point(7, 55);
+            this.chbCloseOutput.Name = "chbCloseOutput";
+            this.chbCloseOutput.Size = new System.Drawing.Size(230, 17);
+            this.chbCloseOutput.TabIndex = 2;
+            this.chbCloseOutput.Text = "Закрывать вкладку при выходе из игры";
+            this.chbCloseOutput.UseVisualStyleBackColor = true;
+            // 
+            // chbUseLogPrefix
+            // 
+            this.chbUseLogPrefix.AutoSize = true;
+            this.chbUseLogPrefix.Location = new System.Drawing.Point(7, 31);
+            this.chbUseLogPrefix.Name = "chbUseLogPrefix";
+            this.chbUseLogPrefix.Size = new System.Drawing.Size(286, 17);
+            this.chbUseLogPrefix.TabIndex = 1;
+            this.chbUseLogPrefix.Text = "Использовать префикс [GAME] для логов Minecraft";
+            this.chbUseLogPrefix.UseVisualStyleBackColor = true;
+            // 
+            // chbEnableGameLogging
+            // 
+            this.chbEnableGameLogging.AutoSize = true;
+            this.chbEnableGameLogging.Location = new System.Drawing.Point(7, 7);
+            this.chbEnableGameLogging.Name = "chbEnableGameLogging";
+            this.chbEnableGameLogging.Size = new System.Drawing.Size(178, 17);
+            this.chbEnableGameLogging.TabIndex = 0;
+            this.chbEnableGameLogging.Text = "Выводить лог игры в консоль";
+            this.chbEnableGameLogging.UseVisualStyleBackColor = true;
             // 
             // btnLaunch
             // 
@@ -129,6 +168,16 @@
             this.panel1.Size = new System.Drawing.Size(1064, 30);
             this.panel1.TabIndex = 0;
             // 
+            // btnSaveSettings
+            // 
+            this.btnSaveSettings.Location = new System.Drawing.Point(7, 89);
+            this.btnSaveSettings.Name = "btnSaveSettings";
+            this.btnSaveSettings.Size = new System.Drawing.Size(178, 23);
+            this.btnSaveSettings.TabIndex = 3;
+            this.btnSaveSettings.Text = "Сохранить";
+            this.btnSaveSettings.UseVisualStyleBackColor = true;
+            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +190,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.tabControl1.ResumeLayout(false);
             this.tpLog.ResumeLayout(false);
+            this.tpSettings.ResumeLayout(false);
+            this.tpSettings.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -157,5 +208,9 @@
         private System.Windows.Forms.RichTextBox txtLog;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox chbCloseOutput;
+        private System.Windows.Forms.CheckBox chbUseLogPrefix;
+        private System.Windows.Forms.CheckBox chbEnableGameLogging;
+        private System.Windows.Forms.Button btnSaveSettings;
     }
 }

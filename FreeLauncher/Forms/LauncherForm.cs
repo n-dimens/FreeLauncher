@@ -20,13 +20,6 @@ namespace FreeLauncher.Forms {
         private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
         private Profile _selectedProfile;
-        private readonly Configuration _cfg;
-
-        public LauncherFormPresenter Presenter => _presenter;
-
-        private int StatusBarMaxValue {
-            set => SetStatusBarMaxValue(value);
-        }
 
         private void DisableControls() {
             BlockControls = true;
@@ -46,50 +39,14 @@ namespace FreeLauncher.Forms {
                 NicknameDropDownList.Enabled = !value;
             }
         }
-
-        private void IncStatusBarValue() {
-            SetStatusBarValue(StatusBar.Value1 + 1);
-        }
-
-        private void SetStatusBarValue(int i) {
-            if (StatusBar.InvokeRequired) {
-                StatusBar.Invoke(new Action<int>(SetStatusBarValue), i);
-            }
-            else {
-                StatusBar.Value1 = i;
-            }
-        }
-
-        private void SetStatusBarMaxValue(int value) {
-            if (StatusBar.InvokeRequired) {
-                StatusBar.Invoke(new Action<int>(SetStatusBarMaxValue), value);
-            }
-            else {
-                StatusBar.Maximum = value;
-            }
-        }
-        
+       
         public LauncherForm(LauncherFormPresenter presenter) {
             _presenter = presenter;
             _applicationContext = presenter.AppContext;
             InitializeComponent();
-            // Loading configuration
-            _cfg = _applicationContext.Configuration;
-            EnableMinecraftLogging.Checked = _cfg.EnableGameLogging;
-            UseGamePrefix.Checked = _cfg.ShowGamePrefix;
-            CloseGameOutput.Checked = _cfg.CloseTabAfterSuccessfulExitCode;
             LoadLocalization();
             //
             Text = ProductName + " " + ProductVersion;
-            AboutVersion.Text = ProductVersion;
-            _presenter.LogInfo($"Application: {ProductName} v.{ProductVersion}");
-            _presenter.LogInfo($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
-            _presenter.LogInfo("==============");
-            _presenter.LogInfo("System info:");
-            _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
-            _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            _presenter.LogInfo($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
-            _presenter.LogInfo("==============");
 
             if (!Directory.Exists(_applicationContext.McDirectory)) {
                 Directory.CreateDirectory(_applicationContext.McDirectory);
@@ -106,12 +63,6 @@ namespace FreeLauncher.Forms {
             
             _presenter.ReloadUserManager();
             UpdateNicknameDropDownList(_presenter.UserManager);
-        }
-
-        private void LauncherForm_FormClosing(object sender, FormClosingEventArgs e) {
-            _cfg.EnableGameLogging = EnableMinecraftLogging.Checked;
-            _cfg.ShowGamePrefix = UseGamePrefix.Checked;
-            _cfg.CloseTabAfterSuccessfulExitCode = CloseGameOutput.Checked;
         }
 
         private void profilesDropDownBox_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
@@ -253,7 +204,7 @@ namespace FreeLauncher.Forms {
 
             if (!File.Exists(path + "/" + version + ".json")) {
                 string filename = version + ".json";
-                UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
+                UpdateStatusBarText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
                 downloader.DownloadFileAsync(new Uri(string.Format(
                         "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.json", version)),
                     string.Format("{0}/{1}/{1}.json", _applicationContext.McVersions, version));
@@ -268,7 +219,7 @@ namespace FreeLauncher.Forms {
             if ((!File.Exists(path + "/" + version + ".jar")) &&
                 selectedVersion.InheritsFrom == null) {
                 string filename = version + ".jar";
-                UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
+                UpdateStatusBarText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
                 downloader.DownloadFileAsync(new Uri(string.Format(
                         "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.jar", version)),
                     string.Format("{0}/{1}/{1}.jar", _applicationContext.McVersions, version));
@@ -290,7 +241,7 @@ namespace FreeLauncher.Forms {
 
             if (!File.Exists(string.Format("{0}/{1}/{1}.jar", _applicationContext.McVersions, selectedVersion.InheritsFrom))) {
                 string filename = selectedVersion.InheritsFrom + ".jar";
-                UpdateStatusBarAndLog("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
+                UpdateStatusBarText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
                 downloader.DownloadFileAsync(new Uri(string.Format(
                         "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.jar", selectedVersion.InheritsFrom)),
                     string.Format("{0}/{1}/{1}.jar", _applicationContext.McVersions, selectedVersion.InheritsFrom));
@@ -302,7 +253,7 @@ namespace FreeLauncher.Forms {
             while (state != 3) ;
             if (!File.Exists(string.Format("{0}/{1}/{1}.json", _applicationContext.McVersions, selectedVersion.InheritsFrom))) {
                 string filename = selectedVersion.InheritsFrom + ".json";
-                UpdateStatusBarAndLog("Downloading " + filename + "...");
+                UpdateStatusBarText("Downloading " + filename + "...");
                 downloader.DownloadFileAsync(new Uri(string.Format(
                         "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.json", selectedVersion.InheritsFrom)),
                     string.Format("{0}/{1}/{1}.json", _applicationContext.McVersions, selectedVersion.InheritsFrom));
@@ -326,7 +277,7 @@ namespace FreeLauncher.Forms {
             foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
                 IncStatusBarValue();
                 if (!File.Exists(_applicationContext.McLibs + lib.ToPath())) {
-                    UpdateStatusBarAndLog("Downloading " + lib.Name + "...");
+                    UpdateStatusBarText("Downloading " + lib.Name + "...");
                     _presenter.LogDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
                     string directory = Path.GetDirectoryName(_applicationContext.McLibs + lib.ToPath());
                     if (!File.Exists(directory)) {
@@ -338,7 +289,7 @@ namespace FreeLauncher.Forms {
                 }
 
                 if (lib.IsNative != null) {
-                    UpdateStatusBarAndLog("Unpacking " + lib.Name + "...");
+                    UpdateStatusBarText("Unpacking " + lib.Name + "...");
                     using (ZipFile zip = ZipFile.Read(_applicationContext.McLibs + lib.ToPath())) {
                         foreach (ZipEntry entry in zip.Where(entry => entry.FileName.EndsWith(".dll"))) {
                             _presenter.LogDebug($"Unzipping {entry.FileName}");
@@ -365,7 +316,7 @@ namespace FreeLauncher.Forms {
         }
         
         private void CheckGameResources() {
-            UpdateStatusBarAndLog("Checking game assets...");
+            UpdateStatusBarText("Checking game assets...");
             Version selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
             string file = string.Format("{0}/indexes/{1}.json", _applicationContext.McAssets, selectedVersion.AssetsIndex ?? "legacy");
@@ -409,7 +360,7 @@ namespace FreeLauncher.Forms {
                 SetStatusBarValue(0);
                 StatusBarMaxValue = jo["objects"].Cast<JProperty>()
                     .Count(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name)) + 1;
-                UpdateStatusBarAndLog("Converting assets...");
+                UpdateStatusBarText("Converting assets...");
                 foreach (JProperty res in jo["objects"].Cast<JProperty>()
                              .Where(res => !File.Exists(_applicationContext.McLegacyAssets + res.Name))) {
                     try {
@@ -509,44 +460,56 @@ namespace FreeLauncher.Forms {
 
         private void LoadLocalization() {
             // EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
-            AboutPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
-            SettingsPage.Text = _applicationContext.ProgramLocalization.SettingsTabText;
-
             LaunchButton.Text = _applicationContext.ProgramLocalization.LaunchButtonText;
             AddProfile.Text = _applicationContext.ProgramLocalization.AddProfileButtonText;
-            EditProfile.Text = _applicationContext.ProgramLocalization.EditProfileButtonText;
-            
-            EnableMinecraftLogging.Text = _applicationContext.ProgramLocalization.EnableMinecraftLoggingText;
-            UseGamePrefix.Text = _applicationContext.ProgramLocalization.UseGamePrefixText;
-            CloseGameOutput.Text = _applicationContext.ProgramLocalization.CloseGameOutputText;
+            EditProfile.Text = _applicationContext.ProgramLocalization.EditProfileButtonText;           
         }
 
-        private void UpdateStatusBarText(string text) {
+        private void UpdateStatusBarText(string text, string methodName = null) {
             if (StatusBar.InvokeRequired) {
-                StatusBar.Invoke(new Action<string>(UpdateStatusBarText), text);
-            }
-            else {
-                StatusBar.Text = text;
-            }
-        }
-
-        private void UpdateStatusBarAndLog(string text, string methodName = null) {
-            if (StatusBar.InvokeRequired) {
-                StatusBar.Invoke(new Action<string, string>(UpdateStatusBarAndLog), text,
-                    new StackFrame(1).GetMethod().Name);
+                StatusBar.Invoke(new Action<string, string>(UpdateStatusBarText), text, methodName);
             }
             else {
                 StatusBar.Text = text;
                 _presenter.LogInfo(text, methodName);
             }
         }
-      
+
+        private int StatusBarMaxValue {
+            set => SetStatusBarMaxValue(value);
+        }
+
         private void SetStatusBarVisibility(bool b) {
             if (StatusBar.InvokeRequired) {
                 StatusBar.Invoke(new Action<bool>(SetStatusBarVisibility), b);
             }
             else {
                 StatusBar.Visible = b;
+            }
+        }
+
+        // TODO: to event
+        private void IncStatusBarValue() {
+            SetStatusBarValue(StatusBar.Value1 + 1);
+        }
+
+        // TODO: to event
+        private void SetStatusBarValue(int i) {
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<int>(SetStatusBarValue), i);
+            }
+            else {
+                StatusBar.Value1 = i;
+            }
+        }
+
+        // TODO: to event
+        private void SetStatusBarMaxValue(int value) {
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<int>(SetStatusBarMaxValue), value);
+            }
+            else {
+                StatusBar.Maximum = value;
             }
         }
     }
