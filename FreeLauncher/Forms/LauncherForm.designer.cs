@@ -39,11 +39,6 @@ namespace FreeLauncher.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             this.vs12theme = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
-            this.ConsolePage = new Telerik.WinControls.UI.RadPageViewPage();
-            this.logBox = new System.Windows.Forms.RichTextBox();
-            this.ConsoleOptionsPanel = new Telerik.WinControls.UI.RadPanel();
-            this.SetToClipboardButton = new Telerik.WinControls.UI.RadButton();
-            this.DebugModeButton = new Telerik.WinControls.UI.RadToggleButton();
             // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
             // this.versionsListView = new Telerik.WinControls.UI.RadListView();
             this.AboutPage = new Telerik.WinControls.UI.RadPageViewPage();
@@ -68,11 +63,6 @@ namespace FreeLauncher.Forms
             this.AddProfile = new Telerik.WinControls.UI.RadButton();
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).BeginInit();
             this.mainPageView.SuspendLayout();
-            this.ConsolePage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ConsoleOptionsPanel)).BeginInit();
-            this.ConsoleOptionsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SetToClipboardButton)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DebugModeButton)).BeginInit();
             // this.EditVersions.SuspendLayout();
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
             this.AboutPage.SuspendLayout();
@@ -104,7 +94,6 @@ namespace FreeLauncher.Forms
             // 
             // mainPageView
             // 
-            this.mainPageView.Controls.Add(this.ConsolePage);
             // this.mainPageView.Controls.Add(this.EditVersions);
             this.mainPageView.Controls.Add(this.AboutPage);
             this.mainPageView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -118,66 +107,11 @@ namespace FreeLauncher.Forms
             this.mainPageView.RootElement.FlipText = false;
             this.mainPageView.RootElement.Margin = new System.Windows.Forms.Padding(0);
             this.mainPageView.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.mainPageView.SelectedPage = this.ConsolePage;
+            this.mainPageView.SelectedPage = this.AboutPage;
             this.mainPageView.Size = new System.Drawing.Size(858, 363);
             this.mainPageView.TabIndex = 2;
             this.mainPageView.ThemeName = "VisualStudio2012Dark";
             ((Telerik.WinControls.UI.RadPageViewStripElement)(this.mainPageView.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
-            // 
-            // ConsolePage
-            // 
-            this.ConsolePage.Controls.Add(this.logBox);
-            this.ConsolePage.Controls.Add(this.ConsoleOptionsPanel);
-            this.ConsolePage.ItemSize = new System.Drawing.SizeF(65F, 24F);
-            this.ConsolePage.Location = new System.Drawing.Point(5, 30);
-            this.ConsolePage.Name = "ConsolePage";
-            this.ConsolePage.Size = new System.Drawing.Size(848, 328);
-            this.ConsolePage.Text = "КОНСОЛЬ";
-            // 
-            // logBox
-            // 
-            this.logBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.logBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logBox.Font = new System.Drawing.Font("Consolas", 9F);
-            this.logBox.Location = new System.Drawing.Point(0, 0);
-            this.logBox.Name = "logBox";
-            this.logBox.ReadOnly = true;
-            this.logBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.logBox.Size = new System.Drawing.Size(848, 299);
-            this.logBox.TabIndex = 1;
-            this.logBox.Text = "";
-            this.logBox.TextChanged += new System.EventHandler(this.logBox_TextChanged);
-            // 
-            // ConsoleOptionsPanel
-            // 
-            this.ConsoleOptionsPanel.Controls.Add(this.SetToClipboardButton);
-            this.ConsoleOptionsPanel.Controls.Add(this.DebugModeButton);
-            this.ConsoleOptionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.ConsoleOptionsPanel.Location = new System.Drawing.Point(0, 299);
-            this.ConsoleOptionsPanel.Name = "ConsoleOptionsPanel";
-            this.ConsoleOptionsPanel.Size = new System.Drawing.Size(848, 29);
-            this.ConsoleOptionsPanel.TabIndex = 2;
-            this.ConsoleOptionsPanel.ThemeName = "VisualStudio2012Dark";
-            // 
-            // SetToClipboardButton
-            // 
-            this.SetToClipboardButton.Location = new System.Drawing.Point(7, 3);
-            this.SetToClipboardButton.Name = "SetToClipboardButton";
-            this.SetToClipboardButton.Size = new System.Drawing.Size(131, 23);
-            this.SetToClipboardButton.TabIndex = 1;
-            this.SetToClipboardButton.Text = "Скопировать в буфер";
-            this.SetToClipboardButton.ThemeName = "VisualStudio2012Dark";
-            this.SetToClipboardButton.Click += new System.EventHandler(this.SetToClipboardButton_Click);
-            // 
-            // DebugModeButton
-            // 
-            this.DebugModeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.DebugModeButton.Location = new System.Drawing.Point(710, 3);
-            this.DebugModeButton.Name = "DebugModeButton";
-            this.DebugModeButton.Size = new System.Drawing.Size(131, 23);
-            this.DebugModeButton.TabIndex = 0;
-            this.DebugModeButton.Text = "Debug Mode";
-            this.DebugModeButton.ThemeName = "VisualStudio2012Dark";
             // 
             // EditVersions
             // 
@@ -611,11 +545,6 @@ namespace FreeLauncher.Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LauncherForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).EndInit();
             this.mainPageView.ResumeLayout(false);
-            this.ConsolePage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ConsoleOptionsPanel)).EndInit();
-            this.ConsoleOptionsPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SetToClipboardButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DebugModeButton)).EndInit();
             // this.EditVersions.ResumeLayout(false);
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
             this.AboutPage.ResumeLayout(false);
@@ -653,8 +582,6 @@ namespace FreeLauncher.Forms
 
         private VisualStudio2012DarkTheme vs12theme;
         private RadPageView mainPageView;
-        private RadPageViewPage ConsolePage;
-        public RichTextBox logBox;
         // private RadPageViewPage EditVersions;
         // private RadListView versionsListView;
         private RadPageViewPage AboutPage;
@@ -670,15 +597,12 @@ namespace FreeLauncher.Forms
         public RadDropDownList NicknameDropDownList;
         private Label SelectedVersion;
         private PictureBox LogoBox;
-        private RadButton LaunchButton;
+        public RadButton LaunchButton;
         public RadDropDownList profilesDropDownBox;
         private RadButton EditProfile;
         private RadButton AddProfile;
         private RadProgressBar StatusBar;
-        private RadPanel ConsoleOptionsPanel;
         public RadCheckBox CloseGameOutput;
-        private RadToggleButton DebugModeButton;
         private RadButton DeleteProfileButton;
-        private RadButton SetToClipboardButton;
     }
 }

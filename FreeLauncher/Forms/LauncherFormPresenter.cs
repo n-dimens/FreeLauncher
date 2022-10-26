@@ -9,9 +9,11 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
     public class LauncherFormPresenter {
-        public static readonly string ProductName = "FreeLauncher";
         private readonly ILauncherLogger _logger;
-        private readonly ApplicationContext _applicationContext;
+
+        public static readonly string ProductName = "FreeLauncher";
+
+        public ApplicationContext AppContext { get; }
 
         // TODO: Выпилить свойства, раскрывающие объекты
         public User SelectedUser { get; private set; }
@@ -22,17 +24,17 @@ namespace FreeLauncher.Forms {
 
         public LauncherFormPresenter(ILauncherLogger viewLogger, ApplicationContext applicationContext) {
             _logger = viewLogger;
-            _applicationContext = applicationContext;
+            AppContext = applicationContext;
         }
 
         public void ReloadUserManager() {
             try {
-                UserManager = File.Exists(_applicationContext.McLauncher + "users.json")
-                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_applicationContext.McLauncher + "users.json"))
+                UserManager = File.Exists(AppContext.McLauncher + "users.json")
+                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(AppContext.McLauncher + "users.json"))
                     : new UserManager();
             }
             catch (Exception ex) {
-                _logger.AppendException("Reading user list: an exception has occurred\n" + ex.Message);
+                LogError("Reading user list: an exception has occurred\n" + ex.Message);
                 UserManager = new UserManager();
                 SaveUsers();
             }
@@ -61,7 +63,7 @@ namespace FreeLauncher.Forms {
                     };
                     bool check = am.CheckSessionToken();
                     if (!check) {
-                        _logger.AppendException("Session token is not valid. Please, head up to user manager and re-add your account.");
+                        LogError("Session token is not valid. Please, head up to user manager and re-add your account.");
                         User user = new User {
                             Username = nickname,
                             Type = "offline"
@@ -82,23 +84,23 @@ namespace FreeLauncher.Forms {
 
         public void ReloadProfileManager() {
             try {
-                ProfileManager = LauncherExtensions.ParseProfile(_applicationContext.McDirectory + "/launcher_profiles.json");
+                ProfileManager = LauncherExtensions.ParseProfile(AppContext.McDirectory + "/launcher_profiles.json");
                 if (!ProfileManager.Profiles.Any()) {
                     throw new Exception("Someone broke my profiles>:(");
                 }
             }
             catch (Exception ex) {
-                _logger.AppendException("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
+                LogError("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
 
                 // save backup
-                if (File.Exists(_applicationContext.LauncherProfiles)) {
+                if (File.Exists(AppContext.LauncherProfiles)) {
                     string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
-                    _logger.AppendLog("A copy of old profile list has been created: " + fileName);
-                    File.Move(_applicationContext.LauncherProfiles, _applicationContext.McDirectory + "/" + fileName);
+                    LogInfo("A copy of old profile list has been created: " + fileName);
+                    File.Move(AppContext.LauncherProfiles, AppContext.McDirectory + "/" + fileName);
                 }
 
                 // write default content file
-                File.WriteAllText(_applicationContext.LauncherProfiles, new JObject {
+                File.WriteAllText(AppContext.LauncherProfiles, new JObject {
                     {
                         "profiles", new JObject {
                             {
@@ -117,17 +119,17 @@ namespace FreeLauncher.Forms {
                     {"selectedProfile", ProductName}
                 }.ToString());
 
-                ProfileManager = LauncherExtensions.ParseProfile(_applicationContext.LauncherProfiles);
+                ProfileManager = LauncherExtensions.ParseProfile(AppContext.LauncherProfiles);
                 SaveProfiles();
             }
         }
 
         public void SaveProfiles() {
-            File.WriteAllText(_applicationContext.McDirectory + "launcher_profiles.json", ProfileManager.ToJson());
+            File.WriteAllText(AppContext.McDirectory + "launcher_profiles.json", ProfileManager.ToJson());
         }
 
         public void SaveUsers() {
-            File.WriteAllText(_applicationContext.McLauncher + "users.json",
+            File.WriteAllText(AppContext.McLauncher + "users.json",
                 JsonConvert.SerializeObject(UserManager, Formatting.Indented,
                     new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore}));
         }
@@ -136,18 +138,18 @@ namespace FreeLauncher.Forms {
         /// Обновление локального файла versions.json при сравнении с файлом в облаке
         /// </summary>
         public void UpdateVersionsList() {
-            _logger.AppendLog("Checking version.json...");
-            if (!Directory.Exists(_applicationContext.McVersions)) {
-                Directory.CreateDirectory(_applicationContext.McVersions);
+            LogInfo("Checking version.json...");
+            if (!Directory.Exists(AppContext.McVersions)) {
+                Directory.CreateDirectory(AppContext.McVersions);
             }
             
             // Скачиваем новый файл
             var jsonVersionList = new WebClient().DownloadString(new Uri(ApplicationContext.VersionsFileUrl));
             
             // Если локального файла не существует, сохраняем и выходим
-            if (!File.Exists(_applicationContext.McVersionsFile)) {
-                File.WriteAllText(_applicationContext.McVersionsFile, jsonVersionList);
-                _logger.AppendLog("File downloaded and saved.");
+            if (!File.Exists(AppContext.McVersionsFile)) {
+                File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
+                LogInfo("File downloaded and saved.");
                 return;
             }
 
@@ -155,26 +157,38 @@ namespace FreeLauncher.Forms {
             var newVersionsData = JObject.Parse(jsonVersionList);
             string remoteSnapshotVersion = newVersionsData["latest"]["snapshot"].ToString();
             string remoteReleaseVersion = newVersionsData["latest"]["release"].ToString();
-            _logger.AppendLog("Latest snapshot: " + remoteSnapshotVersion);
-            _logger.AppendLog("Latest release: " + remoteReleaseVersion);
+            LogInfo("Latest snapshot: " + remoteSnapshotVersion);
+            LogInfo("Latest release: " + remoteReleaseVersion);
 
-            JObject ver = JObject.Parse(File.ReadAllText(_applicationContext.McVersionsFile));
+            JObject ver = JObject.Parse(File.ReadAllText(AppContext.McVersionsFile));
             string localSnapshotVersion = ver["latest"]["snapshot"].ToString();
             string localReleaseVersion = ver["latest"]["release"].ToString();
 
             bool isVersionsCountEqual = ((JArray) newVersionsData["versions"]).Count == ((JArray) ver["versions"]).Count;
             bool isEqualVersions = remoteReleaseVersion == localReleaseVersion && remoteSnapshotVersion == localSnapshotVersion;
-            _logger.AppendLog("Local versions: " + ((JArray) newVersionsData["versions"]).Count + ". Remote versions: " + ((JArray) ver["versions"]).Count);
+            LogInfo("Local versions: " + ((JArray) newVersionsData["versions"]).Count + ". Remote versions: " + ((JArray) ver["versions"]).Count);
             
             if (isVersionsCountEqual && isEqualVersions) {
                 // Изменений нет, выходим
-                _logger.AppendLog("No update found.");
+                LogInfo("No update found.");
                 return;
             }
 
             // Найдены изменения, обновляем лоакльный файл
-            _logger.AppendLog("Writting new list... ");
-            File.WriteAllText(_applicationContext.McVersionsFile, jsonVersionList);
+            LogInfo("Writting new list... ");
+            File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
+        }
+
+        public void LogDebug(string text, string methodName = null) {
+            _logger.LogDebug(text, methodName);
+        }
+
+        public void LogError(string text, string methodName = null) {
+            _logger.LogError(text, methodName);
+        }
+
+        public void LogInfo(string text, string methodName = null) {
+            _logger.LogInfo(text, methodName);
         }
     }
 }

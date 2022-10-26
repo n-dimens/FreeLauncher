@@ -16,12 +16,14 @@ using Telerik.WinControls.UI.Data;
 using Version = dotMCLauncher.Core.Version;
 
 namespace FreeLauncher.Forms {
-    public partial class LauncherForm : RadForm, ILauncherLogger {
+    public partial class LauncherForm : RadForm {
         private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
         private Profile _selectedProfile;
         private readonly Configuration _cfg;
-        
+
+        public LauncherFormPresenter Presenter => _presenter;
+
         private int StatusBarMaxValue {
             set => SetStatusBarMaxValue(value);
         }
@@ -50,8 +52,8 @@ namespace FreeLauncher.Forms {
         }
 
         private void SetStatusBarValue(int i) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<int>(SetStatusBarValue), i);
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<int>(SetStatusBarValue), i);
             }
             else {
                 StatusBar.Value1 = i;
@@ -59,17 +61,17 @@ namespace FreeLauncher.Forms {
         }
 
         private void SetStatusBarMaxValue(int value) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<int>(SetStatusBarMaxValue), value);
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<int>(SetStatusBarMaxValue), value);
             }
             else {
                 StatusBar.Maximum = value;
             }
         }
         
-        public LauncherForm(ApplicationContext appContext) {
-            _presenter = new LauncherFormPresenter(this, appContext);
-            _applicationContext = appContext;
+        public LauncherForm(LauncherFormPresenter presenter) {
+            _presenter = presenter;
+            _applicationContext = presenter.AppContext;
             InitializeComponent();
             // Loading configuration
             _cfg = _applicationContext.Configuration;
@@ -80,14 +82,14 @@ namespace FreeLauncher.Forms {
             //
             Text = ProductName + " " + ProductVersion;
             AboutVersion.Text = ProductVersion;
-            AppendLog($"Application: {ProductName} v.{ProductVersion}");
-            AppendLog($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
-            AppendLog("==============");
-            AppendLog("System info:");
-            AppendLog($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
-            AppendLog($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            AppendLog($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
-            AppendLog("==============");
+            _presenter.LogInfo($"Application: {ProductName} v.{ProductVersion}");
+            _presenter.LogInfo($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
+            _presenter.LogInfo("==============");
+            _presenter.LogInfo("System info:");
+            _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
+            _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+            _presenter.LogInfo($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
+            _presenter.LogInfo("==============");
 
             if (!Directory.Exists(_applicationContext.McDirectory)) {
                 Directory.CreateDirectory(_applicationContext.McDirectory);
@@ -112,8 +114,7 @@ namespace FreeLauncher.Forms {
             _cfg.CloseTabAfterSuccessfulExitCode = CloseGameOutput.Checked;
         }
 
-        private void profilesDropDownBox_SelectedIndexChanged(object sender,
-            PositionChangedEventArgs e) {
+        private void profilesDropDownBox_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
             if (profilesDropDownBox.SelectedItem == null) {
                 return;
             }
@@ -244,7 +245,7 @@ namespace FreeLauncher.Forms {
             SetStatusBarValue(0);
             string version = _selectedProfile.GetSelectedVersion(_applicationContext);
             UpdateStatusBarText(string.Format(_applicationContext.ProgramLocalization.CheckingVersionAvailability, version));
-            AppendLog($"Checking '{version}' version availability...");
+            _presenter.LogInfo($"Checking '{version}' version availability...");
             string path = Path.Combine(_applicationContext.McVersions, version + "\\");
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
@@ -278,7 +279,7 @@ namespace FreeLauncher.Forms {
 
             while (state != 2) ;
             if (selectedVersion.InheritsFrom == null) {
-                AppendLog("Finished checking version avalability.");
+                _presenter.LogInfo("Finished checking version avalability.");
                 return;
             }
 
@@ -311,7 +312,7 @@ namespace FreeLauncher.Forms {
             }
 
             while (state != 4) ;
-            AppendLog("Finished checking version avalability.");
+            _presenter.LogInfo("Finished checking version avalability.");
         }
         
         private void CheckLibraries() {
@@ -321,12 +322,12 @@ namespace FreeLauncher.Forms {
             SetStatusBarValue(0);
             SetStatusBarMaxValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
             UpdateStatusBarText(_applicationContext.ProgramLocalization.CheckingLibraries);
-            AppendLog("Checking libraries...");
+            _presenter.LogInfo("Checking libraries...");
             foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
                 IncStatusBarValue();
                 if (!File.Exists(_applicationContext.McLibs + lib.ToPath())) {
                     UpdateStatusBarAndLog("Downloading " + lib.Name + "...");
-                    AppendDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
+                    _presenter.LogDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
                     string directory = Path.GetDirectoryName(_applicationContext.McLibs + lib.ToPath());
                     if (!File.Exists(directory)) {
                         Directory.CreateDirectory(directory);
@@ -340,12 +341,12 @@ namespace FreeLauncher.Forms {
                     UpdateStatusBarAndLog("Unpacking " + lib.Name + "...");
                     using (ZipFile zip = ZipFile.Read(_applicationContext.McLibs + lib.ToPath())) {
                         foreach (ZipEntry entry in zip.Where(entry => entry.FileName.EndsWith(".dll"))) {
-                            AppendDebug($"Unzipping {entry.FileName}");
+                            _presenter.LogDebug($"Unzipping {entry.FileName}");
                             try {
                                 entry.Extract(_applicationContext.McNatives, ExtractExistingFileAction.OverwriteSilently);
                             }
                             catch (Exception ex) {
-                                AppendException(ex.Message);
+                                _presenter.LogError(ex.Message);
                             }
                         }
                     }
@@ -360,7 +361,7 @@ namespace FreeLauncher.Forms {
             libraries += string.Format("{0}{1}\\{1}.jar", _applicationContext.McVersions,
                 selectedVersion.InheritsFrom ?? _selectedProfile.GetSelectedVersion(_applicationContext));
             _applicationContext.Libraries = libraries;
-            AppendLog("Finished checking libraries.");
+            _presenter.LogInfo("Finished checking libraries.");
         }
         
         private void CheckGameResources() {
@@ -392,18 +393,18 @@ namespace FreeLauncher.Forms {
                 }
 
                 try {
-                    AppendDebug("Downloading " + resourseFile + "...");
+                    _presenter.LogDebug("Downloading " + resourseFile + "...");
                     new WebClient().DownloadFile(@"http://resources.download.minecraft.net/" + resourseFile,
                         _applicationContext.McObjectsAssets + resourseFile);
                 }
                 catch (Exception ex) {
-                    AppendException(ex.ToString());
+                    _presenter.LogError(ex.ToString());
                 }
 
                 IncStatusBarValue();
             }
 
-            AppendLog("Finished checking game assets.");
+            _presenter.LogInfo("Finished checking game assets.");
             if (selectedVersion.AssetsIndex == null) {
                 SetStatusBarValue(0);
                 StatusBarMaxValue = jo["objects"].Cast<JProperty>()
@@ -417,20 +418,20 @@ namespace FreeLauncher.Forms {
                             resFile.Directory.Create();
                         }
 
-                        AppendDebug(
+                        _presenter.LogDebug(
                             $"Converting \"{"\\assets\\objects\\" + res.Value["hash"].ToString()[0] + res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"]}\" to \"{"\\assets\\legacy\\" + res.Name}\"");
                         File.Copy(_applicationContext.McObjectsAssets + res.Value["hash"].ToString()[0] +
                                   res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"],
                             resFile.FullName);
                     }
                     catch (Exception ex) {
-                        AppendLog(ex.ToString());
+                        _presenter.LogError(ex.ToString());
                     }
 
                     IncStatusBarValue();
                 }
 
-                AppendLog("Finished converting assets.");
+                _presenter.LogInfo("Finished converting assets.");
             }
         }
         
@@ -458,8 +459,8 @@ namespace FreeLauncher.Forms {
                 .OfflineNickname(NicknameDropDownList.Text)
                 .Build();
 
-            AppendLog($"Command line: \"{proc.FileName}\" {proc.Arguments}");
-            AppendLog($"Version {selectedVersion.VersionId} successfuly launched.");
+            _presenter.LogInfo($"Command line: \"{proc.FileName}\" {proc.Arguments}");
+            _presenter.LogInfo($"Version {selectedVersion.VersionId} successfuly launched.");
 
             CreateMinecraftProcessPage(proc).Launch();
         }
@@ -492,15 +493,6 @@ namespace FreeLauncher.Forms {
             return mcProcessPage;
         }
 
-        private void logBox_TextChanged(object sender, EventArgs e) {
-            logBox.SelectionStart = logBox.Text.Length;
-            logBox.ScrollToCaret();
-        }
-
-        private void SetToClipboardButton_Click(object sender, EventArgs e) {
-            Clipboard.SetText(logBox.Text);
-        }
-
         private void UpdateProfileList() {
             _presenter.ReloadProfileManager();
             profilesDropDownBox.Items.Clear();
@@ -516,7 +508,6 @@ namespace FreeLauncher.Forms {
         }
 
         private void LoadLocalization() {
-            ConsolePage.Text = _applicationContext.ProgramLocalization.ConsoleTabText;
             // EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
             AboutPage.Text = _applicationContext.ProgramLocalization.AboutTabText;
             SettingsPage.Text = _applicationContext.ProgramLocalization.SettingsTabText;
@@ -531,8 +522,8 @@ namespace FreeLauncher.Forms {
         }
 
         private void UpdateStatusBarText(string text) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<string>(UpdateStatusBarText), text);
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<string>(UpdateStatusBarText), text);
             }
             else {
                 StatusBar.Text = text;
@@ -540,59 +531,19 @@ namespace FreeLauncher.Forms {
         }
 
         private void UpdateStatusBarAndLog(string text, string methodName = null) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<string, string>(UpdateStatusBarAndLog), text,
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<string, string>(UpdateStatusBarAndLog), text,
                     new StackFrame(1).GetMethod().Name);
             }
             else {
                 StatusBar.Text = text;
-                AppendLog(text, methodName);
+                _presenter.LogInfo(text, methodName);
             }
         }
-
-        public void AppendLog(string text, string methodName = null) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<string, string>(AppendLog), text, new StackFrame(1).GetMethod().Name);
-            }
-            else {
-                logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
-                    DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "INFO",
-                    methodName ?? new StackFrame(1, false).GetMethod().Name, text));
-            }
-        }
-
-        public void AppendException(string text, string methodName = null) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<string, string>(AppendException), text, new StackFrame(1).GetMethod().Name);
-            }
-            else {
-                logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
-                    DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "ERR",
-                    methodName ?? new StackFrame(1, false).GetMethod().Name, text));
-            }
-        }
-
-        public void AppendDebug(string text, string methodName = null) {
-            if (!DebugModeButton.IsChecked) {
-                return;
-            }
-
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<string, string>(AppendDebug), text, new StackFrame(1).GetMethod().Name);
-            }
-            else {
-                logBox.AppendText(string.Format(
-                    string.IsNullOrEmpty(logBox.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
-                    DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), "DEBUG",
-                    methodName ?? new StackFrame(1, false).GetMethod().Name, text));
-            }
-        }
-        
+      
         private void SetStatusBarVisibility(bool b) {
-            if (logBox.InvokeRequired) {
-                logBox.Invoke(new Action<bool>(SetStatusBarVisibility), b);
+            if (StatusBar.InvokeRequired) {
+                StatusBar.Invoke(new Action<bool>(SetStatusBarVisibility), b);
             }
             else {
                 StatusBar.Visible = b;
