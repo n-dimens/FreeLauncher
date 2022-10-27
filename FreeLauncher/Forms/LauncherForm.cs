@@ -19,7 +19,6 @@ namespace FreeLauncher.Forms {
     public partial class LauncherForm : RadForm {
         private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
-        private Profile _selectedProfile;
 
         private void DisableControls() {
             BlockControls = true;
@@ -70,15 +69,14 @@ namespace FreeLauncher.Forms {
                 return;
             }
 
-            _presenter.ProfileManager.LastUsedProfile = profilesDropDownBox.SelectedItem.Text;
-            _selectedProfile = _presenter.ProfileManager.Profiles[profilesDropDownBox.SelectedItem.Text];
-            string path = Path.Combine(_applicationContext.McVersions, _selectedProfile.GetSelectedVersion(_applicationContext) + "\\");
+            _presenter.SelectProfile(profilesDropDownBox.SelectedItem.Text);
+            string path = Path.Combine(_applicationContext.McVersions, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext) + "\\");
             string state = _applicationContext.ProgramLocalization.ReadyToLaunch;
-            if (!File.Exists(string.Format("{0}/{1}.json", path, _selectedProfile.GetSelectedVersion(_applicationContext)))) {
+            if (!File.Exists(string.Format("{0}/{1}.json", path, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)))) {
                 state = _applicationContext.ProgramLocalization.ReadyToDownload;
             }
 
-            SelectedVersion.Text = string.Format(state, _selectedProfile.GetSelectedVersion(_applicationContext));
+            SelectedVersion.Text = string.Format(state, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext));
         }
 
         private void NicknameDropDownList_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
@@ -91,7 +89,7 @@ namespace FreeLauncher.Forms {
         }
 
         private void EditProfile_Click(object sender, EventArgs e) {
-            ProfileForm pf = new ProfileForm(_selectedProfile, _applicationContext) {
+            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext) {
                 Text = _applicationContext.ProgramLocalization.EditingProfileTitle
             };
             pf.ShowDialog();
@@ -114,8 +112,8 @@ namespace FreeLauncher.Forms {
         }
 
         private void AddProfile_Click(object sender, EventArgs e) {
-            Profile editedProfile = Profile.ParseProfile(_selectedProfile.ToString());
-            editedProfile.ProfileName = "Copy of '" + _selectedProfile.ProfileName + "'(" +
+            Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
+            editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
                                         DateTime.Now.ToString("HH:mm:ss") + ")";
             ProfileForm pf = new ProfileForm(editedProfile, _applicationContext) {Text = _applicationContext.ProgramLocalization.AddingProfileTitle};
             pf.ShowDialog();
@@ -194,7 +192,7 @@ namespace FreeLauncher.Forms {
             downloader.DownloadFileCompleted += delegate { state++; };
             SetStatusBarMaxValue(100);
             SetStatusBarValue(0);
-            string version = _selectedProfile.GetSelectedVersion(_applicationContext);
+            string version = _presenter.SelectedProfile.GetSelectedVersion(_applicationContext);
             UpdateStatusBarText(string.Format(_applicationContext.ProgramLocalization.CheckingVersionAvailability, version));
             _presenter.LogInfo($"Checking '{version}' version availability...");
             string path = Path.Combine(_applicationContext.McVersions, version + "\\");
@@ -269,7 +267,7 @@ namespace FreeLauncher.Forms {
         private void CheckLibraries() {
             string libraries = string.Empty;
             Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
+                new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
             SetStatusBarValue(0);
             SetStatusBarMaxValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
             UpdateStatusBarText(_applicationContext.ProgramLocalization.CheckingLibraries);
@@ -310,7 +308,7 @@ namespace FreeLauncher.Forms {
             }
 
             libraries += string.Format("{0}{1}\\{1}.jar", _applicationContext.McVersions,
-                selectedVersion.InheritsFrom ?? _selectedProfile.GetSelectedVersion(_applicationContext));
+                selectedVersion.InheritsFrom ?? _presenter.SelectedProfile.GetSelectedVersion(_applicationContext));
             _applicationContext.Libraries = libraries;
             _presenter.LogInfo("Finished checking libraries.");
         }
@@ -318,7 +316,7 @@ namespace FreeLauncher.Forms {
         private void CheckGameResources() {
             UpdateStatusBarText("Checking game assets...");
             Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
+                new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
             string file = string.Format("{0}/indexes/{1}.json", _applicationContext.McAssets, selectedVersion.AssetsIndex ?? "legacy");
             if (!File.Exists(file)) {
                 if (!Directory.Exists(Path.GetDirectoryName(file))) {
@@ -392,19 +390,19 @@ namespace FreeLauncher.Forms {
             _presenter.ReloadUserManager();
             UpdateNicknameDropDownList(_presenter.UserManager);
             var selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + _selectedProfile.GetSelectedVersion(_applicationContext)));
+                new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
 
-            if (_selectedProfile.FastConnectionSettigs != null) {
-                selectedVersion.ArgumentCollection.Add("server", _selectedProfile.FastConnectionSettigs.ServerIP);
-                selectedVersion.ArgumentCollection.Add("port", _selectedProfile.FastConnectionSettigs.ServerPort.ToString());
+            if (_presenter.SelectedProfile.FastConnectionSettigs != null) {
+                selectedVersion.ArgumentCollection.Add("server", _presenter.SelectedProfile.FastConnectionSettigs.ServerIP);
+                selectedVersion.ArgumentCollection.Add("port", _presenter.SelectedProfile.FastConnectionSettigs.ServerPort.ToString());
             }
 
-            if (_selectedProfile.WorkingDirectory != null && !Directory.Exists(_selectedProfile.WorkingDirectory)) {
-                Directory.CreateDirectory(_selectedProfile.WorkingDirectory);
+            if (_presenter.SelectedProfile.WorkingDirectory != null && !Directory.Exists(_presenter.SelectedProfile.WorkingDirectory)) {
+                Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);
             }
 
             var proc = ProcessInfoBuilder.Create(_applicationContext)
-                .Profile(_selectedProfile)
+                .Profile(_presenter.SelectedProfile)
                 .User(_presenter.SelectedUser)
                 .Version(selectedVersion)
                 .OfflineNickname(NicknameDropDownList.Text)
@@ -420,7 +418,7 @@ namespace FreeLauncher.Forms {
         /// Создание вкладки для нового процесса Minecraft
         /// </summary>
         private MinecraftProcessPage CreateMinecraftProcessPage(ProcessStartInfo processInfo) {
-            var context = new MinecraftProcessPageContext(this, _selectedProfile, _applicationContext);
+            var context = new MinecraftProcessPageContext(this, _presenter.SelectedProfile, _applicationContext);
             var mcProcessPage = new MinecraftProcessPage(new Process {StartInfo = processInfo, EnableRaisingEvents = true}, context);
             mcProcessPage.PageCreated += (o, page) => {
                 mainPageView.Pages.Add(page);
@@ -428,16 +426,16 @@ namespace FreeLauncher.Forms {
             };
             mcProcessPage.PageClosed += (o, page) => { mainPageView.Pages.Remove(page); };
             mcProcessPage.ProcessLaunched += (o, args) => {
-                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.CLOSED) {
+                if (_presenter.SelectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.CLOSED) {
                     Close();
                 }
 
-                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
+                if (_presenter.SelectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
                     Hide();
                 }
             };
             mcProcessPage.ProcessExited += (o, args) => {
-                if (_selectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
+                if (_presenter.SelectedProfile.LauncherVisibilityOnGameClose == Profile.LauncherVisibility.HIDDEN) {
                     Invoke((MethodInvoker) Show);
                 }
             };

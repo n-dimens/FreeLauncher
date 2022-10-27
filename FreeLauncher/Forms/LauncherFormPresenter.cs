@@ -9,18 +9,21 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
     public class LauncherFormPresenter {
+        // TODO: Выпилить свойства, раскрывающие объекты
+
         private readonly ILauncherLogger _logger;
 
         public static readonly string ProductName = "FreeLauncher";
 
         public ApplicationContext AppContext { get; }
 
-        // TODO: Выпилить свойства, раскрывающие объекты
         public User SelectedUser { get; private set; }
 
         public UserManager UserManager { get; private set; }
         
         public ProfileManager ProfileManager { get; private set; }
+
+        public Profile SelectedProfile { get; private set; }
 
         public LauncherFormPresenter(ILauncherLogger viewLogger, ApplicationContext applicationContext) {
             _logger = viewLogger;
@@ -80,6 +83,11 @@ namespace FreeLauncher.Forms {
             }
 
             UserManager.SelectedUsername = SelectedUser.Username;
+        }
+
+        public void SelectProfile(string name) {
+            SelectedProfile = ProfileManager.Profiles[name];
+            ProfileManager.LastUsedProfile = name;
         }
 
         // TODO: Отделить Restore от Reload
