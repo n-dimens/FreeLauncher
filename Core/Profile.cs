@@ -73,5 +73,16 @@ namespace dotMCLauncher.Core {
             HIDDEN,
             CLOSED,
         }
+
+        public static Profile CreateDefault() {
+            // TODO: Java exe, gamedir, lastVersionId
+            var profile = new Profile {
+                ProfileName = "default",
+                AllowedReleaseTypes = new[] { "release", "other" },
+                LauncherVisibilityOnGameClose = Profile.LauncherVisibility.VISIBLE
+            };
+
+            return profile;
+        }
     }
 }

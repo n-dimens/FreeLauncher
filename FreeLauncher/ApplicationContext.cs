@@ -25,6 +25,7 @@ namespace FreeLauncher {
         public string McAssets { get; }
         public string McLegacyAssets { get; }
         public string McObjectsAssets { get; }
+        public string McLauncherProfiles { get; }
         public string LauncherProfiles { get; }
 
         public string Libraries { get; set; }
@@ -46,7 +47,8 @@ namespace FreeLauncher {
             McAssets = Path.Combine(McDirectory, "assets\\");
             McLegacyAssets = Path.Combine(McAssets, "legacy\\");
             McObjectsAssets = Path.Combine(McAssets, "objects\\");
-            LauncherProfiles = Path.Combine(McDirectory, "launcher_profiles.json");
+            McLauncherProfiles = Path.Combine(McDirectory, "launcher_profiles.json"); // TODO: Как защитить только на чтение через API?
+            LauncherProfiles = Path.Combine(McLauncher, "profiles.json");
 
             _configurationFile = McLauncher + "\\configuration.json";
             Configuration = GetConfiguration();

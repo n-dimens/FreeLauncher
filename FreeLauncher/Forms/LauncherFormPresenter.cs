@@ -82,11 +82,22 @@ namespace FreeLauncher.Forms {
             UserManager.SelectedUsername = SelectedUser.Username;
         }
 
+        // TODO: Отделить Restore от Reload
         public void ReloadProfileManager() {
             try {
-                ProfileManager = LauncherExtensions.ParseProfile(AppContext.McDirectory + "/launcher_profiles.json");
+                if (!File.Exists(AppContext.McLauncherProfiles) && !File.Exists(AppContext.LauncherProfiles)) {
+                    ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
+                    return;
+                } 
+                
+                if (File.Exists(AppContext.McLauncherProfiles) && !File.Exists(AppContext.LauncherProfiles)) {
+                    File.Copy(AppContext.McLauncherProfiles, AppContext.LauncherProfiles);
+                }
+
+                ProfileManager = LauncherExtensions.ParseProfile(AppContext.LauncherProfiles);
                 if (!ProfileManager.Profiles.Any()) {
-                    throw new Exception("Someone broke my profiles>:(");
+                    LogError("Reading profile list: profiles missing. Creating default.");
+                    ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
                 }
             }
             catch (Exception ex) {
@@ -94,38 +105,17 @@ namespace FreeLauncher.Forms {
 
                 // save backup
                 if (File.Exists(AppContext.LauncherProfiles)) {
-                    string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".bak.json";
-                    LogInfo("A copy of old profile list has been created: " + fileName);
-                    File.Move(AppContext.LauncherProfiles, AppContext.McDirectory + "/" + fileName);
+                    string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".broken.json";
+                    LogInfo("A copy of broken profiles file has been created: " + fileName);
+                    File.Move(AppContext.LauncherProfiles, Path.Combine(AppContext.McLauncher, fileName));
                 }
 
-                // write default content file
-                File.WriteAllText(AppContext.LauncherProfiles, new JObject {
-                    {
-                        "profiles", new JObject {
-                            {
-                                ProductName, new JObject {
-                                    {"name", ProductName}, {
-                                        "allowedReleaseTypes", new JArray {
-                                            "release",
-                                            "other"
-                                        }
-                                    },
-                                    {"launcherVisibilityOnGameClose", "keep the launcher open"}
-                                }
-                            }
-                        }
-                    },
-                    {"selectedProfile", ProductName}
-                }.ToString());
-
-                ProfileManager = LauncherExtensions.ParseProfile(AppContext.LauncherProfiles);
-                SaveProfiles();
+                ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
             }
         }
 
         public void SaveProfiles() {
-            File.WriteAllText(AppContext.McDirectory + "launcher_profiles.json", ProfileManager.ToJson());
+            ProfileManager.Save(AppContext.LauncherProfiles);
         }
 
         public void SaveUsers() {

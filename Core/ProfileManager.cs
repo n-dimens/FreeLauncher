@@ -54,5 +54,26 @@ namespace dotMCLauncher.Core {
             profile.ProfileName = newName;
             Profiles[newName] = profile;
         }
+
+        public static ProfileManager Default() {
+            return new ProfileManager {
+                Profiles = new Dictionary<string, Profile> {
+                    { "default", Profile.CreateDefault() }
+                },
+                LastUsedProfile = "default"
+            };
+        }
+    }
+
+    public static class ProfileManagerUtils {
+        public static void Save(this ProfileManager manager, string profilesFile) {
+            File.WriteAllText(profilesFile, manager.ToJson());
+        }
+
+        public static ProfileManager Init(string profilesFile) {
+            var manager = ProfileManager.Default();
+            manager.Save(profilesFile);
+            return manager;
+        }
     }
 }
