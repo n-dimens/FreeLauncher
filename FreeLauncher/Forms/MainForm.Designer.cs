@@ -27,6 +27,7 @@
             this.tpLog = new System.Windows.Forms.TabPage();
             this.txtLog = new System.Windows.Forms.RichTextBox();
             this.tpSettings = new System.Windows.Forms.TabPage();
+            this.btnSaveSettings = new System.Windows.Forms.Button();
             this.chbCloseOutput = new System.Windows.Forms.CheckBox();
             this.chbUseLogPrefix = new System.Windows.Forms.CheckBox();
             this.chbEnableGameLogging = new System.Windows.Forms.CheckBox();
@@ -34,7 +35,7 @@
             this.cbProfiles = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnSaveSettings = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.tabControl1.SuspendLayout();
             this.tpLog.SuspendLayout();
             this.tpSettings.SuspendLayout();
@@ -55,6 +56,7 @@
             // 
             // tpLog
             // 
+            this.tpLog.Controls.Add(this.progressBar);
             this.tpLog.Controls.Add(this.txtLog);
             this.tpLog.Location = new System.Drawing.Point(4, 22);
             this.tpLog.Name = "tpLog";
@@ -66,12 +68,13 @@
             // 
             // txtLog
             // 
-            this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLog.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.txtLog.Location = new System.Drawing.Point(3, 3);
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
-            this.txtLog.Size = new System.Drawing.Size(1044, 600);
+            this.txtLog.Size = new System.Drawing.Size(1044, 569);
             this.txtLog.TabIndex = 0;
             this.txtLog.Text = "";
             this.txtLog.TextChanged += new System.EventHandler(this.txtLog_TextChanged);
@@ -89,6 +92,16 @@
             this.tpSettings.TabIndex = 1;
             this.tpSettings.Text = "Настройки";
             this.tpSettings.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveSettings
+            // 
+            this.btnSaveSettings.Location = new System.Drawing.Point(7, 89);
+            this.btnSaveSettings.Name = "btnSaveSettings";
+            this.btnSaveSettings.Size = new System.Drawing.Size(178, 23);
+            this.btnSaveSettings.TabIndex = 3;
+            this.btnSaveSettings.Text = "Сохранить";
+            this.btnSaveSettings.UseVisualStyleBackColor = true;
+            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
             // 
             // chbCloseOutput
             // 
@@ -168,15 +181,12 @@
             this.panel1.Size = new System.Drawing.Size(1064, 30);
             this.panel1.TabIndex = 0;
             // 
-            // btnSaveSettings
+            // progressBar
             // 
-            this.btnSaveSettings.Location = new System.Drawing.Point(7, 89);
-            this.btnSaveSettings.Name = "btnSaveSettings";
-            this.btnSaveSettings.Size = new System.Drawing.Size(178, 23);
-            this.btnSaveSettings.TabIndex = 3;
-            this.btnSaveSettings.Text = "Сохранить";
-            this.btnSaveSettings.UseVisualStyleBackColor = true;
-            this.btnSaveSettings.Click += new System.EventHandler(this.btnSaveSettings_Click);
+            this.progressBar.Location = new System.Drawing.Point(5, 577);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1039, 23);
+            this.progressBar.TabIndex = 3;
             // 
             // MainForm
             // 
@@ -212,5 +222,6 @@
         private System.Windows.Forms.CheckBox chbUseLogPrefix;
         private System.Windows.Forms.CheckBox chbEnableGameLogging;
         private System.Windows.Forms.Button btnSaveSettings;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

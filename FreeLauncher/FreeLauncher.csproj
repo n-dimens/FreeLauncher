@@ -111,6 +111,7 @@
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Forms\ILauncherLogger.cs" />
+    <Compile Include="Forms\IProgressView.cs" />
     <Compile Include="Forms\LauncherExtensions.cs" />
     <Compile Include="Forms\LauncherForm.cs">
       <SubType>Form</SubType>

@@ -41,7 +41,6 @@ namespace FreeLauncher.Forms
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
             // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
             // this.versionsListView = new Telerik.WinControls.UI.RadListView();
-            this.StatusBar = new Telerik.WinControls.UI.RadProgressBar();
             this.BottomToolbarPanel = new Telerik.WinControls.UI.RadPanel();
             this.DeleteProfileButton = new Telerik.WinControls.UI.RadButton();
             this.ManageUsersButton = new Telerik.WinControls.UI.RadButton();
@@ -56,7 +55,6 @@ namespace FreeLauncher.Forms
             this.mainPageView.SuspendLayout();
             // this.EditVersions.SuspendLayout();
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).BeginInit();
             this.BottomToolbarPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DeleteProfileButton)).BeginInit();
@@ -139,17 +137,6 @@ namespace FreeLauncher.Forms
             // this.versionsListView.VerticalScrollState = Telerik.WinControls.UI.ScrollState.AlwaysShow;
             // this.versionsListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
             // this.versionsListView.ItemMouseClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.versionsListView_ItemMouseClick);
-            // 
-            // StatusBar
-            // 
-            this.StatusBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.StatusBar.Location = new System.Drawing.Point(0, 363);
-            this.StatusBar.Name = "StatusBar";
-            this.StatusBar.Size = new System.Drawing.Size(858, 24);
-            this.StatusBar.TabIndex = 4;
-            this.StatusBar.Text = "StatusBar";
-            this.StatusBar.ThemeName = "VisualStudio2012Dark";
-            this.StatusBar.Visible = false;
             // 
             // radPanel1
             // 
@@ -342,7 +329,6 @@ namespace FreeLauncher.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 446);
             this.Controls.Add(this.mainPageView);
-            this.Controls.Add(this.StatusBar);
             this.Controls.Add(this.BottomToolbarPanel);
             this.MinimumSize = new System.Drawing.Size(712, 446);
             this.Name = "LauncherForm";
@@ -356,7 +342,6 @@ namespace FreeLauncher.Forms
             this.mainPageView.ResumeLayout(false);
             // this.EditVersions.ResumeLayout(false);
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StatusBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).EndInit();
             this.BottomToolbarPanel.ResumeLayout(false);
             this.BottomToolbarPanel.PerformLayout();
@@ -389,7 +374,6 @@ namespace FreeLauncher.Forms
         public RadDropDownList profilesDropDownBox;
         private RadButton EditProfile;
         private RadButton AddProfile;
-        private RadProgressBar StatusBar;
         private RadButton DeleteProfileButton;
     }
 }

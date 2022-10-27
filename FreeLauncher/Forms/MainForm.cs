@@ -12,14 +12,14 @@
 
     using Microsoft.VisualBasic.Devices;
 
-    public partial class MainForm : Form, ILauncherLogger {
+    public partial class MainForm : Form, ILauncherLogger, IProgressView {
         private readonly FreeLauncher.ApplicationContext _applicationContext;
         private readonly LauncherFormPresenter _presenter;
         private readonly LauncherForm frmLauncher;
 
         public MainForm(FreeLauncher.ApplicationContext appContext) {
             _applicationContext = appContext;
-            _presenter = new LauncherFormPresenter(this, _applicationContext);
+            _presenter = new LauncherFormPresenter(this, this, _applicationContext);
             InitializeComponent();
             PrintAppInfo();
             frmLauncher = new LauncherForm(_presenter);
@@ -106,6 +106,48 @@
             _applicationContext.Configuration.ShowGamePrefix = chbUseLogPrefix.Checked;
             _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode = chbCloseOutput.Checked;
             _applicationContext.SaveConfiguration();
+        }
+
+        public void UpdateStageText(string text, string methodName = null) {
+            if (progressBar.InvokeRequired) {
+                progressBar.Invoke(new Action<string, string>(UpdateStageText), text, methodName);
+            }
+            else {
+                // progressBar.Text = text;
+                // TODO: need custom progress bar; https://stackoverflow.com/questions/3529928/how-do-i-put-text-on-progressbar
+                _presenter.LogInfo(text, methodName);
+            }
+        }
+
+        public void SetProgressVisibility(bool b) {
+            if (progressBar.InvokeRequired) {
+                progressBar.Invoke(new Action<bool>(SetProgressVisibility), b);
+            }
+            else {
+                progressBar.Visible = b;
+            }
+        }
+
+        public void IncProgressValue() {
+            SetProgressValue(progressBar.Value + 1);
+        }
+
+        public void SetProgressValue(int value) {
+            if (progressBar.InvokeRequired) {
+                progressBar.Invoke(new Action<int>(SetProgressValue), value);
+            }
+            else {
+                progressBar.Value = value;
+            }
+        }
+
+        public void SetMaxProgressValue(int value) {
+            if (progressBar.InvokeRequired) {
+                progressBar.Invoke(new Action<int>(SetMaxProgressValue), value);
+            }
+            else {
+                progressBar.Maximum = value;
+            }
         }
     }
 }
