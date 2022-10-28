@@ -28,10 +28,7 @@ namespace FreeLauncher.Forms {
         private bool BlockControls {
             set {
                 LaunchButton.Enabled = !value;
-                profilesDropDownBox.Enabled = !value;
                 DeleteProfileButton.Enabled = !value && (_presenter.ProfileManager.Profiles.Count > 1);
-                EditProfile.Enabled = !value;
-                AddProfile.Enabled = !value;
                 NicknameDropDownList.Enabled = !value;
             }
         }
@@ -40,7 +37,6 @@ namespace FreeLauncher.Forms {
             _presenter = presenter;
             _applicationContext = presenter.AppContext;
             InitializeComponent();
-            LoadLocalization();
             //
             Text = ProductName + " " + ProductVersion;
 
@@ -61,21 +57,6 @@ namespace FreeLauncher.Forms {
             UpdateNicknameDropDownList(_presenter.UserManager);
         }
 
-        private void profilesDropDownBox_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
-            if (profilesDropDownBox.SelectedItem == null) {
-                return;
-            }
-
-            _presenter.SelectProfile(profilesDropDownBox.SelectedItem.Text);
-            string path = Path.Combine(_applicationContext.McVersions, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext) + "\\");
-            string state = _applicationContext.ProgramLocalization.ReadyToLaunch;
-            if (!File.Exists(string.Format("{0}/{1}.json", path, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)))) {
-                state = _applicationContext.ProgramLocalization.ReadyToDownload;
-            }
-
-            SelectedVersion.Text = string.Format(state, _presenter.SelectedProfile.GetSelectedVersion(_applicationContext));
-        }
-
         private void NicknameDropDownList_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
             if (NicknameDropDownList.SelectedItem == null) {
                 return;
@@ -83,51 +64,6 @@ namespace FreeLauncher.Forms {
 
             _presenter.SelectUser(NicknameDropDownList.SelectedItem.Text);
             _presenter.SaveUsers();
-        }
-
-        private void EditProfile_Click(object sender, EventArgs e) {
-            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext) {
-                Text = _applicationContext.ProgramLocalization.EditingProfileTitle
-            };
-            pf.ShowDialog();
-            if (pf.DialogResult == DialogResult.OK) {
-                _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
-                if (_presenter.ProfileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
-                    RadMessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
-                        _applicationContext.ProgramLocalization.Error,
-                        MessageBoxButtons.OK, RadMessageIcon.Error);
-                    UpdateProfileList();
-                    return;
-                }
-
-                _presenter.ProfileManager.Profiles.Add(pf.CurrentProfile.ProfileName, pf.CurrentProfile);
-                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
-            }
-
-            _presenter.SaveProfiles();
-            UpdateProfileList();
-        }
-
-        private void AddProfile_Click(object sender, EventArgs e) {
-            Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
-            editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
-                                        DateTime.Now.ToString("HH:mm:ss") + ")";
-            ProfileForm pf = new ProfileForm(editedProfile, _applicationContext) {Text = _applicationContext.ProgramLocalization.AddingProfileTitle};
-            pf.ShowDialog();
-            if (pf.DialogResult == DialogResult.OK) {
-                if (_presenter.ProfileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
-                    RadMessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
-                        _applicationContext.ProgramLocalization.Error,
-                        MessageBoxButtons.OK, RadMessageIcon.Error);
-                    return;
-                }
-
-                _presenter.ProfileManager.Profiles.Add(editedProfile.ProfileName, editedProfile);
-                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
-            }
-
-            _presenter.SaveProfiles();
-            UpdateProfileList();
         }
 
         private void DeleteProfileButton_Click(object sender, EventArgs e) {
@@ -234,23 +170,13 @@ namespace FreeLauncher.Forms {
 
         private void UpdateProfileList() {
             _presenter.ReloadProfileManager();
-            profilesDropDownBox.Items.Clear();
             DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
-            profilesDropDownBox.Items.AddRange(_presenter.ProfileManager.Profiles.Keys);
-            profilesDropDownBox.SelectedItem = profilesDropDownBox.FindItemExact(_presenter.ProfileManager.LastUsedProfile, true);
         }
 
         private void UpdateNicknameDropDownList(UserManager userManager) {
             NicknameDropDownList.Items.Clear();
             NicknameDropDownList.Items.AddRange(userManager.Accounts.Keys);
             NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(userManager.SelectedUsername, true);
-        }
-
-        private void LoadLocalization() {
-            // EditVersions.Text = _applicationContext.ProgramLocalization.ManageVersionsTabText;
-            LaunchButton.Text = _applicationContext.ProgramLocalization.LaunchButtonText;
-            AddProfile.Text = _applicationContext.ProgramLocalization.AddProfileButtonText;
-            EditProfile.Text = _applicationContext.ProgramLocalization.EditProfileButtonText;           
         }
     }
 }

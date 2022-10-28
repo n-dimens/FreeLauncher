@@ -395,5 +395,15 @@ namespace FreeLauncher.Forms {
         public void LogInfo(string text, string methodName = null) {
             _logger.LogInfo(text, methodName);
         }
+
+        public string GetVersionLabel() {
+            string path = Path.Combine(AppContext.McVersions, SelectedProfile.GetSelectedVersion(AppContext) + "\\");
+            string state = AppContext.ProgramLocalization.ReadyToLaunch;
+            if (!File.Exists(string.Format("{0}/{1}.json", path, SelectedProfile.GetSelectedVersion(AppContext)))) {
+                state = AppContext.ProgramLocalization.ReadyToDownload;
+            }
+
+            return string.Format(state, SelectedProfile.GetSelectedVersion(AppContext));
+        }
     }
 }

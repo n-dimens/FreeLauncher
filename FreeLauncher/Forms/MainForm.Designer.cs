@@ -25,6 +25,7 @@
         private void InitializeComponent() {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLog = new System.Windows.Forms.TabPage();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.txtLog = new System.Windows.Forms.RichTextBox();
             this.tpSettings = new System.Windows.Forms.TabPage();
             this.btnSaveSettings = new System.Windows.Forms.Button();
@@ -35,7 +36,9 @@
             this.cbProfiles = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.lblSelectedVersion = new System.Windows.Forms.Label();
+            this.btnEditProfile = new System.Windows.Forms.Button();
+            this.btnAddProfile = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tpLog.SuspendLayout();
             this.tpSettings.SuspendLayout();
@@ -51,7 +54,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1058, 632);
+            this.tabControl1.Size = new System.Drawing.Size(1058, 602);
             this.tabControl1.TabIndex = 0;
             // 
             // tpLog
@@ -61,10 +64,17 @@
             this.tpLog.Location = new System.Drawing.Point(4, 22);
             this.tpLog.Name = "tpLog";
             this.tpLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tpLog.Size = new System.Drawing.Size(1050, 606);
+            this.tpLog.Size = new System.Drawing.Size(1050, 576);
             this.tpLog.TabIndex = 0;
             this.tpLog.Text = "Журнал";
             this.tpLog.UseVisualStyleBackColor = true;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(5, 577);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1039, 23);
+            this.progressBar.TabIndex = 3;
             // 
             // txtLog
             // 
@@ -88,7 +98,7 @@
             this.tpSettings.Location = new System.Drawing.Point(4, 22);
             this.tpSettings.Name = "tpSettings";
             this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSettings.Size = new System.Drawing.Size(1050, 606);
+            this.tpSettings.Size = new System.Drawing.Size(1050, 576);
             this.tpSettings.TabIndex = 1;
             this.tpSettings.Text = "Настройки";
             this.tpSettings.UseVisualStyleBackColor = true;
@@ -146,10 +156,11 @@
             // 
             // cbProfiles
             // 
+            this.cbProfiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbProfiles.FormattingEnabled = true;
             this.cbProfiles.Location = new System.Drawing.Point(10, 3);
             this.cbProfiles.Name = "cbProfiles";
-            this.cbProfiles.Size = new System.Drawing.Size(178, 21);
+            this.cbProfiles.Size = new System.Drawing.Size(228, 21);
             this.cbProfiles.TabIndex = 2;
             this.cbProfiles.SelectedIndexChanged += new System.EventHandler(this.cbProfiles_SelectedIndexChanged);
             // 
@@ -173,20 +184,46 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.lblSelectedVersion);
+            this.panel1.Controls.Add(this.btnEditProfile);
+            this.panel1.Controls.Add(this.btnAddProfile);
             this.panel1.Controls.Add(this.btnLaunch);
             this.panel1.Controls.Add(this.cbProfiles);
-            this.panel1.Location = new System.Drawing.Point(0, 638);
+            this.panel1.Location = new System.Drawing.Point(0, 608);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1064, 30);
+            this.panel1.Size = new System.Drawing.Size(1064, 60);
             this.panel1.TabIndex = 0;
             // 
-            // progressBar
+            // lblSelectedVersion
             // 
-            this.progressBar.Location = new System.Drawing.Point(5, 577);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1039, 23);
-            this.progressBar.TabIndex = 3;
+            this.lblSelectedVersion.AutoSize = true;
+            this.lblSelectedVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblSelectedVersion.Location = new System.Drawing.Point(611, 36);
+            this.lblSelectedVersion.Name = "lblSelectedVersion";
+            this.lblSelectedVersion.Size = new System.Drawing.Size(41, 15);
+            this.lblSelectedVersion.TabIndex = 5;
+            this.lblSelectedVersion.Text = "label1";
+            // 
+            // btnEditProfile
+            // 
+            this.btnEditProfile.Location = new System.Drawing.Point(124, 25);
+            this.btnEditProfile.Name = "btnEditProfile";
+            this.btnEditProfile.Size = new System.Drawing.Size(114, 23);
+            this.btnEditProfile.TabIndex = 4;
+            this.btnEditProfile.Text = "Изменить профиль";
+            this.btnEditProfile.UseVisualStyleBackColor = true;
+            this.btnEditProfile.Click += new System.EventHandler(this.btnEditProfile_Click);
+            // 
+            // btnAddProfile
+            // 
+            this.btnAddProfile.Location = new System.Drawing.Point(10, 25);
+            this.btnAddProfile.Name = "btnAddProfile";
+            this.btnAddProfile.Size = new System.Drawing.Size(114, 23);
+            this.btnAddProfile.TabIndex = 3;
+            this.btnAddProfile.Text = "Добавить профиль";
+            this.btnAddProfile.UseVisualStyleBackColor = true;
+            this.btnAddProfile.Click += new System.EventHandler(this.btnAddProfile_Click);
             // 
             // MainForm
             // 
@@ -194,6 +231,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1064, 668);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Minecraft Launcher";
@@ -204,6 +242,7 @@
             this.tpSettings.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -223,5 +262,8 @@
         private System.Windows.Forms.CheckBox chbEnableGameLogging;
         private System.Windows.Forms.Button btnSaveSettings;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Button btnEditProfile;
+        private System.Windows.Forms.Button btnAddProfile;
+        private System.Windows.Forms.Label lblSelectedVersion;
     }
 }

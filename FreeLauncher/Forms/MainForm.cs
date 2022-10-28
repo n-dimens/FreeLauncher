@@ -5,10 +5,13 @@
     using System.Data;
     using System.Diagnostics;
     using System.Drawing;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+
+    using dotMCLauncher.Core;
 
     using Microsoft.VisualBasic.Devices;
 
@@ -23,7 +26,6 @@
             InitializeComponent();
             PrintAppInfo();
             frmLauncher = new LauncherForm(_presenter);
-            frmLauncher.ShowInTaskbar = false;
             frmLauncher.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             frmLauncher.Show();
 
@@ -31,7 +33,7 @@
             chbUseLogPrefix.Checked = appContext.Configuration.ShowGamePrefix;
             chbCloseOutput.Checked = appContext.Configuration.CloseTabAfterSuccessfulExitCode;
 
-            LoadProfilesList();
+            UpdateProfileList();
         }
 
         private void PrintAppInfo() {
@@ -51,6 +53,23 @@
             cbProfiles.SelectedItem = _presenter.ProfileManager.LastUsedProfile;
         }
 
+        private void DisableControls() {
+            BlockControls(true);
+        }
+
+        private void EnableControls() {
+            BlockControls(false);
+        }
+
+        private void BlockControls(bool value) {
+            btnLaunch.Enabled = !value;
+            cbProfiles.Enabled = !value;
+            // DeleteProfileButton.Enabled = !value && (_presenter.ProfileManager.Profiles.Count > 1);
+            btnEditProfile.Enabled = !value;
+            btnAddProfile.Enabled = !value;
+            // NicknameDropDownList.Enabled = !value;
+        }
+
         private void btnLaunch_Click(object sender, EventArgs e) {
             frmLauncher.LaunchButton.PerformClick();
         }
@@ -60,7 +79,9 @@
                 return;
             }
 
-            frmLauncher.profilesDropDownBox.SelectedItem = frmLauncher.profilesDropDownBox.FindItemExact(cbProfiles.SelectedItem.ToString(), true);
+            _presenter.SelectProfile(cbProfiles.SelectedItem.ToString());
+            lblSelectedVersion.Text = _presenter.GetVersionLabel();
+            // frmLauncher.profilesDropDownBox.SelectedItem = frmLauncher.profilesDropDownBox.FindItemExact(cbProfiles.SelectedItem.ToString(), true);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -148,6 +169,58 @@
             else {
                 progressBar.Maximum = value;
             }
+        }
+
+        // TODO: Текстовая вкладка с редактированием Json?
+        private void btnAddProfile_Click(object sender, EventArgs e) {
+            Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
+            editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
+                                        DateTime.Now.ToString("HH:mm:ss") + ")";
+            ProfileForm pf = new ProfileForm(editedProfile, _applicationContext) { Text = _applicationContext.ProgramLocalization.AddingProfileTitle };
+            pf.ShowDialog();
+            if (pf.DialogResult == DialogResult.OK) {
+                if (_presenter.ProfileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
+                    MessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
+                        _applicationContext.ProgramLocalization.Error,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                _presenter.ProfileManager.Profiles.Add(editedProfile.ProfileName, editedProfile);
+                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+            }
+
+            _presenter.SaveProfiles();
+            UpdateProfileList();
+        }
+
+        private void btnEditProfile_Click(object sender, EventArgs e) {
+            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext) {
+                Text = _applicationContext.ProgramLocalization.EditingProfileTitle
+            };
+            pf.ShowDialog();
+            if (pf.DialogResult == DialogResult.OK) {
+                _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
+                if (_presenter.ProfileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
+                    MessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
+                        _applicationContext.ProgramLocalization.Error,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UpdateProfileList();
+                    return;
+                }
+
+                _presenter.ProfileManager.Profiles.Add(pf.CurrentProfile.ProfileName, pf.CurrentProfile);
+                _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+            }
+
+            _presenter.SaveProfiles();
+            UpdateProfileList();
+        }
+
+        private void UpdateProfileList() {
+            _presenter.ReloadProfileManager();
+            // DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
+            LoadProfilesList();
         }
     }
 }
