@@ -3,11 +3,22 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher {
     public class User {
-        [JsonProperty("username")] public string Username;
-        [JsonProperty("type")] public string Type;
-        [JsonProperty("uuid")] public string Uuid;
-        [JsonProperty("sessionToken")] public string SessionToken;
-        [JsonProperty("accessToken")] public string AccessToken;
-        [JsonProperty("properties")] public JArray UserProperties;
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("uuid")]
+        public string Uuid { get; set; }
+
+        [JsonProperty("sessionToken")]
+        public string SessionToken { get; set; }
+
+        [JsonProperty("accessToken")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("properties")]
+        public JArray UserProperties { get; set; }
     }
 }

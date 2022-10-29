@@ -148,6 +148,8 @@
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserManager.cs" />
+    <Compile Include="UserManagerExtensions.cs" />
+    <Compile Include="UsersRepository.cs" />
     <EmbeddedResource Include="Forms\GameProcessForm.resx">
       <DependentUpon>GameProcessForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -257,7 +257,6 @@
             }
 
             _presenter.SelectUser(cbUsers.SelectedItem.ToString());
-            _presenter.SaveUsers();
         }
 
         public void btnLaunch_Click(object sender, EventArgs e) {

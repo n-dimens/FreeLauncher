@@ -17,6 +17,7 @@ namespace FreeLauncher.Forms {
         // TODO: Выпилить свойства, раскрывающие объекты
         private readonly ILauncherLogger _logger;
         private readonly IProgressView _progressView;
+        private readonly UsersRepository _usersRepository;
 
         public static readonly string ProductName = "FreeLauncher";
 
@@ -30,22 +31,21 @@ namespace FreeLauncher.Forms {
 
         public Profile SelectedProfile { get; private set; }
 
-        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, ApplicationContext applicationContext) {
+        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, ApplicationContext appContext) {
             _logger = viewLogger;
             _progressView = progressView;
-            AppContext = applicationContext;
+            _usersRepository = new UsersRepository(appContext);
+            AppContext = appContext;
         }
 
         public void ReloadUserManager() {
             try {
-                UserManager = File.Exists(AppContext.LauncherUsers)
-                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(AppContext.LauncherUsers))
-                    : new UserManager();
+                UserManager = _usersRepository.Read();
             }
             catch (Exception ex) {
                 LogError("Reading user list: an exception has occurred\n" + ex.Message);
                 UserManager = new UserManager();
-                SaveUsers();
+                _usersRepository.Save(UserManager);
             }
         }
 
@@ -93,12 +93,6 @@ namespace FreeLauncher.Forms {
 
         public void SaveProfiles() {
             ProfileManager.Save(AppContext.LauncherProfiles);
-        }
-
-        public void SaveUsers() {
-            File.WriteAllText(AppContext.LauncherUsers,
-                JsonConvert.SerializeObject(UserManager, Formatting.Indented,
-                    new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
         }
 
         /// <summary>

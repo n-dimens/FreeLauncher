@@ -1,155 +1,157 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Net;
 using System.Windows.Forms;
+
 using dotMCLauncher.YaDra4il;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Data;
 
-namespace FreeLauncher.Forms
-{
-    public partial class UsersForm : RadForm
-    {
-        private readonly ApplicationContext _applicationContext;
-
+namespace FreeLauncher.Forms {
+    public partial class UsersForm : RadForm {
+        private readonly Localization _localization;
+        private readonly UsersRepository _usersRepository;
         private readonly UserManager _userManager;
 
-        public UsersForm(ApplicationContext appContext)
-        {
-            _applicationContext = appContext;
+        public UsersForm(ApplicationContext appContext) {
+            _localization = appContext.ProgramLocalization;
+            _usersRepository = new UsersRepository(appContext);
             InitializeComponent();
             LoadLocalization();
-            _userManager = File.Exists(_applicationContext.LauncherUsers)
-                ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_applicationContext.LauncherUsers))
-                : new UserManager();
+            _userManager = _usersRepository.Read();
             UpdateUsers();
         }
 
-        private void YesNoToggleSwitch_ValueChanged(object sender, EventArgs e)
-        {
-            PasswordTextBox.Enabled = YesNoToggleSwitch.Value;
-            TextBox_TextChanged(this, EventArgs.Empty);
+        private void IsLicense_ValueChanged(object sender, EventArgs e) {
+            PasswordTextBox.Enabled = swIsLicense.Value;
+            AddUserButton.Enabled = AllowAddUser(UsernameTextBox.Text, PasswordTextBox.Text, swIsLicense.Value);
         }
 
-        private void AddUserButton_Click(object sender, EventArgs e)
-        {
-            AddUserButton.Enabled =
-                UsernameTextBox.Enabled = PasswordTextBox.Enabled = YesNoToggleSwitch.Enabled = false;
-            ControlBox = false;
-            AddUserButton.Text = _applicationContext.ProgramLocalization.PleaseWait;
+        private void AddUserButton_Click(object sender, EventArgs e) {
+            if (!swIsLicense.Value) {
+                User user = new User {
+                    Username = UsernameTextBox.Text,
+                    Type = "offline"
+                };
+                _userManager.AddUser(user);
+                _userManager.SelectedUsername = user.Username;
+                _usersRepository.Save(_userManager);
+                UpdateUsers();
+                return;
+            }
+
+            DisableControls();
+            AddUserButton.Text = _localization.PleaseWait;
             BackgroundWorker bgw = new BackgroundWorker();
             bgw.DoWork += delegate {
-                User user = new User {Username = UsernameTextBox.Text};
-                if (!YesNoToggleSwitch.Value) {
-                    user.Type = "offline";
-                    if (_userManager.Accounts.ContainsKey(user.Username)) {
-                        _userManager.Accounts[user.Username] = user;
-                    } else {
-                        _userManager.Accounts.Add(user.Username, user);
-                    }
-                    _userManager.SelectedUsername = user.Username;
-                    SaveUsers();
-                    UpdateUsers();
-                    return;
-                }
-                AuthManager auth = new AuthManager {Email = UsernameTextBox.Text, Password = PasswordTextBox.Text};
+                AuthManager auth = new AuthManager { 
+                    Email = UsernameTextBox.Text, 
+                    Password = PasswordTextBox.Text 
+                };
                 try {
                     auth.Login();
-                    user.Type = auth.IsLegacy ? "legacy" : "mojang";
-                    user.AccessToken = auth.AccessToken;
-                    user.SessionToken = auth.SessionToken;
-                    user.Uuid = auth.Uuid;
-                    user.UserProperties = auth.UserProperties;
-                    if (_userManager.Accounts.ContainsKey(user.Username)) {
-                        _userManager.Accounts[user.Username] = user;
-                    } else {
-                        _userManager.Accounts.Add(user.Username, user);
-                    }
+                    User user = new User {
+                        Username = UsernameTextBox.Text,
+                        Type = auth.IsLegacy ? "legacy" : "mojang",
+                        AccessToken = auth.AccessToken,
+                        SessionToken = auth.SessionToken,
+                        Uuid = auth.Uuid,
+                        UserProperties = auth.UserProperties
+                    };
+
+                    _userManager.AddUser(user);
                     _userManager.SelectedUsername = user.Username;
                 }
                 catch (WebException ex) {
                     switch (ex.Status) {
                         case WebExceptionStatus.ProtocolError:
-                            RadMessageBox.Show(_applicationContext.ProgramLocalization.IncorrectLoginOrPassword, _applicationContext.ProgramLocalization.Error, MessageBoxButtons.OK,
+                            RadMessageBox.Show(_localization.IncorrectLoginOrPassword, _localization.Error, MessageBoxButtons.OK,
                                 RadMessageIcon.Error);
                             return;
                         default:
                             return;
                     }
                 }
-                Invoke(new Action(() => {
-                    SaveUsers();
-                    UpdateUsers();
-                    UsernameTextBox.Clear();
-                    PasswordTextBox.Clear();
-                }));
             };
             bgw.RunWorkerCompleted += delegate {
-                UsernameTextBox.Enabled = YesNoToggleSwitch.Enabled = true;
-                ControlBox = true;
-                AddUserButton.Text = _applicationContext.ProgramLocalization.AddNewUserButton;
-                YesNoToggleSwitch_ValueChanged(this, EventArgs.Empty);
+                _usersRepository.Save(_userManager);
+                UpdateUsers();
+                UsernameTextBox.Clear();
+                PasswordTextBox.Clear();
+                EnableControls();
+                AddUserButton.Text = _localization.AddNewUserButton;
+                IsLicense_ValueChanged(this, EventArgs.Empty);
             };
             bgw.RunWorkerAsync();
         }
 
-        private void UpdateUsers()
-        {
+        private void DisableControls() {
+            AddUserButton.Enabled = false;
+            UsernameTextBox.Enabled = false;
+            PasswordTextBox.Enabled = false;
+            swIsLicense.Enabled = false;
+            ControlBox = false;
+        }
+
+        private void EnableControls() {
+            UsernameTextBox.Enabled = true;
+            swIsLicense.Enabled = true;
+            ControlBox = true;
+        }
+
+        private void DeleteUserButton_Click(object sender, EventArgs e) {
+            _userManager.Accounts.Remove(UsersListControl.SelectedItem.Tag.ToString());
+            _usersRepository.Save(_userManager);
+            UpdateUsers();
+        }
+
+        private void UpdateUsers() {
             UsersListControl.Items.Clear();
             foreach (KeyValuePair<string, User> item in _userManager.Accounts) {
-                UsersListControl.Items.Add(new RadListDataItem($"{item.Key}[{_userManager.Accounts[item.Key].Type}]") {
+                UsersListControl.Items.Add(new RadListDataItem($"{item.Key} [{_userManager.Accounts[item.Key].Type}]") {
                     Tag = item.Key
                 });
             }
         }
 
-        private void SaveUsers()
-        {
-            File.WriteAllText(_applicationContext.LauncherUsers,
-                JsonConvert.SerializeObject(_userManager, Formatting.Indented,
-                    new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore}));
-        }
-
-        private void DeleteUserButton_Click(object sender, EventArgs e)
-        {
-            _userManager.Accounts.Remove(UsersListControl.SelectedItem.Tag.ToString());
-            SaveUsers();
-            UpdateUsers();
-        }
-
-        private void UsersListControl_SelectedIndexChanged(object sender,
-            PositionChangedEventArgs e)
-        {
+        private void UsersListControl_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
             DeleteUserButton.Enabled = UsersListControl.SelectedItem != null;
         }
 
-        private void TextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(UsernameTextBox.Text)) {
-                if (!YesNoToggleSwitch.Value ||
-                    YesNoToggleSwitch.Value && !string.IsNullOrWhiteSpace(PasswordTextBox.Text)) {
-                    AddUserButton.Enabled = true;
-                } else if (YesNoToggleSwitch.Value && string.IsNullOrWhiteSpace(PasswordTextBox.Text)) {
-                    AddUserButton.Enabled = false;
-                }
-            } else {
-                AddUserButton.Enabled = false;
-            }
+        private void UsernameTextBox_TextChanged(object sender, EventArgs e) {
+            AddUserButton.Enabled = AllowAddUser(UsernameTextBox.Text, PasswordTextBox.Text, swIsLicense.Value);
         }
 
-        private void LoadLocalization()
-        {
-            DeleteUserButton.Text = _applicationContext.ProgramLocalization.RemoveSelectedUser;
-            AddNewUserBox.Text = _applicationContext.ProgramLocalization.AddNewUserBox;
-            NicknameLabel.Text = _applicationContext.ProgramLocalization.Nickname;
-            LicenseQuestionLabel.Text = _applicationContext.ProgramLocalization.LicenseQuestion;
-            PasswordLabel.Text = _applicationContext.ProgramLocalization.Password;
-            AddUserButton.Text = _applicationContext.ProgramLocalization.AddNewUserButton;
+        private void PasswordTextBox_TextChanged(object sender, EventArgs e) {
+            AddUserButton.Enabled = AllowAddUser(UsernameTextBox.Text, PasswordTextBox.Text, swIsLicense.Value);
+        }
+
+        private bool AllowAddUser(string username, string password, bool isLicense) {
+            if (string.IsNullOrWhiteSpace(username)) {
+                return false;
+            }
+
+            if (!isLicense) {
+                return true;
+            }
+
+            if (isLicense) {
+                return !string.IsNullOrWhiteSpace(password);
+            }
+
+            return false;
+        }
+
+        private void LoadLocalization() {
+            DeleteUserButton.Text = _localization.RemoveSelectedUser;
+            AddNewUserBox.Text = _localization.AddNewUserBox;
+            NicknameLabel.Text = _localization.Nickname;
+            LicenseQuestionLabel.Text = _localization.LicenseQuestion;
+            PasswordLabel.Text = _localization.Password;
+            AddUserButton.Text = _localization.AddNewUserButton;
         }
     }
 }

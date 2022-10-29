@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 
 namespace FreeLauncher {
     public class UserManager {
-        [JsonProperty("selectedUsername")] public string SelectedUsername;
+        [JsonProperty("selectedUsername")]
+        public string SelectedUsername { get; set; }
         
-        [JsonProperty("users")] public Dictionary<string, User> Accounts = new Dictionary<string, User>();
+        [JsonProperty("users")] 
+        public Dictionary<string, User> Accounts { get; set; }
     }
 }
