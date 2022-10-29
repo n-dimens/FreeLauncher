@@ -41,24 +41,10 @@ namespace FreeLauncher.Forms
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
             // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();
             // this.versionsListView = new Telerik.WinControls.UI.RadListView();
-            this.BottomToolbarPanel = new Telerik.WinControls.UI.RadPanel();
-            this.DeleteProfileButton = new Telerik.WinControls.UI.RadButton();
-            this.ManageUsersButton = new Telerik.WinControls.UI.RadButton();
-            this.NicknameDropDownList = new Telerik.WinControls.UI.RadDropDownList();
-            this.SelectedVersion = new System.Windows.Forms.Label();
-            this.LogoBox = new System.Windows.Forms.PictureBox();
-            this.LaunchButton = new Telerik.WinControls.UI.RadButton();
             ((System.ComponentModel.ISupportInitialize)(this.mainPageView)).BeginInit();
             this.mainPageView.SuspendLayout();
             // this.EditVersions.SuspendLayout();
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).BeginInit();
-            this.BottomToolbarPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DeleteProfileButton)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ManageUsersButton)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NicknameDropDownList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LogoBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LaunchButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             this.SuspendLayout();
             // 
@@ -132,139 +118,12 @@ namespace FreeLauncher.Forms
             // this.versionsListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
             // this.versionsListView.ItemMouseClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.versionsListView_ItemMouseClick);
             // 
-            // radPanel1
-            // 
-            this.BottomToolbarPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("radPanel1.BackgroundImage")));
-            this.BottomToolbarPanel.Controls.Add(this.DeleteProfileButton);
-            this.BottomToolbarPanel.Controls.Add(this.ManageUsersButton);
-            this.BottomToolbarPanel.Controls.Add(this.NicknameDropDownList);
-            this.BottomToolbarPanel.Controls.Add(this.SelectedVersion);
-            this.BottomToolbarPanel.Controls.Add(this.LogoBox);
-            this.BottomToolbarPanel.Controls.Add(this.LaunchButton);
-            this.BottomToolbarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.BottomToolbarPanel.Location = new System.Drawing.Point(0, 387);
-            this.BottomToolbarPanel.Name = "radPanel1";
-            // 
-            // 
-            // 
-            this.BottomToolbarPanel.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.BottomToolbarPanel.RootElement.AngleTransform = 0F;
-            this.BottomToolbarPanel.RootElement.FlipText = false;
-            this.BottomToolbarPanel.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.BottomToolbarPanel.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.BottomToolbarPanel.Size = new System.Drawing.Size(858, 59);
-            this.BottomToolbarPanel.TabIndex = 3;
-            this.BottomToolbarPanel.ThemeName = "VisualStudio2012Dark";
-            // 
-            // DeleteProfileButton
-            // 
-            this.DeleteProfileButton.Image = ((System.Drawing.Image)(resources.GetObject("DeleteProfileButton.Image")));
-            this.DeleteProfileButton.ImageAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.DeleteProfileButton.Location = new System.Drawing.Point(6, 6);
-            this.DeleteProfileButton.Name = "DeleteProfileButton";
-            this.DeleteProfileButton.Size = new System.Drawing.Size(32, 24);
-            this.DeleteProfileButton.TabIndex = 8;
-            this.DeleteProfileButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.DeleteProfileButton.ThemeName = "VisualStudio2012Dark";
-            this.DeleteProfileButton.Click += new System.EventHandler(this.DeleteProfileButton_Click);
-            this.DeleteProfileButton.Visible = false;
-            // 
-            // ManageUsersButton
-            // 
-            this.ManageUsersButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.ManageUsersButton.Image = global::FreeLauncher.Properties.Resources.edit;
-            this.ManageUsersButton.ImageAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ManageUsersButton.Location = new System.Drawing.Point(513, 6);
-            this.ManageUsersButton.Name = "ManageUsersButton";
-            // 
-            // 
-            // 
-            this.ManageUsersButton.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.ManageUsersButton.RootElement.AngleTransform = 0F;
-            this.ManageUsersButton.RootElement.FlipText = false;
-            this.ManageUsersButton.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.ManageUsersButton.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ManageUsersButton.Size = new System.Drawing.Size(32, 24);
-            this.ManageUsersButton.TabIndex = 7;
-            this.ManageUsersButton.ThemeName = "VisualStudio2012Dark";
-            this.ManageUsersButton.Click += new System.EventHandler(this.ManageUsersButton_Click);
-            // 
-            // NicknameDropDownList
-            // 
-            this.NicknameDropDownList.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.NicknameDropDownList.AutoCompleteDisplayMember = null;
-            this.NicknameDropDownList.AutoCompleteValueMember = null;
-            this.NicknameDropDownList.Location = new System.Drawing.Point(314, 6);
-            this.NicknameDropDownList.Name = "NicknameDropDownList";
-            this.NicknameDropDownList.NullText = "Ник";
-            // 
-            // 
-            // 
-            this.NicknameDropDownList.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.NicknameDropDownList.RootElement.AngleTransform = 0F;
-            this.NicknameDropDownList.RootElement.FlipText = false;
-            this.NicknameDropDownList.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.NicknameDropDownList.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.NicknameDropDownList.Size = new System.Drawing.Size(196, 24);
-            this.NicknameDropDownList.TabIndex = 3;
-            this.NicknameDropDownList.ThemeName = "VisualStudio2012Dark";
-            this.NicknameDropDownList.SelectedIndexChanged += new Telerik.WinControls.UI.Data.PositionChangedEventHandler(this.NicknameDropDownList_SelectedIndexChanged);
-            // 
-            // SelectedVersion
-            // 
-            this.SelectedVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectedVersion.AutoSize = true;
-            this.SelectedVersion.BackColor = System.Drawing.Color.Transparent;
-            this.SelectedVersion.ForeColor = System.Drawing.Color.White;
-            this.SelectedVersion.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.SelectedVersion.Location = new System.Drawing.Point(631, 42);
-            this.SelectedVersion.MinimumSize = new System.Drawing.Size(220, 13);
-            this.SelectedVersion.Name = "SelectedVersion";
-            this.SelectedVersion.Size = new System.Drawing.Size(220, 13);
-            this.SelectedVersion.TabIndex = 6;
-            this.SelectedVersion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // LogoBox
-            // 
-            this.LogoBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogoBox.BackColor = System.Drawing.Color.Transparent;
-            this.LogoBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.LogoBox.Image = ((System.Drawing.Image)(resources.GetObject("LogoBox.Image")));
-            this.LogoBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.LogoBox.Location = new System.Drawing.Point(651, -11);
-            this.LogoBox.Name = "LogoBox";
-            this.LogoBox.Size = new System.Drawing.Size(181, 84);
-            this.LogoBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.LogoBox.TabIndex = 5;
-            this.LogoBox.TabStop = false;
-            // 
-            // LaunchButton
-            // 
-            this.LaunchButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.LaunchButton.Location = new System.Drawing.Point(314, 33);
-            this.LaunchButton.Name = "LaunchButton";
-            // 
-            // 
-            // 
-            this.LaunchButton.RootElement.Alignment = System.Drawing.ContentAlignment.TopLeft;
-            this.LaunchButton.RootElement.AngleTransform = 0F;
-            this.LaunchButton.RootElement.FlipText = false;
-            this.LaunchButton.RootElement.Margin = new System.Windows.Forms.Padding(0);
-            this.LaunchButton.RootElement.TextOrientation = System.Windows.Forms.Orientation.Horizontal;
-            this.LaunchButton.Size = new System.Drawing.Size(231, 22);
-            this.LaunchButton.TabIndex = 4;
-            this.LaunchButton.Text = "Запуск игры";
-            this.LaunchButton.ThemeName = "VisualStudio2012Dark";
-            this.LaunchButton.Visible = false;
-            this.LaunchButton.Click += new System.EventHandler(this.LaunchButton_Click);
-            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 446);
             this.Controls.Add(this.mainPageView);
-            this.Controls.Add(this.BottomToolbarPanel);
             this.MinimumSize = new System.Drawing.Size(712, 446);
             this.Name = "LauncherForm";
             // 
@@ -277,14 +136,6 @@ namespace FreeLauncher.Forms
             this.mainPageView.ResumeLayout(false);
             // this.EditVersions.ResumeLayout(false);
             // ((System.ComponentModel.ISupportInitialize)(this.versionsListView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BottomToolbarPanel)).EndInit();
-            this.BottomToolbarPanel.ResumeLayout(false);
-            this.BottomToolbarPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DeleteProfileButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ManageUsersButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NicknameDropDownList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LogoBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LaunchButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
             this.ResumeLayout(false);
 
@@ -296,14 +147,5 @@ namespace FreeLauncher.Forms
         private RadPageView mainPageView;
         // private RadPageViewPage EditVersions;
         // private RadListView versionsListView;
-
-        private RadPanel BottomToolbarPanel;
-        private RadButton ManageUsersButton;
-        public RadDropDownList NicknameDropDownList;
-        private Label SelectedVersion;
-        private PictureBox LogoBox;
-
-        public RadButton LaunchButton;
-        private RadButton DeleteProfileButton;
     }
 }

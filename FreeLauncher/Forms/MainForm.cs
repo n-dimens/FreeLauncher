@@ -24,16 +24,32 @@
             _applicationContext = appContext;
             _presenter = new LauncherFormPresenter(this, this, _applicationContext);
             InitializeComponent();
+
+            if (!Directory.Exists(_applicationContext.McDirectory)) {
+                Directory.CreateDirectory(_applicationContext.McDirectory);
+            }
+
+            if (!Directory.Exists(_applicationContext.McLauncher)) {
+                Directory.CreateDirectory(_applicationContext.McLauncher);
+            }
+
             PrintAppInfo();
             frmLauncher = new LauncherForm(_presenter);
             frmLauncher.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            btnLaunch.Click += new EventHandler(frmLauncher.LaunchButton_Click);
             frmLauncher.Show();
 
             chbEnableGameLogging.Checked = appContext.Configuration.EnableGameLogging;
             chbUseLogPrefix.Checked = appContext.Configuration.ShowGamePrefix;
             chbCloseOutput.Checked = appContext.Configuration.CloseTabAfterSuccessfulExitCode;
 
-            UpdateProfileList();
+            Focus();
+
+            _presenter.ReloadProfileManager();
+            LoadProfilesList();
+
+            _presenter.ReloadUserManager();
+            LoadUsersList(_presenter.UserManager);
         }
 
         private void PrintAppInfo() {
@@ -67,11 +83,8 @@
             // DeleteProfileButton.Enabled = !value && (_presenter.ProfileManager.Profiles.Count > 1);
             btnEditProfile.Enabled = !value;
             btnAddProfile.Enabled = !value;
-            // NicknameDropDownList.Enabled = !value;
-        }
-
-        private void btnLaunch_Click(object sender, EventArgs e) {
-            frmLauncher.LaunchButton.PerformClick();
+            cbUsers.Enabled = !value;
+            btnUsers.Enabled = !value;
         }
 
         private void cbProfiles_SelectedIndexChanged(object sender, EventArgs e) {
@@ -221,6 +234,37 @@
             _presenter.ReloadProfileManager();
             // DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
             LoadProfilesList();
+        }
+
+        private void btnUsers_Click(object sender, EventArgs e) {
+            new UsersForm(_applicationContext).ShowDialog();
+            _presenter.ReloadUserManager();
+            LoadUsersList(_presenter.UserManager);
+        }
+
+        private void cbUsers_SelectedIndexChanged(object sender, EventArgs e) {
+            if (cbUsers.SelectedItem == null) {
+                return;
+            }
+
+            _presenter.SelectUser(cbUsers.SelectedItem.ToString());
+            _presenter.SaveUsers();
+        }
+
+        private void LoadUsersList(UserManager userManager) {
+            cbUsers.Items.Clear();
+            if (userManager.Accounts.Count == 0) {
+                return;
+            }
+
+            cbUsers.Items.AddRange(userManager.Accounts.Keys.ToArray());
+            var itemIndex = cbUsers.FindStringExact(userManager.SelectedUsername);
+            if (itemIndex == -1) {
+                cbUsers.SelectedIndex = 0;
+            }
+            else {
+                cbUsers.SelectedIndex = itemIndex;
+            }
         }
     }
 }

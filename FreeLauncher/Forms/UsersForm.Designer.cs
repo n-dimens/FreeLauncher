@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.label1 = new System.Windows.Forms.Label();
             this.UsersListControl = new Telerik.WinControls.UI.RadListControl();
             this.DeleteUserButton = new Telerik.WinControls.UI.RadButton();

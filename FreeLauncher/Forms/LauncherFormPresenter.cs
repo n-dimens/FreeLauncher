@@ -54,43 +54,6 @@ namespace FreeLauncher.Forms {
             UserManager.SelectedUsername = nickname;
         }
 
-        public void SelectUserForLaunch(string nickname) {
-            if (!UserManager.Accounts.ContainsKey(nickname)) {
-                User user = new User {
-                    Username = nickname,
-                    Type = "offline"
-                };
-                UserManager.Accounts.Add(user.Username, user);
-                SelectedUser = user;
-            }
-            else {
-                SelectedUser = UserManager.Accounts[nickname];
-                if (SelectedUser.Type != "offline") {
-                    AuthManager am = new AuthManager {
-                        SessionToken = SelectedUser.SessionToken,
-                        Uuid = SelectedUser.Uuid
-                    };
-                    bool check = am.CheckSessionToken();
-                    if (!check) {
-                        LogError("Session token is not valid. Please, head up to user manager and re-add your account.");
-                        User user = new User {
-                            Username = nickname,
-                            Type = "offline"
-                        };
-                        SelectedUser = user;
-                    }
-                    else {
-                        Refresh refresh = new Refresh(SelectedUser.SessionToken, SelectedUser.AccessToken);
-                        SelectedUser.UserProperties = (JArray)refresh.user["properties"];
-                        SelectedUser.SessionToken = refresh.accessToken;
-                        UserManager.Accounts[nickname] = SelectedUser;
-                    }
-                }
-            }
-
-            UserManager.SelectedUsername = SelectedUser.Username;
-        }
-
         public void SelectProfile(string name) {
             SelectedProfile = ProfileManager.Profiles[name];
             ProfileManager.LastUsedProfile = name;

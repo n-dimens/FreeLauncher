@@ -16,54 +16,12 @@ namespace FreeLauncher.Forms {
     public partial class LauncherForm : RadForm {
         private readonly LauncherFormPresenter _presenter;
         private readonly ApplicationContext _applicationContext;
-
-        private void DisableControls() {
-            BlockControls = true;
-        }
-        
-        private void EnableControls() {
-            BlockControls = false;
-        }
-        
-        private bool BlockControls {
-            set {
-                LaunchButton.Enabled = !value;
-                DeleteProfileButton.Enabled = !value && (_presenter.ProfileManager.Profiles.Count > 1);
-                NicknameDropDownList.Enabled = !value;
-            }
-        }
-       
+      
         public LauncherForm(LauncherFormPresenter presenter) {
             _presenter = presenter;
             _applicationContext = presenter.AppContext;
             InitializeComponent();
-            //
-            Text = ProductName + " " + ProductVersion;
-
-            if (!Directory.Exists(_applicationContext.McDirectory)) {
-                Directory.CreateDirectory(_applicationContext.McDirectory);
-            }
-
-            if (!Directory.Exists(_applicationContext.McLauncher)) {
-                Directory.CreateDirectory(_applicationContext.McLauncher);
-            }
-
-            Focus();
-            
-            _presenter.UpdateVersionsList();
-            UpdateProfileList();
-            
-            _presenter.ReloadUserManager();
-            UpdateNicknameDropDownList(_presenter.UserManager);
-        }
-
-        private void NicknameDropDownList_SelectedIndexChanged(object sender, PositionChangedEventArgs e) {
-            if (NicknameDropDownList.SelectedItem == null) {
-                return;
-            }
-
-            _presenter.SelectUser(NicknameDropDownList.SelectedItem.Text);
-            _presenter.SaveUsers();
+            Text = ProductName + " " + ProductVersion;      
         }
 
         private void DeleteProfileButton_Click(object sender, EventArgs e) {
@@ -82,18 +40,13 @@ namespace FreeLauncher.Forms {
             UpdateProfileList();
         }
 
-        private void ManageUsersButton_Click(object sender, EventArgs e) {
-            new UsersForm(_applicationContext).ShowDialog();
-            _presenter.ReloadUserManager();
-            UpdateNicknameDropDownList(_presenter.UserManager);
-        }
-
-        private void LaunchButton_Click(object sender, EventArgs e) {
-            if (string.IsNullOrWhiteSpace(NicknameDropDownList.Text)) {
-                NicknameDropDownList.Text = $"Player{DateTime.Now:hhmmss}";
+        public void LaunchButton_Click(object sender, EventArgs e) {
+            if (_presenter.SelectedUser == null) {
+                _presenter.LogError("Пользователь не выбран");
+                return;
             }
 
-            DisableControls();
+            // DisableControls();
             var bgw = new BackgroundWorker();
             bgw.DoWork += (o, args) => {
                 // SetProgressVisibility(true);
@@ -105,16 +58,12 @@ namespace FreeLauncher.Forms {
             bgw.RunWorkerCompleted += (o, args) => {
                 // запуск в UI потоке
                 Launch();
-                EnableControls();
+                // EnableControls();
             };
             bgw.RunWorkerAsync();
         }
         
         private void Launch() {
-            _presenter.SelectUserForLaunch(NicknameDropDownList.Text);
-            _presenter.SaveUsers();
-            _presenter.ReloadUserManager();
-            UpdateNicknameDropDownList(_presenter.UserManager);
             var selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
 
@@ -131,7 +80,6 @@ namespace FreeLauncher.Forms {
                 .Profile(_presenter.SelectedProfile)
                 .User(_presenter.SelectedUser)
                 .Version(selectedVersion)
-                .OfflineNickname(NicknameDropDownList.Text)
                 .Build();
 
             _presenter.LogInfo($"Command line: \"{proc.FileName}\" {proc.Arguments}");
@@ -170,13 +118,7 @@ namespace FreeLauncher.Forms {
 
         private void UpdateProfileList() {
             _presenter.ReloadProfileManager();
-            DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
-        }
-
-        private void UpdateNicknameDropDownList(UserManager userManager) {
-            NicknameDropDownList.Items.Clear();
-            NicknameDropDownList.Items.AddRange(userManager.Accounts.Keys);
-            NicknameDropDownList.SelectedItem = NicknameDropDownList.FindItemExact(userManager.SelectedUsername, true);
+            // DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
         }
     }
 }

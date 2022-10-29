@@ -13,7 +13,6 @@ namespace FreeLauncher.Forms {
         private Profile _selectedProfile;
         private User _selectedUser;
         private Version _selectedVersion;
-        private string _offlineNickname;
 
         public ProcessInfoBuilder(ApplicationContext applicationContext) {
             _applicationContext = applicationContext;
@@ -34,11 +33,6 @@ namespace FreeLauncher.Forms {
             return this;
         }
 
-        public ProcessInfoBuilder OfflineNickname(string nickname) {
-            _offlineNickname = nickname;
-            return this;
-        }
-
         public ProcessStartInfo Build() {
             JObject properties = new JObject {
                 new JProperty("freelauncher", new JArray("cheeki_breeki_iv_damke"))
@@ -48,7 +42,7 @@ namespace FreeLauncher.Forms {
                 ? string.Empty
                 : _selectedProfile.JavaArguments;
             
-            string userName = _selectedUser.Type == "offline" ? _offlineNickname : new Username() { Uuid = _selectedUser.Uuid }.GetUsernameByUuid();
+            string userName = _selectedUser.Type == "offline" ? _selectedUser.Username : new Username() { Uuid = _selectedUser.Uuid }.GetUsernameByUuid();
             string userProperties = _selectedVersion.ArgumentCollection.ToString(new Dictionary<string, string> {
                 { "auth_player_name", userName },
                 { "version_name", _selectedProfile.ProfileName },
