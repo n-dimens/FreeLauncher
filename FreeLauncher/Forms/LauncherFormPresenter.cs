@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
-    public class LauncherFormPresenter {
+    public class MainFormPresenter {
         // TODO: Выпилить свойства, раскрывающие объекты
         private readonly ILauncherLogger _logger;
         private readonly IProgressView _progressView;
@@ -30,7 +30,7 @@ namespace FreeLauncher.Forms {
 
         public Profile SelectedProfile { get; private set; }
 
-        public LauncherFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, ApplicationContext applicationContext) {
+        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, ApplicationContext applicationContext) {
             _logger = viewLogger;
             _progressView = progressView;
             AppContext = applicationContext;

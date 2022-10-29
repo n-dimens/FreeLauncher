@@ -5,7 +5,7 @@ using Telerik.WinControls.UI;
 
 namespace FreeLauncher.Forms
 {
-    partial class LauncherForm
+    partial class GameProcessForm
     {
         /// <summary>
         /// Required designer variable.
@@ -36,7 +36,7 @@ namespace FreeLauncher.Forms
             // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn1 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 0", "Версия");
             // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn2 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 1", "Тип");
             // Telerik.WinControls.UI.ListViewDetailColumn listViewDetailColumn3 = new Telerik.WinControls.UI.ListViewDetailColumn("Column 2", "Зависимость");
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameProcessForm));
             this.vs12theme = new Telerik.WinControls.Themes.VisualStudio2012DarkTheme();
             this.mainPageView = new Telerik.WinControls.UI.RadPageView();
             // this.EditVersions = new Telerik.WinControls.UI.RadPageViewPage();

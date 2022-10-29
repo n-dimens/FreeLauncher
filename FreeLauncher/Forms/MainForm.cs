@@ -10,19 +10,19 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-
+    using Version = dotMCLauncher.Core.Version;
     using dotMCLauncher.Core;
 
     using Microsoft.VisualBasic.Devices;
 
     public partial class MainForm : Form, ILauncherLogger, IProgressView {
         private readonly FreeLauncher.ApplicationContext _applicationContext;
-        private readonly LauncherFormPresenter _presenter;
-        private readonly LauncherForm frmLauncher;
+        private readonly MainFormPresenter _presenter;
+        private readonly GameProcessForm frmGameProcess;
 
         public MainForm(FreeLauncher.ApplicationContext appContext) {
             _applicationContext = appContext;
-            _presenter = new LauncherFormPresenter(this, this, _applicationContext);
+            _presenter = new MainFormPresenter(this, this, _applicationContext);
             InitializeComponent();
 
             if (!Directory.Exists(_applicationContext.McDirectory)) {
@@ -34,10 +34,7 @@
             }
 
             PrintAppInfo();
-            frmLauncher = new LauncherForm(_presenter);
-            frmLauncher.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-            btnLaunch.Click += new EventHandler(frmLauncher.LaunchButton_Click);
-            frmLauncher.Show();
+            frmGameProcess = new GameProcessForm(_presenter.AppContext);
 
             chbEnableGameLogging.Checked = appContext.Configuration.EnableGameLogging;
             chbUseLogPrefix.Checked = appContext.Configuration.ShowGamePrefix;
@@ -99,7 +96,7 @@
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             SaveConfiguration();
-            frmLauncher.Close();
+            frmGameProcess.Close();
         }
 
         public void LogDebug(string text, string methodName) {
@@ -236,6 +233,22 @@
             LoadProfilesList();
         }
 
+        //private void DeleteProfileButton_Click(object sender, EventArgs e) {
+        //    DialogResult dr =
+        //        RadMessageBox.Show(
+        //            string.Format(_applicationContext.ProgramLocalization.ProfileDeleteConfirmationText,
+        //                _presenter.ProfileManager.LastUsedProfile), _applicationContext.ProgramLocalization.DeleteConfirmationTitle,
+        //            MessageBoxButtons.YesNo, RadMessageIcon.Question);
+        //    if (dr != DialogResult.Yes) {
+        //        return;
+        //    }
+
+        //    _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
+        //    _presenter.ProfileManager.LastUsedProfile = _presenter.ProfileManager.Profiles.FirstOrDefault().Key;
+        //    _presenter.SaveProfiles();
+        //    UpdateProfileList();
+        //}
+
         private void btnUsers_Click(object sender, EventArgs e) {
             new UsersForm(_applicationContext).ShowDialog();
             _presenter.ReloadUserManager();
@@ -249,6 +262,58 @@
 
             _presenter.SelectUser(cbUsers.SelectedItem.ToString());
             _presenter.SaveUsers();
+        }
+
+        public void btnLaunch_Click(object sender, EventArgs e) {
+            if (_presenter.SelectedUser == null) {
+                _presenter.LogError("Пользователь не выбран");
+                return;
+            }
+
+            DisableControls();
+            var bgw = new BackgroundWorker();
+            bgw.DoWork += (o, args) => {
+                SetProgressVisibility(true);
+                _presenter.CheckVersionAvailability();
+                _presenter.CheckLibraries();
+                _presenter.CheckGameResources();
+                SetProgressVisibility(false);
+            };
+            bgw.RunWorkerCompleted += (o, args) => {
+                // запуск в UI потоке
+                Launch();
+                EnableControls();
+            };
+            bgw.RunWorkerAsync();
+        }
+
+        private void Launch() {
+            var selectedVersion = Version.ParseVersion(
+                new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
+
+            if (_presenter.SelectedProfile.FastConnectionSettigs != null) {
+                selectedVersion.ArgumentCollection.Add("server", _presenter.SelectedProfile.FastConnectionSettigs.ServerIP);
+                selectedVersion.ArgumentCollection.Add("port", _presenter.SelectedProfile.FastConnectionSettigs.ServerPort.ToString());
+            }
+
+            if (_presenter.SelectedProfile.WorkingDirectory != null && !Directory.Exists(_presenter.SelectedProfile.WorkingDirectory)) {
+                Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);
+            }
+
+            var proc = ProcessInfoBuilder.Create(_applicationContext)
+                .Profile(_presenter.SelectedProfile)
+                .User(_presenter.SelectedUser)
+                .Version(selectedVersion)
+                .Build();
+
+            _presenter.LogInfo($"Command line: \"{proc.FileName}\" {proc.Arguments}");
+            _presenter.LogInfo($"Version {selectedVersion.VersionId} successfuly launched.");
+
+            if (frmGameProcess.Visible == false) {
+                frmGameProcess.Show();
+            }
+
+            frmGameProcess.CreateMinecraftProcessPage(_presenter.SelectedProfile, proc).Launch();
         }
 
         private void LoadUsersList(UserManager userManager) {

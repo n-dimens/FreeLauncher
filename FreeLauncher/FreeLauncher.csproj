@@ -113,11 +113,11 @@
     <Compile Include="Forms\ILauncherLogger.cs" />
     <Compile Include="Forms\IProgressView.cs" />
     <Compile Include="Forms\LauncherExtensions.cs" />
-    <Compile Include="Forms\LauncherForm.cs">
+    <Compile Include="Forms\GameProcessForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\LauncherForm.designer.cs">
-      <DependentUpon>LauncherForm.cs</DependentUpon>
+    <Compile Include="Forms\GameProcessForm.designer.cs">
+      <DependentUpon>GameProcessForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LauncherFormPresenter.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -148,8 +148,8 @@
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserManager.cs" />
-    <EmbeddedResource Include="Forms\LauncherForm.resx">
-      <DependentUpon>LauncherForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\GameProcessForm.resx">
+      <DependentUpon>GameProcessForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

@@ -36,11 +36,11 @@
             this.cbProfiles = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnUsers = new System.Windows.Forms.Button();
+            this.cbUsers = new System.Windows.Forms.ComboBox();
             this.lblSelectedVersion = new System.Windows.Forms.Label();
             this.btnEditProfile = new System.Windows.Forms.Button();
             this.btnAddProfile = new System.Windows.Forms.Button();
-            this.cbUsers = new System.Windows.Forms.ComboBox();
-            this.btnUsers = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tpLog.SuspendLayout();
             this.tpSettings.SuspendLayout();
@@ -154,6 +154,7 @@
             this.btnLaunch.TabIndex = 1;
             this.btnLaunch.Text = "Запуск";
             this.btnLaunch.UseVisualStyleBackColor = true;
+            this.btnLaunch.Click += new System.EventHandler(this.btnLaunch_Click);
             // 
             // cbProfiles
             // 
@@ -198,6 +199,26 @@
             this.panel1.Size = new System.Drawing.Size(1064, 60);
             this.panel1.TabIndex = 0;
             // 
+            // btnUsers
+            // 
+            this.btnUsers.Location = new System.Drawing.Point(272, 27);
+            this.btnUsers.Name = "btnUsers";
+            this.btnUsers.Size = new System.Drawing.Size(175, 23);
+            this.btnUsers.TabIndex = 7;
+            this.btnUsers.Text = "Пользователи";
+            this.btnUsers.UseVisualStyleBackColor = true;
+            this.btnUsers.Click += new System.EventHandler(this.btnUsers_Click);
+            // 
+            // cbUsers
+            // 
+            this.cbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbUsers.FormattingEnabled = true;
+            this.cbUsers.Location = new System.Drawing.Point(272, 5);
+            this.cbUsers.Name = "cbUsers";
+            this.cbUsers.Size = new System.Drawing.Size(175, 21);
+            this.cbUsers.TabIndex = 6;
+            this.cbUsers.SelectedIndexChanged += new System.EventHandler(this.cbUsers_SelectedIndexChanged);
+            // 
             // lblSelectedVersion
             // 
             this.lblSelectedVersion.AutoSize = true;
@@ -227,26 +248,6 @@
             this.btnAddProfile.Text = "Добавить профиль";
             this.btnAddProfile.UseVisualStyleBackColor = true;
             this.btnAddProfile.Click += new System.EventHandler(this.btnAddProfile_Click);
-            // 
-            // cbUsers
-            // 
-            this.cbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbUsers.FormattingEnabled = true;
-            this.cbUsers.Location = new System.Drawing.Point(272, 5);
-            this.cbUsers.Name = "cbUsers";
-            this.cbUsers.Size = new System.Drawing.Size(175, 21);
-            this.cbUsers.TabIndex = 6;
-            this.cbUsers.SelectedIndexChanged += new System.EventHandler(this.cbUsers_SelectedIndexChanged);
-            // 
-            // btnUsers
-            // 
-            this.btnUsers.Location = new System.Drawing.Point(272, 27);
-            this.btnUsers.Name = "btnUsers";
-            this.btnUsers.Size = new System.Drawing.Size(175, 23);
-            this.btnUsers.TabIndex = 7;
-            this.btnUsers.Text = "Пользователи";
-            this.btnUsers.UseVisualStyleBackColor = true;
-            this.btnUsers.Click += new System.EventHandler(this.btnUsers_Click);
             // 
             // MainForm
             // 
