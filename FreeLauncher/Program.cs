@@ -16,7 +16,7 @@ namespace FreeLauncher {
     internal class Program {
         [STAThread]
         public static void Main(string[] args) {
-            var applicationContext = new ApplicationContext(args);
+            var applicationContext = new ApplicationContext();
             ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

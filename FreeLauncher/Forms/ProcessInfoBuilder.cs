@@ -65,7 +65,7 @@ namespace FreeLauncher.Forms {
                 RedirectStandardError = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
-                FileName = _selectedProfile.JavaExecutable ?? Java.JavaExecutable,
+                FileName = _selectedProfile.JavaExecutable ?? JavaUtils.GetJavaExecutable(),
                 StandardErrorEncoding = Encoding.UTF8,
                 WorkingDirectory = _selectedProfile.WorkingDirectory ?? _applicationContext.McDirectory,
                 Arguments = $"{javaArgumentsTemp} -Djava.library.path={nativeLibraries} -cp {classPath} {_selectedVersion.MainClass} {userProperties}"

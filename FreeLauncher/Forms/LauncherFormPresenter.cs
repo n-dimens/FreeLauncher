@@ -38,8 +38,8 @@ namespace FreeLauncher.Forms {
 
         public void ReloadUserManager() {
             try {
-                UserManager = File.Exists(AppContext.McLauncher + "users.json")
-                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(AppContext.McLauncher + "users.json"))
+                UserManager = File.Exists(AppContext.LauncherUsers)
+                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(AppContext.LauncherUsers))
                     : new UserManager();
             }
             catch (Exception ex) {
@@ -96,7 +96,7 @@ namespace FreeLauncher.Forms {
         }
 
         public void SaveUsers() {
-            File.WriteAllText(AppContext.McLauncher + "users.json",
+            File.WriteAllText(AppContext.LauncherUsers,
                 JsonConvert.SerializeObject(UserManager, Formatting.Indented,
                     new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
         }

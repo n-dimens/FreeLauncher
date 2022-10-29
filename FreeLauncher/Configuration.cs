@@ -1,10 +1,11 @@
-﻿namespace FreeLauncher
-{
-    public class Configuration
-    {
-        public bool EnableGameLogging = true;
-        public bool ShowGamePrefix = true;
-        public bool CloseTabAfterSuccessfulExitCode = false;
-        public string SelectedLanguage = "ru-RU";
+﻿namespace FreeLauncher {
+    public class Configuration {
+        public bool EnableGameLogging { get; set; } = true;
+
+        public bool ShowGamePrefix { get; set; } = true;
+
+        public bool CloseTabAfterSuccessfulExitCode { get; set; } = false;
+
+        public string InstallationDirectory { get; set; } = string.Empty;
     }
 }

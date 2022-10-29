@@ -25,22 +25,10 @@
             _presenter = new MainFormPresenter(this, this, _applicationContext);
             InitializeComponent();
 
-            if (!Directory.Exists(_applicationContext.McDirectory)) {
-                Directory.CreateDirectory(_applicationContext.McDirectory);
-            }
-
-            if (!Directory.Exists(_applicationContext.McLauncher)) {
-                Directory.CreateDirectory(_applicationContext.McLauncher);
-            }
-
             PrintAppInfo();
             frmGameProcess = new GameProcessForm(_presenter.AppContext);
 
-            chbEnableGameLogging.Checked = appContext.Configuration.EnableGameLogging;
-            chbUseLogPrefix.Checked = appContext.Configuration.ShowGamePrefix;
-            chbCloseOutput.Checked = appContext.Configuration.CloseTabAfterSuccessfulExitCode;
-
-            Focus();
+            LoadConfiguration();
 
             _presenter.ReloadProfileManager();
             LoadProfilesList();
@@ -56,8 +44,15 @@
             _presenter.LogInfo("System info:");
             _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
             _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            _presenter.LogInfo($"Java path: \"{Java.JavaInstallationPath}\" ({Java.JavaBitInstallation}-bit)");
+            _presenter.LogInfo($"Java path: {JavaUtils.GetJavaInstallationPath()}");
             _presenter.LogInfo("==============");
+        }
+
+        private void LoadConfiguration() {
+            chbEnableGameLogging.Checked = _applicationContext.Configuration.EnableGameLogging;
+            chbUseLogPrefix.Checked = _applicationContext.Configuration.ShowGamePrefix;
+            chbCloseOutput.Checked = _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode;
+            txtInstallationDir.Text = _applicationContext.Configuration.InstallationDirectory;
         }
 
         private void LoadProfilesList() {
@@ -136,6 +131,7 @@
             _applicationContext.Configuration.EnableGameLogging = chbEnableGameLogging.Checked;
             _applicationContext.Configuration.ShowGamePrefix = chbUseLogPrefix.Checked;
             _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode = chbCloseOutput.Checked;
+            _applicationContext.Configuration.InstallationDirectory = txtInstallationDir.Text;
             _applicationContext.SaveConfiguration();
         }
 

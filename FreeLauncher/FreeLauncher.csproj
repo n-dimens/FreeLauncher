@@ -141,7 +141,7 @@
     <Compile Include="Forms\UsersForm.Designer.cs">
       <DependentUpon>UsersForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Java.cs" />
+    <Compile Include="JavaUtils.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

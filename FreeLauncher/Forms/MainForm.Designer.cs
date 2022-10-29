@@ -41,6 +41,7 @@
             this.lblSelectedVersion = new System.Windows.Forms.Label();
             this.btnEditProfile = new System.Windows.Forms.Button();
             this.btnAddProfile = new System.Windows.Forms.Button();
+            this.txtInstallationDir = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tpLog.SuspendLayout();
             this.tpSettings.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // tpSettings
             // 
+            this.tpSettings.Controls.Add(this.txtInstallationDir);
             this.tpSettings.Controls.Add(this.btnSaveSettings);
             this.tpSettings.Controls.Add(this.chbCloseOutput);
             this.tpSettings.Controls.Add(this.chbUseLogPrefix);
@@ -107,7 +109,7 @@
             // 
             // btnSaveSettings
             // 
-            this.btnSaveSettings.Location = new System.Drawing.Point(7, 89);
+            this.btnSaveSettings.Location = new System.Drawing.Point(7, 104);
             this.btnSaveSettings.Name = "btnSaveSettings";
             this.btnSaveSettings.Size = new System.Drawing.Size(178, 23);
             this.btnSaveSettings.TabIndex = 3;
@@ -249,6 +251,13 @@
             this.btnAddProfile.UseVisualStyleBackColor = true;
             this.btnAddProfile.Click += new System.EventHandler(this.btnAddProfile_Click);
             // 
+            // txtInstallationDir
+            // 
+            this.txtInstallationDir.Location = new System.Drawing.Point(7, 78);
+            this.txtInstallationDir.Name = "txtInstallationDir";
+            this.txtInstallationDir.Size = new System.Drawing.Size(319, 20);
+            this.txtInstallationDir.TabIndex = 4;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -291,5 +300,6 @@
         private System.Windows.Forms.Label lblSelectedVersion;
         private System.Windows.Forms.Button btnUsers;
         private System.Windows.Forms.ComboBox cbUsers;
+        private System.Windows.Forms.TextBox txtInstallationDir;
     }
 }
