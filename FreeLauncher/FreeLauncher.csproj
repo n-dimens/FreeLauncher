@@ -198,10 +198,6 @@
       <Project>{dbaf755f-f9a9-40dc-9301-b4f57880fb5c}</Project>
       <Name>FreeLauncher.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YaDra4il\FreeLauncher.YaDra4il.csproj">
-      <Project>{f41bc001-e08c-4c3b-9435-53ddc8a392de}</Project>
-      <Name>FreeLauncher.YaDra4il</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

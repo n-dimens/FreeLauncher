@@ -6,7 +6,7 @@
 
 using Newtonsoft.Json.Linq;
 
-namespace dotMCLauncher.YaDra4il
+namespace dotMCLauncher.Core.Auth
 {
   public class Authenticate : Request
   {

@@ -4,13 +4,13 @@ using System.ComponentModel;
 using System.Net;
 using System.Windows.Forms;
 
-using dotMCLauncher.YaDra4il;
 using Core = dotMCLauncher.Core;
 
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Data;
 using dotMCLauncher.Core;
+using dotMCLauncher.Core.Auth;
 
 namespace FreeLauncher.Forms {
     public partial class UsersForm : RadForm {

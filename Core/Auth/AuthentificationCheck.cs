@@ -4,8 +4,7 @@
 // MVID: 1BBB2245-4A1D-4E2A-A2F8-AF41A47D39FB
 // Assembly location: D:\projects\minecraft\FreeLauncher\lib\dotMCLauncher\YaDra4il\0.0.1.67\dotMCLauncher.YaDra4il.dll
 
-namespace dotMCLauncher.YaDra4il
-{
+namespace dotMCLauncher.Core.Auth {
   public class AuthentificationCheck : Request
   {
     public bool valid;

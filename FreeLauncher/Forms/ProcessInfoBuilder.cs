@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using dotMCLauncher.Core;
-using dotMCLauncher.YaDra4il;
+using dotMCLauncher.Core.Auth;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

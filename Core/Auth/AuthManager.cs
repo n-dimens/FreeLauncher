@@ -7,8 +7,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace dotMCLauncher.YaDra4il
-{
+namespace dotMCLauncher.Core.Auth {
   public class AuthManager
   {
     [JsonProperty("email")]
@@ -46,9 +45,9 @@ namespace dotMCLauncher.YaDra4il
 
     private static void Logout(string email, string password) => new Signout(email, password).DoPost();
 
-    public dotMCLauncher.YaDra4il.Refresh Refresh()
+    public Refresh Refresh()
     {
-      dotMCLauncher.YaDra4il.Refresh refresh = new dotMCLauncher.YaDra4il.Refresh(this.SessionToken, this.AccessToken);
+      Refresh refresh = new Refresh(this.SessionToken, this.AccessToken);
       this.SessionToken = refresh.accessToken;
       this.AccessToken = refresh.clientToken;
       this.UserProperties = (JArray) refresh.user["properties"];
@@ -61,7 +60,7 @@ namespace dotMCLauncher.YaDra4il
 
     public string GetUsernameByUUID()
     {
-      this.Username = new dotMCLauncher.YaDra4il.Username() { Uuid = this.Uuid }.GetUsernameByUuid();
+      this.Username = new Username() { Uuid = this.Uuid }.GetUsernameByUuid();
       return this.Username;
     }
 

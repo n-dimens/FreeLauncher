@@ -9,8 +9,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace dotMCLauncher.YaDra4il
-{
+namespace dotMCLauncher.Core.Auth {
   public abstract class Request
   {
     public string Url;

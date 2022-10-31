@@ -6,8 +6,7 @@
 
 using Newtonsoft.Json.Linq;
 
-namespace dotMCLauncher.YaDra4il
-{
+namespace dotMCLauncher.Core.Auth {
   public class Signout : Request
   {
     public Signout(string email, string password)

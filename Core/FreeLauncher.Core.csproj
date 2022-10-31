@@ -42,6 +42,15 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auth\Authenticate.cs" />
+    <Compile Include="Auth\AuthentificationCheck.cs" />
+    <Compile Include="Auth\AuthManager.cs" />
+    <Compile Include="Auth\Refresh.cs" />
+    <Compile Include="Auth\Request.cs" />
+    <Compile Include="Auth\Signout.cs" />
+    <Compile Include="Auth\Urls.cs" />
+    <Compile Include="Auth\UserInfo.cs" />
+    <Compile Include="Auth\Username.cs" />
     <Compile Include="Data\UsersRepository.cs" />
     <Compile Include="GameFileStructure.cs" />
     <Compile Include="Configuration.cs" />

@@ -7,8 +7,7 @@
 using Newtonsoft.Json.Linq;
 using System.Net;
 
-namespace dotMCLauncher.YaDra4il
-{
+namespace dotMCLauncher.Core.Auth {
   public class Username
   {
     public string Uuid { private get; set; }
