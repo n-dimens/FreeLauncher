@@ -1,20 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
+﻿namespace FreeLauncher {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Windows.Forms;
 
-using CommandLine;
+    using dotMCLauncher.Core;
 
-using dotMCLauncher.Core;
+    using FreeLauncher.Forms;
 
-using FreeLauncher.Forms;
+    using Telerik.WinControls;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using Telerik.WinControls;
-
-namespace FreeLauncher {
     internal class Program {
         [STAThread]
         public static void Main(string[] args) {
