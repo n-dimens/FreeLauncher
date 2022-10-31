@@ -42,10 +42,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\UsersRepository.cs" />
+    <Compile Include="GameFileStructure.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="JavaUtils.cs" />
     <Compile Include="ProfileManager.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="MinecraftWindowSize.cs" />
     <Compile Include="ConnectionSettings.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserManager.cs" />
+    <Compile Include="UserManagerExtensions.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="Rule.cs" />

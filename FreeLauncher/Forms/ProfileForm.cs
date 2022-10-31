@@ -13,15 +13,18 @@ using Telerik.WinControls;
 using Telerik.WinControls.UI;
 
 using Version = dotMCLauncher.Core.Version;
+using Core = dotMCLauncher.Core;
 
 namespace FreeLauncher.Forms {
     public partial class ProfileForm : RadForm {
-        private readonly ApplicationContext _applicationContext;
+        private readonly Core.GameFileStructure _applicationContext;
+        private readonly Localization _localization;
 
         public Profile CurrentProfile;
 
-        public ProfileForm(Profile profile, ApplicationContext appContext) {
+        public ProfileForm(Profile profile, Core.GameFileStructure appContext, Localization localization) {
             _applicationContext = appContext;
+            _localization = localization;
             CurrentProfile = profile;
             InitializeComponent();
             LoadLocalization();
@@ -94,8 +97,8 @@ namespace FreeLauncher.Forms {
 
             // TODO: чо за хрень?
             if (JavaUtils.GetJavaExecutable() == "\\bin\\java.exe") {
-                RadMessageBox.Show(this, _applicationContext.ProgramLocalization.JavaDetectionFailed,
-                    _applicationContext.ProgramLocalization.Error, MessageBoxButtons.OK, RadMessageIcon.Error);
+                RadMessageBox.Show(this, _localization.JavaDetectionFailed,
+                    _localization.Error, MessageBoxButtons.OK, RadMessageIcon.Error);
             }
 
             javaExecutableBox.Text = CurrentProfile.JavaExecutable ?? JavaUtils.GetJavaExecutable();
@@ -105,20 +108,20 @@ namespace FreeLauncher.Forms {
         }
 
         private void LoadLocalization() {
-            ProfileNameLabel.Text = _applicationContext.ProgramLocalization.ProfileName;
-            GameDirectoryCheckBox.Text = _applicationContext.ProgramLocalization.WorkingDirectory;
-            WindowResolutionLabel.Text = _applicationContext.ProgramLocalization.WindowResolution;
-            ActionAfterLaunchLabel.Text = _applicationContext.ProgramLocalization.ActionAfterLaunch;
-            FastConnectCheckBox.Text = _applicationContext.ProgramLocalization.Autoconnect;
-            snapshotsCheckBox.Text = _applicationContext.ProgramLocalization.Snapshots;
-            betaCheckBox.Text = _applicationContext.ProgramLocalization.Beta;
-            alphaCheckBox.Text = _applicationContext.ProgramLocalization.Alpha;
-            otherCheckBox.Text = _applicationContext.ProgramLocalization.Other;
-            JavaExecutableCheckBox.Text = _applicationContext.ProgramLocalization.JavaExecutable;
-            JavaArgumentsCheckBox.Text = _applicationContext.ProgramLocalization.JavaFlags;
-            cancelButton.Text = _applicationContext.ProgramLocalization.Cancel;
-            openGameDirectoryButton.Text = _applicationContext.ProgramLocalization.OpenDirectory;
-            saveProfileButton.Text = _applicationContext.ProgramLocalization.Save;
+            ProfileNameLabel.Text = _localization.ProfileName;
+            GameDirectoryCheckBox.Text = _localization.WorkingDirectory;
+            WindowResolutionLabel.Text = _localization.WindowResolution;
+            ActionAfterLaunchLabel.Text = _localization.ActionAfterLaunch;
+            FastConnectCheckBox.Text = _localization.Autoconnect;
+            snapshotsCheckBox.Text = _localization.Snapshots;
+            betaCheckBox.Text = _localization.Beta;
+            alphaCheckBox.Text = _localization.Alpha;
+            otherCheckBox.Text = _localization.Other;
+            JavaExecutableCheckBox.Text = _localization.JavaExecutable;
+            JavaArgumentsCheckBox.Text = _localization.JavaFlags;
+            cancelButton.Text = _localization.Cancel;
+            openGameDirectoryButton.Text = _localization.OpenDirectory;
+            saveProfileButton.Text = _localization.Save;
         }
 
         private void saveProfileButton_Click(object sender, EventArgs e) {
@@ -217,7 +220,7 @@ namespace FreeLauncher.Forms {
         //TODO: Add modified versions
         private void GetVersions() {
             versionsDropDownList.Items.Clear();
-            versionsDropDownList.Items.Add(_applicationContext.ProgramLocalization.UseLatestVersion);
+            versionsDropDownList.Items.Add(_localization.UseLatestVersion);
             List<string> list = new List<string>();
             JObject json = JObject.Parse(File.ReadAllText(_applicationContext.McVersionsFile));
             foreach (JObject ver in json["versions"]) {

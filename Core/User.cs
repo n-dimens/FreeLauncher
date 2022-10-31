@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace FreeLauncher {
+namespace dotMCLauncher.Core {
     public class User {
         [JsonProperty("username")]
         public string Username { get; set; }

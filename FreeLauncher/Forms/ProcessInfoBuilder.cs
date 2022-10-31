@@ -9,12 +9,12 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
     public class ProcessInfoBuilder {
-        private readonly ApplicationContext _applicationContext;
+        private readonly GameFileStructure _applicationContext;
         private Profile _selectedProfile;
         private User _selectedUser;
         private Version _selectedVersion;
 
-        public ProcessInfoBuilder(ApplicationContext applicationContext) {
+        public ProcessInfoBuilder(GameFileStructure applicationContext) {
             _applicationContext = applicationContext;
         }
 
@@ -74,7 +74,7 @@ namespace FreeLauncher.Forms {
             return proc;
         }
 
-        public static ProcessInfoBuilder Create(ApplicationContext applicationContext) {
+        public static ProcessInfoBuilder Create(GameFileStructure applicationContext) {
             return new ProcessInfoBuilder(applicationContext);
         }
     }

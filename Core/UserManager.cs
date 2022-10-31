@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace FreeLauncher {
+namespace dotMCLauncher.Core {
     public class UserManager {
         [JsonProperty("selectedUsername")]
         public string SelectedUsername { get; set; }

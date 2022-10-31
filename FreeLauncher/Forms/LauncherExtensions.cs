@@ -12,11 +12,11 @@
     using Newtonsoft.Json.Linq;
 
     internal static class LauncherExtensions {
-        internal static string GetSelectedVersion(this Profile profile, ApplicationContext appContext) {
+        internal static string GetSelectedVersion(this Profile profile, GameFileStructure appContext) {
             return profile.SelectedVersion ?? profile.GetLatestVersion(appContext);
         }
 
-        private static string GetLatestVersion(this Profile profile, ApplicationContext appContext) {
+        private static string GetLatestVersion(this Profile profile, GameFileStructure appContext) {
             JObject versionsList = JObject.Parse(File.ReadAllText(appContext.McVersionsFile));
             return profile.AllowedReleaseTypes != null
                 ? profile.AllowedReleaseTypes.Contains("snapshot")

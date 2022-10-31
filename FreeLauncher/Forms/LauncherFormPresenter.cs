@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using dotMCLauncher.Core;
-using dotMCLauncher.YaDra4il;
 using Version = dotMCLauncher.Core.Version;
+using Core = dotMCLauncher.Core;
 
 using Ionic.Zip;
 
@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace FreeLauncher.Forms {
     public class MainFormPresenter {
+        private readonly static string CheckingLibrariesMessage = "Выполняется проверка библиотек";
         // TODO: Выпилить свойства, раскрывающие объекты
         private readonly ILauncherLogger _logger;
         private readonly IProgressView _progressView;
@@ -21,7 +22,7 @@ namespace FreeLauncher.Forms {
 
         public static readonly string ProductName = "FreeLauncher";
 
-        public ApplicationContext AppContext { get; }
+        public Core.GameFileStructure AppContext { get; }
 
         public User SelectedUser { get; private set; }
 
@@ -31,7 +32,7 @@ namespace FreeLauncher.Forms {
 
         public Profile SelectedProfile { get; private set; }
 
-        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, ApplicationContext appContext) {
+        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, Core.GameFileStructure appContext) {
             _logger = viewLogger;
             _progressView = progressView;
             _usersRepository = new UsersRepository(appContext);
@@ -105,7 +106,7 @@ namespace FreeLauncher.Forms {
             }
 
             // Скачиваем новый файл
-            var jsonVersionList = new WebClient().DownloadString(new Uri(ApplicationContext.VersionsFileUrl));
+            var jsonVersionList = new WebClient().DownloadString(new Uri(GameFileStructure.VersionsFileUrl));
 
             // Если локального файла не существует, сохраняем и выходим
             if (!File.Exists(AppContext.McVersionsFile)) {
@@ -150,7 +151,7 @@ namespace FreeLauncher.Forms {
             _progressView.SetMaxProgressValue(100);
             _progressView.SetProgressValue(0);
             string version = SelectedProfile.GetSelectedVersion(AppContext);
-            _progressView.UpdateStageText(string.Format(AppContext.ProgramLocalization.CheckingVersionAvailability, version));
+            _progressView.UpdateStageText($"Выполняется проверка доступности версии '{version}'");
             LogInfo($"Checking '{version}' version availability...");
             string path = Path.Combine(AppContext.McVersions, version + "\\");
             if (!Directory.Exists(path)) {
@@ -227,7 +228,7 @@ namespace FreeLauncher.Forms {
                 new DirectoryInfo(AppContext.McVersions + SelectedProfile.GetSelectedVersion(AppContext)));
             _progressView.SetProgressValue(0);
             _progressView.SetMaxProgressValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
-            _progressView.UpdateStageText(AppContext.ProgramLocalization.CheckingLibraries);
+            _progressView.UpdateStageText(CheckingLibrariesMessage);
             LogInfo("Checking libraries...");
             foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
                 _progressView.IncProgressValue();
@@ -261,7 +262,7 @@ namespace FreeLauncher.Forms {
                     libraries += AppContext.McLibs + lib.ToPath() + ";";
                 }
 
-                _progressView.UpdateStageText(AppContext.ProgramLocalization.CheckingLibraries);
+                _progressView.UpdateStageText(CheckingLibrariesMessage);
             }
 
             libraries += string.Format("{0}{1}\\{1}.jar", AppContext.McVersions,
@@ -354,13 +355,13 @@ namespace FreeLauncher.Forms {
         }
 
         public string GetVersionLabel() {
-            string path = Path.Combine(AppContext.McVersions, SelectedProfile.GetSelectedVersion(AppContext) + "\\");
-            string state = AppContext.ProgramLocalization.ReadyToLaunch;
-            if (!File.Exists(string.Format("{0}/{1}.json", path, SelectedProfile.GetSelectedVersion(AppContext)))) {
-                state = AppContext.ProgramLocalization.ReadyToDownload;
+            var selectedVersion = SelectedProfile.GetSelectedVersion(AppContext);
+            string versionFilePath = Path.Combine(AppContext.McVersions, selectedVersion, $"{selectedVersion}.json");
+            if (!File.Exists(versionFilePath)) {
+                return $"Готов к загрузке версии {selectedVersion}";
             }
 
-            return string.Format(state, SelectedProfile.GetSelectedVersion(AppContext));
+            return $"Готов к запуску версии {selectedVersion}";
         }
     }
 }

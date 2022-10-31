@@ -5,12 +5,12 @@ namespace FreeLauncher.Forms {
     public class MinecraftProcessPageContext {
         public GameProcessForm LauncherForm { get; }
         public Profile Profile { get; }
-        public ApplicationContext ApplicationContext { get; }
+        public GameFileStructure ApplicationContext { get; }
         public bool IsMinecraftLoggingEnabled { get; }
         public bool IsUseGamePrefix { get; }
         public bool IsAutoClosePage { get; }
 
-        public MinecraftProcessPageContext(GameProcessForm launcherForm, Profile profile, ApplicationContext appContext) {
+        public MinecraftProcessPageContext(GameProcessForm launcherForm, Profile profile, GameFileStructure appContext) {
             LauncherForm = launcherForm;
             Profile = profile;
             ApplicationContext = appContext;

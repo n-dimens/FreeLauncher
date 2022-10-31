@@ -1,11 +1,11 @@
-﻿namespace FreeLauncher {
+﻿namespace dotMCLauncher.Core {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-    internal static class UserManagerExtensions {
+    public static class UserManagerExtensions {
         public static void AddUser(this UserManager userManager, User user) {
             if (userManager.Accounts.ContainsKey(user.Username)) {
                 userManager.Accounts[user.Username] = user;

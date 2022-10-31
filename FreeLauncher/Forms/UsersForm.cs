@@ -5,10 +5,12 @@ using System.Net;
 using System.Windows.Forms;
 
 using dotMCLauncher.YaDra4il;
+using Core = dotMCLauncher.Core;
 
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Data;
+using dotMCLauncher.Core;
 
 namespace FreeLauncher.Forms {
     public partial class UsersForm : RadForm {
@@ -16,8 +18,8 @@ namespace FreeLauncher.Forms {
         private readonly UsersRepository _usersRepository;
         private readonly UserManager _userManager;
 
-        public UsersForm(ApplicationContext appContext) {
-            _localization = appContext.ProgramLocalization;
+        public UsersForm(Core.GameFileStructure appContext, Localization localization) {
+            _localization = localization;
             _usersRepository = new UsersRepository(appContext);
             InitializeComponent();
             LoadLocalization();

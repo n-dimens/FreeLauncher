@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using CommandLine;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace FreeLauncher {
-    public class ApplicationContext {
+namespace dotMCLauncher.Core {
+    public class GameFileStructure {
         private readonly string _configurationFile;
 
         public static readonly string VersionsFileUrl = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
-
-        public Localization ProgramLocalization { get; } = new Localization();
 
         public string McDirectory { get; }
         public string McLauncher { get; }
@@ -33,7 +29,7 @@ namespace FreeLauncher {
 
         public Configuration Configuration { get; }
 
-        public ApplicationContext() {
+        public GameFileStructure() {
             Libraries = string.Empty;
             McDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft\\");
             if (!Directory.Exists(McDirectory)) {

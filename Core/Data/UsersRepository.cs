@@ -1,4 +1,4 @@
-﻿namespace FreeLauncher {
+﻿namespace dotMCLauncher.Core {
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -7,20 +7,20 @@
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
-
-    internal class UsersRepository {
+    
+    public class UsersRepository {
         // applicationContext.LauncherUsers == ConnectionString - информация об источнике данных, куда "подключаться"
         // т.е. сюда нужно передавать "БД" = корневой папке, а где в этой папке нужная "таблица"=файл - репозиторий должен знать сам.
         // Ну или нужно отдельное метаописание "БД" как папки с файлами
-        private readonly ApplicationContext _applicationContext; 
+        private readonly GameFileStructure _gameFiles; 
 
-        public UsersRepository(ApplicationContext appContext) {
-            _applicationContext = appContext;
+        public UsersRepository(GameFileStructure gameFiles) {
+            _gameFiles = gameFiles;
         }
 
         public UserManager Read() {
-            return File.Exists(_applicationContext.LauncherUsers)
-                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_applicationContext.LauncherUsers))
+            return File.Exists(_gameFiles.LauncherUsers)
+                    ? JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_gameFiles.LauncherUsers))
                     : new UserManager();
         }
 
@@ -30,7 +30,7 @@
                         NullValueHandling = NullValueHandling.Ignore
                     });
 
-            File.WriteAllText(_applicationContext.LauncherUsers, json);
+            File.WriteAllText(_gameFiles.LauncherUsers, json);
         }
     }
 }

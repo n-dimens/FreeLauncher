@@ -1,4 +1,4 @@
-﻿namespace FreeLauncher {
+﻿namespace dotMCLauncher.Core {
     public class Configuration {
         public bool EnableGameLogging { get; set; } = true;
 

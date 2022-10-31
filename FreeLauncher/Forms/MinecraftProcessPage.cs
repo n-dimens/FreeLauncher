@@ -49,8 +49,7 @@ namespace FreeLauncher.Forms {
         
         private void AddNewPage() {
             _viewPage = new RadPageViewPage {
-                Text =
-                    string.Format("{0} ({1})", _context.ApplicationContext.ProgramLocalization.GameOutput, _context.Profile.ProfileName)
+                Text = string.Format("ВЫВОД ИГРЫ ({0})", _context.Profile.ProfileName)
             };
             
             var panel = new RadPanel {
@@ -60,7 +59,7 @@ namespace FreeLauncher.Forms {
             panel.Size = new Size(panel.Size.Width, 60);
             
             _closePageButton = new RadButton {
-                Text = _context.ApplicationContext.ProgramLocalization.Close,
+                Text = "Закрыть",
                 Anchor = (AnchorStyles.Right | AnchorStyles.Top),
                 Enabled = false
             };
@@ -68,7 +67,7 @@ namespace FreeLauncher.Forms {
             _closePageButton.Click += ClosePageButtonOnClick;
             
             _killProcessButton = new RadButton {
-                Text = _context.ApplicationContext.ProgramLocalization.KillProcess,
+                Text = "Убить процесс",
                 Anchor = (AnchorStyles.Right | AnchorStyles.Top)
             };
             _killProcessButton.Click += KillProcessButton_Click;

@@ -16,12 +16,14 @@
     using Microsoft.VisualBasic.Devices;
 
     public partial class MainForm : Form, ILauncherLogger, IProgressView {
-        private readonly FreeLauncher.ApplicationContext _applicationContext;
+        private readonly Localization _localization;
+        private readonly GameFileStructure _applicationContext;
         private readonly MainFormPresenter _presenter;
         private readonly GameProcessForm frmGameProcess;
 
-        public MainForm(FreeLauncher.ApplicationContext appContext) {
+        public MainForm(GameFileStructure appContext, Localization localization) {
             _applicationContext = appContext;
+            _localization = localization;
             _presenter = new MainFormPresenter(this, this, _applicationContext);
             InitializeComponent();
 
@@ -39,7 +41,7 @@
 
         private void PrintAppInfo() {
             _presenter.LogInfo($"Application: {ProductName} v.{ProductVersion}");
-            _presenter.LogInfo($"Application language: {_applicationContext.ProgramLocalization.Name}({_applicationContext.ProgramLocalization.LanguageTag})");
+            _presenter.LogInfo($"Application language: {_localization.Name}({_localization.LanguageTag})");
             _presenter.LogInfo("==============");
             _presenter.LogInfo("System info:");
             _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
@@ -182,12 +184,13 @@
             Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
             editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
                                         DateTime.Now.ToString("HH:mm:ss") + ")";
-            ProfileForm pf = new ProfileForm(editedProfile, _applicationContext) { Text = _applicationContext.ProgramLocalization.AddingProfileTitle };
+            var pf = new ProfileForm(editedProfile, _applicationContext, _localization) { 
+                Text = _localization.AddingProfileTitle 
+            };
             pf.ShowDialog();
             if (pf.DialogResult == DialogResult.OK) {
                 if (_presenter.ProfileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
-                    MessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
-                        _applicationContext.ProgramLocalization.Error,
+                    MessageBox.Show(_localization.ProfileAlreadyExistsErrorText, _localization.Error,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -201,15 +204,14 @@
         }
 
         private void btnEditProfile_Click(object sender, EventArgs e) {
-            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext) {
-                Text = _applicationContext.ProgramLocalization.EditingProfileTitle
+            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext, _localization) {
+                Text = _localization.EditingProfileTitle
             };
             pf.ShowDialog();
             if (pf.DialogResult == DialogResult.OK) {
                 _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
                 if (_presenter.ProfileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
-                    MessageBox.Show(_applicationContext.ProgramLocalization.ProfileAlreadyExistsErrorText,
-                        _applicationContext.ProgramLocalization.Error,
+                    MessageBox.Show(_localization.ProfileAlreadyExistsErrorText, _localization.Error,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     UpdateProfileList();
                     return;
@@ -246,7 +248,7 @@
         //}
 
         private void btnUsers_Click(object sender, EventArgs e) {
-            new UsersForm(_applicationContext).ShowDialog();
+            new UsersForm(_applicationContext, _localization).ShowDialog();
             _presenter.ReloadUserManager();
             LoadUsersList(_presenter.UserManager);
         }
