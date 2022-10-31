@@ -13,7 +13,8 @@
     using Version = dotMCLauncher.Core.Version;
     using dotMCLauncher.Core;
 
-    using Microsoft.VisualBasic.Devices;
+    // using Microsoft.VisualBasic.Devices;
+    using Microsoft.TeamFoundation.Common;
 
     public partial class MainForm : Form, ILauncherLogger, IProgressView {
         private readonly Localization _localization;
@@ -44,7 +45,8 @@
             _presenter.LogInfo($"Application language: {_localization.Name}({_localization.LanguageTag})");
             _presenter.LogInfo("==============");
             _presenter.LogInfo("System info:");
-            _presenter.LogInfo($"Operating system: {Environment.OSVersion}({new ComputerInfo().OSFullName})");
+            // _presenter.LogInfo($"Operating system: {Environment.OSVersion}({ComputerInfo.OSFullName})");
+            _presenter.LogInfo($"Operating system: {Environment.OSVersion}");
             _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
             _presenter.LogInfo($"Java path: {JavaUtils.GetJavaInstallationPath()}");
             _presenter.LogInfo("==============");

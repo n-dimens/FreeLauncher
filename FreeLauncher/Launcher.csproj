@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>10</LangVersion>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<AssemblyName>FreeLauncher</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DotNetZip" Version="1.16.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.170.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Telerik.WinControls">
+			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.dll</HintPath>
+		</Reference>
+		<Reference Include="Telerik.WinControls.Themes.VisualStudio2012Dark">
+			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.Themes.VisualStudio2012Dark.dll</HintPath>
+		</Reference>
+		<Reference Include="Telerik.WinControls.UI">
+			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.UI.dll</HintPath>
+		</Reference>
+		<Reference Include="TelerikCommon">
+			<HintPath>..\lib\RCWF\2015.3.1104.40\TelerikCommon.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+</Project>

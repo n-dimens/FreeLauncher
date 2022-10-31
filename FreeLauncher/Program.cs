@@ -1,25 +1,31 @@
-﻿namespace FreeLauncher {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Windows.Forms;
+namespace Launcher;
 
-    using dotMCLauncher.Core;
+using System;
+using System.Windows.Forms;
 
-    using FreeLauncher.Forms;
+using dotMCLauncher.Core;
 
-    using Telerik.WinControls;
+using FreeLauncher;
+using FreeLauncher.Forms;
 
-    internal class Program {
-        [STAThread]
-        public static void Main(string[] args) {
-            var gameFiles = new GameFileStructure();
-            var localization = new Localization();
-            ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            var frmMain = new MainForm(gameFiles, localization);
-            Application.Run(frmMain);
-        }
+using Telerik.WinControls;
+
+static class Program {
+    /// <summary>
+    ///  The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main() {
+        // To customize application configuration such as set high DPI settings or default font,
+        // see https://aka.ms/applicationconfiguration.
+        //ApplicationConfiguration.Initialize();
+        //Application.Run(new Form1());
+        var gameFiles = new GameFileStructure();
+        var localization = new Localization();
+        ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        var frmMain = new MainForm(gameFiles, localization);
+        Application.Run(frmMain);
     }
 }
