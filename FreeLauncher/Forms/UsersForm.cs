@@ -48,35 +48,18 @@ namespace FreeLauncher.Forms {
             DisableControls();
             AddUserButton.Text = _localization.PleaseWait;
             BackgroundWorker bgw = new BackgroundWorker();
+            // TODO: Task ?
             bgw.DoWork += delegate {
-                AuthManager auth = new AuthManager { 
-                    Email = UsernameTextBox.Text, 
-                    Password = PasswordTextBox.Text 
-                };
-                try {
-                    auth.Login();
-                    User user = new User {
-                        Username = UsernameTextBox.Text,
-                        Type = auth.IsLegacy ? "legacy" : "mojang",
-                        AccessToken = auth.AccessToken,
-                        SessionToken = auth.SessionToken,
-                        Uuid = auth.Uuid,
-                        UserProperties = auth.UserProperties
-                    };
-
+                var user = AuthService.Login(UsernameTextBox.Text, PasswordTextBox.Text);
+                if (user != null) {
                     _userManager.AddUser(user);
                     _userManager.SelectedUsername = user.Username;
                 }
-                catch (WebException ex) {
-                    switch (ex.Status) {
-                        case WebExceptionStatus.ProtocolError:
-                            RadMessageBox.Show(_localization.IncorrectLoginOrPassword, _localization.Error, MessageBoxButtons.OK,
+                else {
+                    RadMessageBox.Show(_localization.IncorrectLoginOrPassword, _localization.Error, MessageBoxButtons.OK,
                                 RadMessageIcon.Error);
-                            return;
-                        default:
-                            return;
-                    }
                 }
+
             };
             bgw.RunWorkerCompleted += delegate {
                 _usersRepository.Save(_userManager);
