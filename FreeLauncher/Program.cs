@@ -4,6 +4,7 @@ using System;
 using System.Windows.Forms;
 
 using dotMCLauncher.Core;
+using dotMCLauncher.Core.Data;
 
 using FreeLauncher;
 using FreeLauncher.Forms;
@@ -19,10 +20,12 @@ static class Program {
         var logger = new FileLogger();
         var gameFiles = new GameFileStructure();
         var localization = new Localization();
+        var versionsService = new VersionsService(logger, gameFiles);
+
         ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        var frmMain = new MainForm(gameFiles, localization, logger);
+        var frmMain = new MainForm(gameFiles, localization, logger, versionsService);
         Application.Run(frmMain);
     }
 }

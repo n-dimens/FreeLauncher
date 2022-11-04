@@ -88,15 +88,15 @@ namespace FreeLauncher.Forms {
         }
 
         private void DeleteUserButton_Click(object sender, EventArgs e) {
-            _userManager.Accounts.Remove(UsersListControl.SelectedItem.Tag.ToString());
+            _userManager.Users.Remove(UsersListControl.SelectedItem.Tag.ToString());
             _usersRepository.Save(_userManager);
             UpdateUsers();
         }
 
         private void UpdateUsers() {
             UsersListControl.Items.Clear();
-            foreach (KeyValuePair<string, User> item in _userManager.Accounts) {
-                UsersListControl.Items.Add(new RadListDataItem($"{item.Key} [{_userManager.Accounts[item.Key].Type}]") {
+            foreach (KeyValuePair<string, User> item in _userManager.Users) {
+                UsersListControl.Items.Add(new RadListDataItem($"{item.Key} [{_userManager.Users[item.Key].Type}]") {
                     Tag = item.Key
                 });
             }

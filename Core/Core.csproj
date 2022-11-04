@@ -4,7 +4,7 @@
 		<TargetFramework>net48</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
 		<RootNamespace>dotMCLauncher.Core</RootNamespace>
 	</PropertyGroup>
 
@@ -18,6 +18,10 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="System.Configuration" />
 	</ItemGroup>
 
 </Project>

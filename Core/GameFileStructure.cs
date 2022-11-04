@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 
@@ -31,12 +32,12 @@ namespace dotMCLauncher.Core {
 
         public GameFileStructure() {
             Libraries = string.Empty;
-            McDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft\\");
+            McDirectory = ConfigurationManager.AppSettings["InstallationDir"];
             if (!Directory.Exists(McDirectory)) {
                 Directory.CreateDirectory(McDirectory);
             }
 
-            McLauncher = Path.Combine(McDirectory, "freelauncher\\");
+            McLauncher = Path.Combine(McDirectory, "launcher");
             if (!Directory.Exists(McLauncher)) {
                 Directory.CreateDirectory(McLauncher);
             }
@@ -52,7 +53,7 @@ namespace dotMCLauncher.Core {
             LauncherProfiles = Path.Combine(McLauncher, "profiles.json");
             LauncherUsers = Path.Combine(McLauncher, "users.json");
 
-            _configurationFile = McLauncher + "\\configuration.json";
+            _configurationFile = Path.Combine(McLauncher, "configuration.json");
             Configuration = GetConfiguration();
         }
 

@@ -1,9 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: dotMCLauncher.Core.Lib
-// Assembly: dotMCLauncher.Core, Version=0.0.4.84, Culture=neutral, PublicKeyToken=null
-// MVID: 3319DB9D-31E6-4AD0-8FD9-640DCB0404A7
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System;
@@ -11,20 +6,18 @@ using System.Collections.Generic;
 
 namespace dotMCLauncher.Core {
     public class Lib {
-        [JsonProperty("name")]
-        public string Name;
+        public string Name { get; set; }
 
-        [JsonProperty("url")]
-        public string Url;
+        public string Url { get; set; }
 
-        [JsonProperty("natives")]
-        private JObject _natives;
+        public LibNatives Natives { get; set; }
 
-        [JsonProperty("rules")]
-        private List<Rule> Rules;
+        public List<Rule> Rules { get; set; }
+
+        public LibDownloads Downloads { get; set; }
 
         [JsonIgnore]
-        public string IsNative => ((object)this._natives?["windows"])?.ToString().Replace("${arch}", IntPtr.Size == 8 ? "64" : "32");
+        public string IsNative => Natives?.Windows?.ToString().Replace("${arch}", IntPtr.Size == 8 ? "64" : "32");
 
         public bool IsForWindows() {
             if (this.Rules == null) {
@@ -48,5 +41,15 @@ namespace dotMCLauncher.Core {
             string[] strArray = this.Name.Split(':');
             return string.Format("{0}\\{1}\\{2}\\{1}-{2}" + (!string.IsNullOrEmpty(this.IsNative) ? "-" + this.IsNative : string.Empty) + ".jar", (object)strArray[0].Replace('.', '\\'), (object)strArray[1], (object)strArray[2]);
         }
+    }
+
+    public class LibNatives {
+        public string Linux { get; set; }
+
+        public string Windows { get; set; }
+    }
+
+    public class LibDownloads {
+        public Artifact Artifact { get; set; }     
     }
 }

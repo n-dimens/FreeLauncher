@@ -264,8 +264,8 @@ namespace FreeLauncher.Forms {
                                                 Version.ParseVersion(
                                                     new DirectoryInfo(string.Format("{0}/{1}/", _applicationContext.McVersions,
                                                         new DirectoryInfo(b).Name)), false)) {
-                    versionsDropDownList.Items.Add(new RadListDataItem(version.ReleaseType + " " + version.VersionId) {
-                        Tag = version.VersionId
+                    versionsDropDownList.Items.Add(new RadListDataItem(version.Type + " " + version.Id) {
+                        Tag = version.Id
                     });
                 }
             }

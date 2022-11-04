@@ -15,6 +15,7 @@
 
     // using Microsoft.VisualBasic.Devices;
     using Microsoft.TeamFoundation.Common;
+    using dotMCLauncher.Core.Data;
 
     public partial class MainForm : Form, IProgressView {
         private readonly ILauncherLogger _logger;
@@ -23,11 +24,14 @@
         private readonly MainFormPresenter _presenter;
         private readonly GameProcessForm frmGameProcess;
 
-        public MainForm(GameFileStructure appContext, Localization localization, ILauncherLogger logger) {
+        public MainForm(GameFileStructure appContext, 
+            Localization localization, 
+            ILauncherLogger logger,
+            VersionsService versionsService) {
             _applicationContext = appContext;
             _localization = localization;
             _logger = logger;
-            _presenter = new MainFormPresenter(logger, this, _applicationContext);
+            _presenter = new MainFormPresenter(logger, this, _applicationContext, versionsService);
             logger.Changed += Logger_Changed;
             InitializeComponent();
 
@@ -296,7 +300,7 @@
                 .Build();
 
             _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
-            _logger.Info($"Version {selectedVersion.VersionId} successfuly launched.");
+            _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
 
             if (frmGameProcess.Visible == false) {
                 frmGameProcess.Show();
@@ -307,11 +311,11 @@
 
         private void LoadUsersList(UserManager userManager) {
             cbUsers.Items.Clear();
-            if (userManager.Accounts.Count == 0) {
+            if (userManager.Users.Count == 0) {
                 return;
             }
 
-            cbUsers.Items.AddRange(userManager.Accounts.Keys.ToArray());
+            cbUsers.Items.AddRange(userManager.Users.Keys.ToArray());
             var itemIndex = cbUsers.FindStringExact(userManager.SelectedUsername);
             if (itemIndex == -1) {
                 cbUsers.SelectedIndex = 0;

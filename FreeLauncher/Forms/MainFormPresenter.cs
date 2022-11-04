@@ -11,6 +11,7 @@ using Ionic.Zip;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using dotMCLauncher.Core.Data;
 
 namespace FreeLauncher.Forms {
     public class MainFormPresenter {
@@ -19,6 +20,7 @@ namespace FreeLauncher.Forms {
         private readonly ILauncherLogger _logger;
         private readonly IProgressView _progressView;
         private readonly UsersRepository _usersRepository;
+        private readonly VersionsService _versionsService;
 
         public static readonly string ProductName = "FreeLauncher";
 
@@ -32,10 +34,11 @@ namespace FreeLauncher.Forms {
 
         public Profile SelectedProfile { get; private set; }
 
-        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, Core.GameFileStructure appContext) {
+        public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, Core.GameFileStructure appContext, VersionsService versionsService) {
             _logger = viewLogger;
             _progressView = progressView;
             _usersRepository = new UsersRepository(appContext);
+            _versionsService = versionsService;
             AppContext = appContext;
         }
 
@@ -51,7 +54,7 @@ namespace FreeLauncher.Forms {
         }
 
         public void SelectUser(string nickname) {
-            SelectedUser = UserManager.Accounts[nickname];
+            SelectedUser = UserManager.Users[nickname];
             UserManager.SelectedUsername = nickname;
         }
 
@@ -96,89 +99,42 @@ namespace FreeLauncher.Forms {
             ProfileManager.Save(AppContext.LauncherProfiles);
         }
 
-        /// <summary>
-        /// Обновление локального файла versions.json при сравнении с файлом в облаке
-        /// </summary>
-        public void UpdateVersionsList() {
-            _logger.Info("Checking version.json...");
-            if (!Directory.Exists(AppContext.McVersions)) {
-                Directory.CreateDirectory(AppContext.McVersions);
-            }
-
-            // Скачиваем новый файл
-            var jsonVersionList = new WebClient().DownloadString(new Uri(GameFileStructure.VersionsFileUrl));
-
-            // Если локального файла не существует, сохраняем и выходим
-            if (!File.Exists(AppContext.McVersionsFile)) {
-                File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
-                _logger.Info("File downloaded and saved.");
-                return;
-            }
-
-            // Если локальный файл существует, сравниваем со скаченным
-            var newVersionsData = JObject.Parse(jsonVersionList);
-            string remoteSnapshotVersion = newVersionsData["latest"]["snapshot"].ToString();
-            string remoteReleaseVersion = newVersionsData["latest"]["release"].ToString();
-            _logger.Info("Latest snapshot: " + remoteSnapshotVersion);
-            _logger.Info("Latest release: " + remoteReleaseVersion);
-
-            JObject ver = JObject.Parse(File.ReadAllText(AppContext.McVersionsFile));
-            string localSnapshotVersion = ver["latest"]["snapshot"].ToString();
-            string localReleaseVersion = ver["latest"]["release"].ToString();
-
-            bool isVersionsCountEqual = ((JArray)newVersionsData["versions"]).Count == ((JArray)ver["versions"]).Count;
-            bool isEqualVersions = remoteReleaseVersion == localReleaseVersion && remoteSnapshotVersion == localSnapshotVersion;
-            _logger.Info("Local versions: " + ((JArray)newVersionsData["versions"]).Count + ". Remote versions: " + ((JArray)ver["versions"]).Count);
-
-            if (isVersionsCountEqual && isEqualVersions) {
-                // Изменений нет, выходим
-                _logger.Info("No update found.");
-                return;
-            }
-
-            // Найдены изменения, обновляем лоакльный файл
-            _logger.Info("Writting new list... ");
-            File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
-        }
-
         public void CheckVersionAvailability() {
             long state = 0;
-            WebClient downloader = new WebClient();
+            var downloader = new WebClient();
             downloader.DownloadProgressChanged += (sender, e) => {
                 _progressView.SetProgressValue(e.ProgressPercentage);
             };
             downloader.DownloadFileCompleted += delegate { state++; };
             _progressView.SetMaxProgressValue(100);
             _progressView.SetProgressValue(0);
+
             string version = SelectedProfile.GetSelectedVersion(AppContext);
+            var versionInfo = _versionsService.GetVersionInfo(version);
             _progressView.UpdateStageText($"Выполняется проверка доступности версии '{version}'");
             _logger.Info($"Checking '{version}' version availability...");
-            string path = Path.Combine(AppContext.McVersions, version + "\\");
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+
+            string versionDirectory = Path.Combine(AppContext.McVersions, version);
+            if (!Directory.Exists(versionDirectory)) {
+                Directory.CreateDirectory(versionDirectory);
             }
 
-            if (!File.Exists(path + "/" + version + ".json")) {
-                string filename = version + ".json";
-                _progressView.UpdateStageText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
-                downloader.DownloadFileAsync(new Uri(string.Format(
-                        "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.json", version)),
-                    string.Format("{0}/{1}/{1}.json", AppContext.McVersions, version));
+            var versionFile = Path.Combine(versionDirectory, version + ".json");
+            if (!File.Exists(versionFile)) {
+                _progressView.UpdateStageText("Downloading " + versionFile + "...", new StackFrame().GetMethod().Name);
+                downloader.DownloadFileAsync(new Uri(versionInfo.Url), versionFile);
             }
             else {
                 state++;
             }
-
             _progressView.SetProgressValue(0);
             while (state != 1) ;
-            var selectedVersion = dotMCLauncher.Core.Version.ParseVersion(new DirectoryInfo(AppContext.McVersions + version), false);
-            if ((!File.Exists(path + "/" + version + ".jar")) &&
-                selectedVersion.InheritsFrom == null) {
+
+            var selectedVersion = Version.ParseVersion(new DirectoryInfo(versionDirectory), false);
+            if ((!File.Exists(Path.Combine(versionDirectory, version + ".jar"))) && selectedVersion.InheritsFrom == null) {
                 string filename = version + ".jar";
                 _progressView.UpdateStageText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
-                downloader.DownloadFileAsync(new Uri(string.Format(
-                        "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.jar", version)),
-                    string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, version));
+                downloader.DownloadFileAsync(new Uri(selectedVersion.Downloads.Client.Url), string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, version));
             }
             else {
                 state++;
@@ -190,9 +146,10 @@ namespace FreeLauncher.Forms {
                 return;
             }
 
-            path = Path.Combine(AppContext.McVersions, selectedVersion.InheritsFrom + "\\");
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
+            // для Forge
+            versionDirectory = Path.Combine(AppContext.McVersions, selectedVersion.InheritsFrom + "\\");
+            if (!Directory.Exists(versionDirectory)) {
+                Directory.CreateDirectory(versionDirectory);
             }
 
             if (!File.Exists(string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, selectedVersion.InheritsFrom))) {
@@ -227,10 +184,11 @@ namespace FreeLauncher.Forms {
             var selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(AppContext.McVersions + SelectedProfile.GetSelectedVersion(AppContext)));
             _progressView.SetProgressValue(0);
-            _progressView.SetMaxProgressValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
+            _progressView.SetMaxProgressValue(selectedVersion.Libraries.Count(a => a.IsForWindows()) + 1);
             _progressView.UpdateStageText(CheckingLibrariesMessage);
+
             _logger.Info("Checking libraries...");
-            foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
+            foreach (Lib lib in selectedVersion.Libraries.Where(a => a.IsForWindows())) {
                 _progressView.IncProgressValue();
                 if (!File.Exists(AppContext.McLibs + lib.ToPath())) {
                     _progressView.UpdateStageText("Downloading " + lib.Name + "...");
@@ -275,15 +233,13 @@ namespace FreeLauncher.Forms {
             _progressView.UpdateStageText("Checking game assets...");
             Version selectedVersion = Version.ParseVersion(
                 new DirectoryInfo(AppContext.McVersions + SelectedProfile.GetSelectedVersion(AppContext)));
-            string file = string.Format("{0}/indexes/{1}.json", AppContext.McAssets, selectedVersion.AssetsIndex ?? "legacy");
+            string file = string.Format("{0}/indexes/{1}.json", AppContext.McAssets, selectedVersion.Assets ?? "legacy");
             if (!File.Exists(file)) {
                 if (!Directory.Exists(Path.GetDirectoryName(file))) {
                     Directory.CreateDirectory(Path.GetDirectoryName(file));
                 }
 
-                new WebClient().DownloadFile(
-                    string.Format("https://s3.amazonaws.com/Minecraft.Download/indexes/{0}.json",
-                        selectedVersion.AssetsIndex ?? "legacy"), file);
+                new WebClient().DownloadFile(selectedVersion.AssetIndex.Url, file);
             }
 
             JObject jo = JObject.Parse(File.ReadAllText(file));
@@ -312,7 +268,7 @@ namespace FreeLauncher.Forms {
             }
 
             _logger.Info("Finished checking game assets.");
-            if (selectedVersion.AssetsIndex == null) {
+            if (selectedVersion.Assets == null) {
                 _progressView.SetProgressValue(0);
                 _progressView.SetMaxProgressValue(jo["objects"].Cast<JProperty>()
                     .Count(res => !File.Exists(AppContext.McLegacyAssets + res.Name)) + 1);
@@ -341,10 +297,6 @@ namespace FreeLauncher.Forms {
                 _logger.Info("Finished converting assets.");
             }
         }
-
-        //public void LogInfo(string text, string methodName = null) {
-        //    _logger.LogInfo(text, methodName);
-        //}
 
         public string GetVersionLabel() {
             var selectedVersion = SelectedProfile.GetSelectedVersion(AppContext);

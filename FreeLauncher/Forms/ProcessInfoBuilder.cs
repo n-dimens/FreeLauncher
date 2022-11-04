@@ -50,7 +50,7 @@ namespace FreeLauncher.Forms {
                 { "game_directory", _selectedProfile.WorkingDirectory ?? _applicationContext.McDirectory },
                 { "assets_root", _applicationContext.McAssets },
                 { "game_assets", _applicationContext.McLegacyAssets },
-                { "assets_index_name", _selectedVersion.AssetsIndex },
+                { "assets_index_name", _selectedVersion.Assets },
                 { "auth_session", _selectedUser.AccessToken ?? "sample_token" },
                 { "auth_access_token", _selectedUser.SessionToken ?? "sample_token" },
                 { "auth_uuid", _selectedUser.Uuid ?? "sample_token" },

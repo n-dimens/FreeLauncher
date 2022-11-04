@@ -7,11 +7,11 @@
 
     public static class UserManagerExtensions {
         public static void AddUser(this UserManager userManager, User user) {
-            if (userManager.Accounts.ContainsKey(user.Username)) {
-                userManager.Accounts[user.Username] = user;
+            if (userManager.Users.ContainsKey(user.Username)) {
+                userManager.Users[user.Username] = user;
             }
             else {
-                userManager.Accounts.Add(user.Username, user);
+                userManager.Users.Add(user.Username, user);
             }
         }
     }

@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: dotMCLauncher.Core.Version
-// Assembly: dotMCLauncher.Core, Version=0.0.4.84, Culture=neutral, PublicKeyToken=null
-// MVID: 3319DB9D-31E6-4AD0-8FD9-640DCB0404A7
-// Assembly location: D:\projects\minecraft\FreeLauncher\lib\dotMCLauncher\Core\0.0.4.84\dotMCLauncher.Core.dll
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using System.Collections.Generic;
 using System.IO;
@@ -13,33 +7,33 @@ namespace dotMCLauncher.Core {
     public class Version {
         [JsonIgnore]
         private string _arguments;
+
         [JsonIgnore]
-        public dotMCLauncher.Core.ArgumentCollection<string, string> ArgumentCollection;
+        public ArgumentCollection<string, string> ArgumentCollection { get; private set; }
 
-        [JsonProperty("id")]
-        public string VersionId { get; set; }
+        public string Id { get; set; }
 
-        [JsonProperty("type")]
-        public string ReleaseType { get; set; }
+        public string Type { get; set; }
 
         [JsonProperty("minecraftArguments")]
         public string Arguments {
-            get => this._arguments;
+            get => _arguments;
             set {
-                this.ArgumentCollection = new ArgumentCollection<string, string>();
-                this.ArgumentCollection.Parse(value);
-                this._arguments = value;
+                ArgumentCollection = new ArgumentCollection<string, string>();
+                ArgumentCollection.Parse(value);
+                _arguments = value;
             }
         }
 
-        [JsonProperty("assets")]
-        public string AssetsIndex { get; set; }
+        public Artifact AssetIndex { get; set; }
 
-        [JsonProperty("mainClass")]
+        public string Assets { get; set; }
+
+        public VersionDownloads Downloads { get; set; }
+
         public string MainClass { get; set; }
 
-        [JsonProperty("libraries")]
-        public List<Lib> Libs { get; set; }
+        public List<Lib> Libraries { get; set; }
 
         [JsonProperty("inheritsFrom")]
         public string InheritsFrom { get; set; }
@@ -62,8 +56,16 @@ namespace dotMCLauncher.Core {
             }
 
             version.InheritableVersion = ParseVersion(new DirectoryInfo(Path.Combine(versionDirectory.Parent.FullName, version.InheritsFrom)));
-            version.Libs.AddRange(version.InheritableVersion.Libs);
+            version.Libraries.AddRange(version.InheritableVersion.Libraries);
             return version;
         }
+    }
+
+    public class VersionDownloads {
+        public Artifact Client { get; set; }
+
+        public Artifact Server { get; set; }
+
+        public Artifact WindowsServer { get; set; }
     }
 }
