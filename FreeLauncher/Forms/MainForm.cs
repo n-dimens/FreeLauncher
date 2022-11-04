@@ -16,16 +16,19 @@
     // using Microsoft.VisualBasic.Devices;
     using Microsoft.TeamFoundation.Common;
 
-    public partial class MainForm : Form, ILauncherLogger, IProgressView {
+    public partial class MainForm : Form, IProgressView {
+        private readonly ILauncherLogger _logger;
         private readonly Localization _localization;
         private readonly GameFileStructure _applicationContext;
         private readonly MainFormPresenter _presenter;
         private readonly GameProcessForm frmGameProcess;
 
-        public MainForm(GameFileStructure appContext, Localization localization) {
+        public MainForm(GameFileStructure appContext, Localization localization, ILauncherLogger logger) {
             _applicationContext = appContext;
             _localization = localization;
-            _presenter = new MainFormPresenter(this, this, _applicationContext);
+            _logger = logger;
+            _presenter = new MainFormPresenter(logger, this, _applicationContext);
+            logger.Changed += Logger_Changed;
             InitializeComponent();
 
             PrintAppInfo();
@@ -40,16 +43,18 @@
             LoadUsersList(_presenter.UserManager);
         }
 
+        private void Logger_Changed(object sender, string message) {
+            Log(message);
+        }
+
         private void PrintAppInfo() {
-            _presenter.LogInfo($"Application: {ProductName} v.{ProductVersion}");
-            _presenter.LogInfo($"Application language: {_localization.Name}({_localization.LanguageTag})");
-            _presenter.LogInfo("==============");
-            _presenter.LogInfo("System info:");
+            _logger.Info("=============< New Session >=============");
+            _logger.Info($"Application: {ProductName} v.{ProductVersion}");
+            _logger.Info($"Application language: {_localization.Name}({_localization.LanguageTag})");
             // _presenter.LogInfo($"Operating system: {Environment.OSVersion}({ComputerInfo.OSFullName})");
-            _presenter.LogInfo($"Operating system: {Environment.OSVersion}");
-            _presenter.LogInfo($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            _presenter.LogInfo($"Java path: {JavaUtils.GetJavaInstallationPath()}");
-            _presenter.LogInfo("==============");
+            _logger.Info($"Operating system: {Environment.OSVersion}");
+            _logger.Info($"Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+            _logger.Info($"Java path: {JavaUtils.GetJavaInstallationPath()}");
         }
 
         private void LoadConfiguration() {
@@ -98,27 +103,12 @@
             frmGameProcess.Close();
         }
 
-        public void LogDebug(string text, string methodName) {
-            Log("DEBUG", text, methodName);
-        }
-
-        public void LogError(string text, string methodName) {
-            Log("ERROR", text, methodName);
-        }
-
-        public void LogInfo(string text, string methodName) {
-            Log("INFO", text, methodName);
-        }
-
-        private void Log(string level, string text, string methodName) {
+        private void Log(string message) {
             if (txtLog.InvokeRequired) {
-                txtLog.Invoke(new Action<string, string, string>(Log), level, text, new StackFrame(1).GetMethod().Name);
+                txtLog.Invoke(new Action<string>(Log), message);
             }
             else {
-                txtLog.AppendText(string.Format(
-                    string.IsNullOrEmpty(txtLog.Text) ? "[{0}] [{1}] [{2}] {3}" : "\n[{0}] [{1}] [{2}] {3}",
-                    DateTime.Now.ToString("dd-MM-yy HH:mm:ss"), level,
-                    methodName ?? new StackFrame(1, false).GetMethod().Name, text));
+                txtLog.AppendText(message + "\n");
             }
         }
 
@@ -146,7 +136,7 @@
             else {
                 // progressBar.Text = text;
                 // TODO: need custom progress bar; https://stackoverflow.com/questions/3529928/how-do-i-put-text-on-progressbar
-                _presenter.LogInfo(text, methodName);
+                _logger.Info(text, methodName);
             }
         }
 
@@ -265,7 +255,7 @@
 
         public void btnLaunch_Click(object sender, EventArgs e) {
             if (_presenter.SelectedUser == null) {
-                _presenter.LogError("Пользователь не выбран");
+                _logger.Error("Пользователь не выбран");
                 return;
             }
 
@@ -305,8 +295,8 @@
                 .Version(selectedVersion)
                 .Build();
 
-            _presenter.LogInfo($"Command line: \"{proc.FileName}\" {proc.Arguments}");
-            _presenter.LogInfo($"Version {selectedVersion.VersionId} successfuly launched.");
+            _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
+            _logger.Info($"Version {selectedVersion.VersionId} successfuly launched.");
 
             if (frmGameProcess.Visible == false) {
                 frmGameProcess.Show();

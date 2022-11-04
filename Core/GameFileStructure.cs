@@ -10,7 +10,7 @@ namespace dotMCLauncher.Core {
     public class GameFileStructure {
         private readonly string _configurationFile;
 
-        public static readonly string VersionsFileUrl = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+        public static readonly string VersionsFileUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 
         public string McDirectory { get; }
         public string McLauncher { get; }
@@ -61,14 +61,14 @@ namespace dotMCLauncher.Core {
         }
 
         private Configuration GetConfiguration() {
-            Configuration configuration = null;
+            Configuration? configuration = null;
             if (File.Exists(_configurationFile)) {
                 configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(_configurationFile));
             } else {
                 configuration = new Configuration();
             }
 
-            return configuration;
+            return configuration!;
         }
     }
 }

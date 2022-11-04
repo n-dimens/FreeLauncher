@@ -44,7 +44,7 @@ namespace FreeLauncher.Forms {
                 UserManager = _usersRepository.Read();
             }
             catch (Exception ex) {
-                LogError("Reading user list: an exception has occurred\n" + ex.Message);
+                _logger.Error("Reading user list: an exception has occurred\n" + ex.Message);
                 UserManager = new UserManager();
                 _usersRepository.Save(UserManager);
             }
@@ -74,17 +74,17 @@ namespace FreeLauncher.Forms {
 
                 ProfileManager = LauncherExtensions.ParseProfile(AppContext.LauncherProfiles);
                 if (!ProfileManager.Profiles.Any()) {
-                    LogError("Reading profile list: profiles missing. Creating default.");
+                    _logger.Error("Reading profile list: profiles missing. Creating default.");
                     ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
                 }
             }
             catch (Exception ex) {
-                LogError("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
+                _logger.Error("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
 
                 // save backup
                 if (File.Exists(AppContext.LauncherProfiles)) {
                     string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".broken.json";
-                    LogInfo("A copy of broken profiles file has been created: " + fileName);
+                    _logger.Info("A copy of broken profiles file has been created: " + fileName);
                     File.Move(AppContext.LauncherProfiles, Path.Combine(AppContext.McLauncher, fileName));
                 }
 
@@ -100,7 +100,7 @@ namespace FreeLauncher.Forms {
         /// Обновление локального файла versions.json при сравнении с файлом в облаке
         /// </summary>
         public void UpdateVersionsList() {
-            LogInfo("Checking version.json...");
+            _logger.Info("Checking version.json...");
             if (!Directory.Exists(AppContext.McVersions)) {
                 Directory.CreateDirectory(AppContext.McVersions);
             }
@@ -111,7 +111,7 @@ namespace FreeLauncher.Forms {
             // Если локального файла не существует, сохраняем и выходим
             if (!File.Exists(AppContext.McVersionsFile)) {
                 File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
-                LogInfo("File downloaded and saved.");
+                _logger.Info("File downloaded and saved.");
                 return;
             }
 
@@ -119,8 +119,8 @@ namespace FreeLauncher.Forms {
             var newVersionsData = JObject.Parse(jsonVersionList);
             string remoteSnapshotVersion = newVersionsData["latest"]["snapshot"].ToString();
             string remoteReleaseVersion = newVersionsData["latest"]["release"].ToString();
-            LogInfo("Latest snapshot: " + remoteSnapshotVersion);
-            LogInfo("Latest release: " + remoteReleaseVersion);
+            _logger.Info("Latest snapshot: " + remoteSnapshotVersion);
+            _logger.Info("Latest release: " + remoteReleaseVersion);
 
             JObject ver = JObject.Parse(File.ReadAllText(AppContext.McVersionsFile));
             string localSnapshotVersion = ver["latest"]["snapshot"].ToString();
@@ -128,16 +128,16 @@ namespace FreeLauncher.Forms {
 
             bool isVersionsCountEqual = ((JArray)newVersionsData["versions"]).Count == ((JArray)ver["versions"]).Count;
             bool isEqualVersions = remoteReleaseVersion == localReleaseVersion && remoteSnapshotVersion == localSnapshotVersion;
-            LogInfo("Local versions: " + ((JArray)newVersionsData["versions"]).Count + ". Remote versions: " + ((JArray)ver["versions"]).Count);
+            _logger.Info("Local versions: " + ((JArray)newVersionsData["versions"]).Count + ". Remote versions: " + ((JArray)ver["versions"]).Count);
 
             if (isVersionsCountEqual && isEqualVersions) {
                 // Изменений нет, выходим
-                LogInfo("No update found.");
+                _logger.Info("No update found.");
                 return;
             }
 
             // Найдены изменения, обновляем лоакльный файл
-            LogInfo("Writting new list... ");
+            _logger.Info("Writting new list... ");
             File.WriteAllText(AppContext.McVersionsFile, jsonVersionList);
         }
 
@@ -152,7 +152,7 @@ namespace FreeLauncher.Forms {
             _progressView.SetProgressValue(0);
             string version = SelectedProfile.GetSelectedVersion(AppContext);
             _progressView.UpdateStageText($"Выполняется проверка доступности версии '{version}'");
-            LogInfo($"Checking '{version}' version availability...");
+            _logger.Info($"Checking '{version}' version availability...");
             string path = Path.Combine(AppContext.McVersions, version + "\\");
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
@@ -186,7 +186,7 @@ namespace FreeLauncher.Forms {
 
             while (state != 2) ;
             if (selectedVersion.InheritsFrom == null) {
-                LogInfo("Finished checking version avalability.");
+                _logger.Info("Finished checking version avalability.");
                 return;
             }
 
@@ -219,7 +219,7 @@ namespace FreeLauncher.Forms {
             }
 
             while (state != 4) ;
-            LogInfo("Finished checking version avalability.");
+            _logger.Info("Finished checking version avalability.");
         }
 
         public void CheckLibraries() {
@@ -229,12 +229,12 @@ namespace FreeLauncher.Forms {
             _progressView.SetProgressValue(0);
             _progressView.SetMaxProgressValue(selectedVersion.Libs.Count(a => a.IsForWindows()) + 1);
             _progressView.UpdateStageText(CheckingLibrariesMessage);
-            LogInfo("Checking libraries...");
+            _logger.Info("Checking libraries...");
             foreach (Lib lib in selectedVersion.Libs.Where(a => a.IsForWindows())) {
                 _progressView.IncProgressValue();
                 if (!File.Exists(AppContext.McLibs + lib.ToPath())) {
                     _progressView.UpdateStageText("Downloading " + lib.Name + "...");
-                    LogDebug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
+                    _logger.Debug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
                     string directory = Path.GetDirectoryName(AppContext.McLibs + lib.ToPath());
                     if (!File.Exists(directory)) {
                         Directory.CreateDirectory(directory);
@@ -248,12 +248,12 @@ namespace FreeLauncher.Forms {
                     _progressView.UpdateStageText("Unpacking " + lib.Name + "...");
                     using (ZipFile zip = ZipFile.Read(AppContext.McLibs + lib.ToPath())) {
                         foreach (ZipEntry entry in zip.Where(entry => entry.FileName.EndsWith(".dll"))) {
-                            LogDebug($"Unzipping {entry.FileName}");
+                            _logger.Debug($"Unzipping {entry.FileName}");
                             try {
                                 entry.Extract(AppContext.McNatives, ExtractExistingFileAction.OverwriteSilently);
                             }
                             catch (Exception ex) {
-                                LogError(ex.Message);
+                                _logger.Error(ex.Message);
                             }
                         }
                     }
@@ -268,7 +268,7 @@ namespace FreeLauncher.Forms {
             libraries += string.Format("{0}{1}\\{1}.jar", AppContext.McVersions,
                 selectedVersion.InheritsFrom ?? SelectedProfile.GetSelectedVersion(AppContext));
             AppContext.Libraries = libraries;
-            LogInfo("Finished checking libraries.");
+            _logger.Info("Finished checking libraries.");
         }
 
         public void CheckGameResources() {
@@ -300,18 +300,18 @@ namespace FreeLauncher.Forms {
                 }
 
                 try {
-                    LogDebug("Downloading " + resourseFile + "...");
+                    _logger.Debug("Downloading " + resourseFile + "...");
                     new WebClient().DownloadFile(@"http://resources.download.minecraft.net/" + resourseFile,
                         AppContext.McObjectsAssets + resourseFile);
                 }
                 catch (Exception ex) {
-                    LogError(ex.ToString());
+                    _logger.Error(ex.ToString());
                 }
 
                 _progressView.IncProgressValue();
             }
 
-            LogInfo("Finished checking game assets.");
+            _logger.Info("Finished checking game assets.");
             if (selectedVersion.AssetsIndex == null) {
                 _progressView.SetProgressValue(0);
                 _progressView.SetMaxProgressValue(jo["objects"].Cast<JProperty>()
@@ -325,34 +325,26 @@ namespace FreeLauncher.Forms {
                             resFile.Directory.Create();
                         }
 
-                        LogDebug(
+                        _logger.Debug(
                             $"Converting \"{"\\assets\\objects\\" + res.Value["hash"].ToString()[0] + res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"]}\" to \"{"\\assets\\legacy\\" + res.Name}\"");
                         File.Copy(AppContext.McObjectsAssets + res.Value["hash"].ToString()[0] +
                                   res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"],
                             resFile.FullName);
                     }
                     catch (Exception ex) {
-                        LogError(ex.ToString());
+                        _logger.Error(ex.ToString());
                     }
 
                     _progressView.IncProgressValue();
                 }
 
-                LogInfo("Finished converting assets.");
+                _logger.Info("Finished converting assets.");
             }
         }
 
-        public void LogDebug(string text, string methodName = null) {
-            _logger.LogDebug(text, methodName);
-        }
-
-        public void LogError(string text, string methodName = null) {
-            _logger.LogError(text, methodName);
-        }
-
-        public void LogInfo(string text, string methodName = null) {
-            _logger.LogInfo(text, methodName);
-        }
+        //public void LogInfo(string text, string methodName = null) {
+        //    _logger.LogInfo(text, methodName);
+        //}
 
         public string GetVersionLabel() {
             var selectedVersion = SelectedProfile.GetSelectedVersion(AppContext);
