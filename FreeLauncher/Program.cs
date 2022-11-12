@@ -9,8 +9,6 @@ using dotMCLauncher.Core.Data;
 using FreeLauncher;
 using FreeLauncher.Forms;
 
-using Telerik.WinControls;
-
 static class Program {
     /// <summary>
     ///  The main entry point for the application.
@@ -22,7 +20,6 @@ static class Program {
         var localization = new Localization();
         var versionsService = new VersionsService(logger, gameFiles);
 
-        ThemeResolutionService.ApplicationThemeName = "VisualStudio2012Dark";
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         var frmMain = new MainForm(gameFiles, localization, logger, versionsService);

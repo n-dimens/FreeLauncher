@@ -23,7 +23,6 @@
         private readonly Localization _localization;
         private readonly GameFileStructure _gameFiles;
         private readonly MainFormPresenter _presenter;
-        private readonly GameProcessForm frmGameProcess;
 
         public MainForm(GameFileStructure appContext, 
             Localization localization, 
@@ -36,8 +35,7 @@
             logger.Changed += Logger_Changed;
             InitializeComponent();
 
-            PrintAppInfo();
-            frmGameProcess = new GameProcessForm(_presenter.AppContext);
+            PrintAppInfo();           
 
             LoadConfiguration();
 
@@ -105,7 +103,7 @@
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             SaveConfiguration();
-            frmGameProcess.Close();
+            // frmGameProcess.Close();
         }
 
         private void Log(string message) {
@@ -298,11 +296,7 @@
             _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
             _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
 
-            if (frmGameProcess.Visible == false) {
-                frmGameProcess.Show();
-            }
-
-            frmGameProcess.CreateMinecraftProcessPage(_presenter.SelectedProfile, proc).Launch();
+            GameSessionForm.Launch(_presenter.AppContext, _presenter.SelectedProfile, proc);
         }
 
         private void LoadUsersList(UserManager userManager) {

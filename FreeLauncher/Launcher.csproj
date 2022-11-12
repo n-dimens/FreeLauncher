@@ -8,6 +8,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<AssemblyName>FreeLauncher</AssemblyName>
+		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,21 +19,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Core\Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="Telerik.WinControls">
-			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.dll</HintPath>
-		</Reference>
-		<Reference Include="Telerik.WinControls.Themes.VisualStudio2012Dark">
-			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.Themes.VisualStudio2012Dark.dll</HintPath>
-		</Reference>
-		<Reference Include="Telerik.WinControls.UI">
-			<HintPath>..\lib\RCWF\2015.3.1104.40\Telerik.WinControls.UI.dll</HintPath>
-		</Reference>
-		<Reference Include="TelerikCommon">
-			<HintPath>..\lib\RCWF\2015.3.1104.40\TelerikCommon.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 
 </Project>
