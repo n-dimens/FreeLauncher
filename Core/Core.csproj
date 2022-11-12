@@ -5,7 +5,8 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>disable</Nullable>
-		<RootNamespace>dotMCLauncher.Core</RootNamespace>
+		<RootNamespace>NDimens.Minecraft.FreeLauncher.Core</RootNamespace>
+		<AssemblyName>NDimens.Minecraft.FreeLauncher.Core</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>

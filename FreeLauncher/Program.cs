@@ -1,13 +1,10 @@
-namespace Launcher;
+namespace NDimens.Minecraft.FreeLauncher;
 
 using System;
 using System.Windows.Forms;
 
 using dotMCLauncher.Core;
 using dotMCLauncher.Core.Data;
-
-using FreeLauncher;
-using FreeLauncher.Forms;
 
 static class Program {
     /// <summary>

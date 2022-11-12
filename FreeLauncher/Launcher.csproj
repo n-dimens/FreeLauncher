@@ -4,9 +4,10 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<LangVersion>10</LangVersion>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>disable</ImplicitUsings>
+		<RootNamespace>NDimens.Minecraft.FreeLauncher</RootNamespace>
 		<AssemblyName>FreeLauncher</AssemblyName>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
