@@ -53,7 +53,7 @@ namespace FreeLauncher.Forms {
             };
             
             var panel = new RadPanel {
-                Text = _context.Profile.GetSelectedVersion(_context.ApplicationContext),
+                Text = _context.Profile.SelectedVersion,
                 Dock = DockStyle.Top,
             };
             panel.Size = new Size(panel.Size.Width, 60);

@@ -3,6 +3,8 @@ using System.IO;
 
 namespace FreeLauncher {
     public static class JavaUtils {
+        public static readonly string DEFAULT_ARGS = "-Xms1G -Xmx8G";
+
         /// <summary>
         /// Проверка переменных окружения в порядке JAVA_HOME, JRE_HOME, JDK_HOME
         /// </summary>

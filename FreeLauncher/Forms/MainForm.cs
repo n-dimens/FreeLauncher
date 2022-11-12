@@ -181,7 +181,7 @@
             Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
             editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
                                         DateTime.Now.ToString("HH:mm:ss") + ")";
-            var pf = new ProfileForm(editedProfile, _gameFiles, _localization) { 
+            var pf = new ProfileManagerForm(editedProfile) { 
                 Text = _localization.AddingProfileTitle 
             };
             pf.ShowDialog();
@@ -201,7 +201,7 @@
         }
 
         private void btnEditProfile_Click(object sender, EventArgs e) {
-            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _gameFiles, _localization) {
+            var pf = new ProfileManagerForm(_presenter.SelectedProfile) {
                 Text = _localization.EditingProfileTitle
             };
             pf.ShowDialog();
@@ -283,12 +283,7 @@
 
         private void Launch() {
             var selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_gameFiles.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_gameFiles)));
-
-            if (_presenter.SelectedProfile.FastConnectionSettigs != null) {
-                selectedVersion.ArgumentCollection.Add("server", _presenter.SelectedProfile.FastConnectionSettigs.ServerIP);
-                selectedVersion.ArgumentCollection.Add("port", _presenter.SelectedProfile.FastConnectionSettigs.ServerPort.ToString());
-            }
+                new DirectoryInfo(_gameFiles.McVersions + _presenter.SelectedProfile.SelectedVersion));
 
             if (_presenter.SelectedProfile.WorkingDirectory != null && !Directory.Exists(_presenter.SelectedProfile.WorkingDirectory)) {
                 Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);

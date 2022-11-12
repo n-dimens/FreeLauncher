@@ -109,7 +109,7 @@ namespace FreeLauncher.Forms {
             _progressView.SetMaxProgressValue(100);
             _progressView.SetProgressValue(0);
 
-            string version = SelectedProfile.GetSelectedVersion(AppContext);
+            string version = SelectedProfile.SelectedVersion;
             var versionInfo = _versionsService.GetVersionInfo(version);
             _progressView.UpdateStageText($"Выполняется проверка доступности версии '{version}'");
             _logger.Info($"Checking '{version}' version availability...");
@@ -182,7 +182,7 @@ namespace FreeLauncher.Forms {
         public void CheckLibraries() {
             string libraries = string.Empty;
             var selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(AppContext.McVersions + SelectedProfile.GetSelectedVersion(AppContext)));
+                new DirectoryInfo(AppContext.McVersions + SelectedProfile.SelectedVersion));
             _progressView.SetProgressValue(0);
             _progressView.SetMaxProgressValue(selectedVersion.Libraries.Count(a => a.IsForWindows()) + 1);
             _progressView.UpdateStageText(CheckingLibrariesMessage);
@@ -224,7 +224,7 @@ namespace FreeLauncher.Forms {
             }
 
             libraries += string.Format("{0}{1}\\{1}.jar", AppContext.McVersions,
-                selectedVersion.InheritsFrom ?? SelectedProfile.GetSelectedVersion(AppContext));
+                selectedVersion.InheritsFrom ?? SelectedProfile.SelectedVersion);
             AppContext.Libraries = libraries;
             _logger.Info("Finished checking libraries.");
         }
@@ -232,7 +232,7 @@ namespace FreeLauncher.Forms {
         public void CheckGameResources() {
             _progressView.UpdateStageText("Checking game assets...");
             Version selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(AppContext.McVersions + SelectedProfile.GetSelectedVersion(AppContext)));
+                new DirectoryInfo(AppContext.McVersions + SelectedProfile.SelectedVersion));
             string file = string.Format("{0}/indexes/{1}.json", AppContext.McAssets, selectedVersion.Assets ?? "legacy");
             if (!File.Exists(file)) {
                 if (!Directory.Exists(Path.GetDirectoryName(file))) {
@@ -299,7 +299,7 @@ namespace FreeLauncher.Forms {
         }
 
         public string GetVersionLabel() {
-            var selectedVersion = SelectedProfile.GetSelectedVersion(AppContext);
+            var selectedVersion = SelectedProfile.SelectedVersion;
             string versionFilePath = Path.Combine(AppContext.McVersions, selectedVersion, $"{selectedVersion}.json");
             if (!File.Exists(versionFilePath)) {
                 return $"Готов к загрузке версии {selectedVersion}";

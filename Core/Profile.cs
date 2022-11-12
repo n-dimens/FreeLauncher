@@ -4,6 +4,8 @@
 // MVID: 3319DB9D-31E6-4AD0-8FD9-640DCB0404A7
 // Assembly location: D:\projects\minecraft\FreeLauncher\lib\dotMCLauncher\Core\0.0.4.84\dotMCLauncher.Core.dll
 
+using FreeLauncher;
+
 using Newtonsoft.Json;
 
 namespace dotMCLauncher.Core {
@@ -17,12 +19,6 @@ namespace dotMCLauncher.Core {
         [JsonProperty("lastVersionId")]
         public string SelectedVersion { get; set; }
 
-        [JsonProperty("resolution")]
-        public MinecraftWindowSize WindowSize { get; set; }
-
-        [JsonProperty("allowedReleaseTypes")]
-        public string[] AllowedReleaseTypes { get; set; }
-
         [JsonProperty("launcherVisibilityOnGameClose")]
         private string _launcherVisibilityOnGameClose { get; set; }
 
@@ -31,9 +27,6 @@ namespace dotMCLauncher.Core {
 
         [JsonProperty("javaArgs")]
         public string JavaArguments { get; set; }
-
-        [JsonProperty("connectionOptions")]
-        public ConnectionSettings FastConnectionSettigs { get; set; }
 
         [JsonIgnore]
         public Profile.LauncherVisibility LauncherVisibilityOnGameClose {
@@ -78,8 +71,9 @@ namespace dotMCLauncher.Core {
             // TODO: Java exe, gamedir, lastVersionId
             var profile = new Profile {
                 ProfileName = "default",
-                AllowedReleaseTypes = new[] { "release", "other" },
-                LauncherVisibilityOnGameClose = Profile.LauncherVisibility.VISIBLE
+                LauncherVisibilityOnGameClose = LauncherVisibility.VISIBLE,
+                JavaExecutable = JavaUtils.GetJavaExecutable(),
+                JavaArguments = JavaUtils.DEFAULT_ARGS
             };
 
             return profile;
