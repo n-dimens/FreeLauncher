@@ -16,11 +16,12 @@
     // using Microsoft.VisualBasic.Devices;
     using Microsoft.TeamFoundation.Common;
     using dotMCLauncher.Core.Data;
+    using Launcher.Forms;
 
     public partial class MainForm : Form, IProgressView {
         private readonly ILauncherLogger _logger;
         private readonly Localization _localization;
-        private readonly GameFileStructure _applicationContext;
+        private readonly GameFileStructure _gameFiles;
         private readonly MainFormPresenter _presenter;
         private readonly GameProcessForm frmGameProcess;
 
@@ -28,10 +29,10 @@
             Localization localization, 
             ILauncherLogger logger,
             VersionsService versionsService) {
-            _applicationContext = appContext;
+            _gameFiles = appContext;
             _localization = localization;
             _logger = logger;
-            _presenter = new MainFormPresenter(logger, this, _applicationContext, versionsService);
+            _presenter = new MainFormPresenter(logger, this, _gameFiles, versionsService);
             logger.Changed += Logger_Changed;
             InitializeComponent();
 
@@ -62,10 +63,10 @@
         }
 
         private void LoadConfiguration() {
-            chbEnableGameLogging.Checked = _applicationContext.Configuration.EnableGameLogging;
-            chbUseLogPrefix.Checked = _applicationContext.Configuration.ShowGamePrefix;
-            chbCloseOutput.Checked = _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode;
-            txtInstallationDir.Text = _applicationContext.Configuration.InstallationDirectory;
+            chbEnableGameLogging.Checked = _gameFiles.Configuration.EnableGameLogging;
+            chbUseLogPrefix.Checked = _gameFiles.Configuration.ShowGamePrefix;
+            chbCloseOutput.Checked = _gameFiles.Configuration.CloseTabAfterSuccessfulExitCode;
+            txtInstallationDir.Text = _gameFiles.Configuration.InstallationDirectory;
         }
 
         private void LoadProfilesList() {
@@ -126,11 +127,11 @@
         }
 
         private void SaveConfiguration() {
-            _applicationContext.Configuration.EnableGameLogging = chbEnableGameLogging.Checked;
-            _applicationContext.Configuration.ShowGamePrefix = chbUseLogPrefix.Checked;
-            _applicationContext.Configuration.CloseTabAfterSuccessfulExitCode = chbCloseOutput.Checked;
-            _applicationContext.Configuration.InstallationDirectory = txtInstallationDir.Text;
-            _applicationContext.SaveConfiguration();
+            _gameFiles.Configuration.EnableGameLogging = chbEnableGameLogging.Checked;
+            _gameFiles.Configuration.ShowGamePrefix = chbUseLogPrefix.Checked;
+            _gameFiles.Configuration.CloseTabAfterSuccessfulExitCode = chbCloseOutput.Checked;
+            _gameFiles.Configuration.InstallationDirectory = txtInstallationDir.Text;
+            _gameFiles.SaveConfiguration();
         }
 
         public void UpdateStageText(string text, string methodName = null) {
@@ -180,7 +181,7 @@
             Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
             editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
                                         DateTime.Now.ToString("HH:mm:ss") + ")";
-            var pf = new ProfileForm(editedProfile, _applicationContext, _localization) { 
+            var pf = new ProfileForm(editedProfile, _gameFiles, _localization) { 
                 Text = _localization.AddingProfileTitle 
             };
             pf.ShowDialog();
@@ -200,7 +201,7 @@
         }
 
         private void btnEditProfile_Click(object sender, EventArgs e) {
-            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _applicationContext, _localization) {
+            ProfileForm pf = new ProfileForm(_presenter.SelectedProfile, _gameFiles, _localization) {
                 Text = _localization.EditingProfileTitle
             };
             pf.ShowDialog();
@@ -244,7 +245,7 @@
         //}
 
         private void btnUsers_Click(object sender, EventArgs e) {
-            new UsersForm(_applicationContext, _localization).ShowDialog();
+            new UserManagerForm(_gameFiles).ShowDialog();
             _presenter.ReloadUserManager();
             LoadUsersList(_presenter.UserManager);
         }
@@ -282,7 +283,7 @@
 
         private void Launch() {
             var selectedVersion = Version.ParseVersion(
-                new DirectoryInfo(_applicationContext.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_applicationContext)));
+                new DirectoryInfo(_gameFiles.McVersions + _presenter.SelectedProfile.GetSelectedVersion(_gameFiles)));
 
             if (_presenter.SelectedProfile.FastConnectionSettigs != null) {
                 selectedVersion.ArgumentCollection.Add("server", _presenter.SelectedProfile.FastConnectionSettigs.ServerIP);
@@ -293,7 +294,7 @@
                 Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);
             }
 
-            var proc = ProcessInfoBuilder.Create(_applicationContext)
+            var proc = ProcessInfoBuilder.Create(_gameFiles)
                 .Profile(_presenter.SelectedProfile)
                 .User(_presenter.SelectedUser)
                 .Version(selectedVersion)
