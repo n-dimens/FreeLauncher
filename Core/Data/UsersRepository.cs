@@ -1,44 +1,73 @@
-﻿namespace dotMCLauncher.Core {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+﻿namespace NDimens.Minecraft.FreeLauncher.Core.Data;
 
-    using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-    public class UsersRepository {
-        // applicationContext.LauncherUsers == ConnectionString - информация об источнике данных, куда "подключаться"
-        // т.е. сюда нужно передавать "БД" = корневой папке, а где в этой папке нужная "таблица"=файл - репозиторий должен знать сам.
-        // Ну или нужно отдельное метаописание "БД" как папки с файлами
-        private readonly GameFileStructure _gameFiles;
+using Newtonsoft.Json;
 
-        public UsersRepository(GameFileStructure gameFiles) {
-            _gameFiles = gameFiles;
-        }
+public class UsersRepository : IUsersRepository {
+    private readonly FileInfo _store;
 
-        public UserManager Read() {
-            if (File.Exists(_gameFiles.LauncherUsers)) {
-                var um = JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_gameFiles.LauncherUsers));
-                if (um != null) {
-                    return um;
-                }
+    public UsersRepository(FileInfo store) {
+        _store = store;
+        InitStore();
+    }
+
+    public ImmutableList<string> GetUserList() {
+        return Read().Users.Keys.ToImmutableList();
+    }
+
+    public UserManager Read() {
+        if (_store.Exists) {
+            var um = JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_store.FullName));
+            if (um != null) {
+                return um;
             }
-
-            var newUserManager = new UserManager();
-            Save(newUserManager);
-            return newUserManager;
         }
 
-        public void Save(UserManager userManager) {
-            var json = JsonConvert.SerializeObject(userManager, Formatting.Indented,
-                    new JsonSerializerSettings {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }
-            );
+        var newUserManager = new UserManager();
+        Save(newUserManager);
+        return newUserManager;
+    }
 
-            File.WriteAllText(_gameFiles.LauncherUsers, json);
+    public User Find(string userName) {
+        return Read().Users[userName];
+    }
+
+    public void Add(User user) {
+        var um = Read();
+        if (um.Users.ContainsKey(user.Username)) {
+            um.Users[user.Username] = user;
+        }
+        else {
+            um.Users.Add(user.Username, user);
+        }
+
+        if (string.IsNullOrEmpty(um.SelectedUsername)) {
+            um.SelectedUsername = user.Username;
+        }
+
+        Save(um);
+    }
+
+    public void Save(UserManager userManager) {
+        var json = JsonConvert.SerializeObject(userManager, Formatting.Indented,
+                new JsonSerializerSettings {
+                    NullValueHandling = NullValueHandling.Ignore
+                }
+        );
+
+        File.WriteAllText(_store.FullName, json);
+    }
+
+    private void InitStore() {
+        if (!_store.Exists) {
+            Save(new UserManager());
         }
     }
 }

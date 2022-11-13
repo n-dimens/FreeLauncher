@@ -9,41 +9,26 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using dotMCLauncher.Core;
+using NDimens.Minecraft.FreeLauncher.Core.Data;
+using NDimens.Minecraft.FreeLauncher.Presenters;
 
 public partial class UserManagerForm : Form {
-    private readonly UsersRepository _usersRepository;
-    private readonly UserManager _userManager;
+    private readonly UserManagerFormPresenter _presenter;
 
-    public UserManagerForm(GameFileStructure gameFiles) {
-        _usersRepository = new UsersRepository(gameFiles);
+    internal UserManagerForm(UserManagerFormPresenter presenter) {
+        _presenter = presenter;
         InitializeComponent();
-        _userManager = _usersRepository.Read();
-        UpdateUsers();
+        ReloadUserList();
     }
 
     private void btnAdd_Click(object sender, EventArgs e) {
-        var user = new User {
-            Username = txtUsername.Text,
-            Type = "offline"
-        };
-        _userManager.AddUser(user);
-        _userManager.SelectedUsername = user.Username;
-        _usersRepository.Save(_userManager);
-        UpdateUsers();
-    }
-
-    private void UpdateUsers() {
-        lbUsers.Items.Clear();
-        foreach (KeyValuePair<string, User> item in _userManager.Users) {
-            lbUsers.Items.Add(item.Key);
-        }
+        _presenter.AddUser(txtUsername.Text);
+        ReloadUserList();
     }
 
     private void btnDelete_Click(object sender, EventArgs e) {
-        _userManager.Users.Remove(lbUsers.SelectedItem.ToString());
-        _usersRepository.Save(_userManager);
-        UpdateUsers();
+        _presenter.DeleteUser(lbUsers.SelectedItem.ToString());
+        ReloadUserList();
     }
 
     private void txtUsername_TextChanged(object sender, EventArgs e) {
@@ -52,5 +37,12 @@ public partial class UserManagerForm : Form {
 
     private void lbUsers_SelectedIndexChanged(object sender, EventArgs e) {
         btnDelete.Enabled = lbUsers.SelectedItem != null;
+    }
+
+    private void ReloadUserList() {
+        lbUsers.Items.Clear();
+        foreach (var username in _presenter.GetUserNames()) {
+            lbUsers.Items.Add(username);
+        }
     }
 }

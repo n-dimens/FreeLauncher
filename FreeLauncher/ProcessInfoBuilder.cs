@@ -9,6 +9,8 @@ using dotMCLauncher.Core.Auth;
 
 using global::FreeLauncher;
 
+using NDimens.Minecraft.FreeLauncher.Core;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

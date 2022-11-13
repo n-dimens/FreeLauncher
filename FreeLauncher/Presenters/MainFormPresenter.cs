@@ -7,56 +7,55 @@ using System.Linq;
 using System.Net;
 using dotMCLauncher.Core;
 using Version = dotMCLauncher.Core.Version;
-using Core = dotMCLauncher.Core;
 
 using Ionic.Zip;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using dotMCLauncher.Core.Data;
+using NDimens.Minecraft.FreeLauncher.Core.Data;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using NDimens.Minecraft.FreeLauncher.Core;
 
 public class MainFormPresenter {
     private readonly static string CheckingLibrariesMessage = "Выполняется проверка библиотек";
-    // TODO: Выпилить свойства, раскрывающие объекты
     private readonly ILauncherLogger _logger;
-    private readonly IProgressView _progressView;
-    private readonly UsersRepository _usersRepository;
+    private readonly IUsersRepository _usersRepository;
     private readonly VersionsService _versionsService;
+    private IProgressView _progressView;
 
     public static readonly string ProductName = "FreeLauncher";
 
-    public GameFileStructure AppContext { get; }
-
-    public User SelectedUser { get; private set; }
-
-    public UserManager UserManager { get; private set; }
+    public GameFileStructure GameFiles { get; }
 
     public ProfileManager ProfileManager { get; private set; }
 
     public Profile SelectedProfile { get; private set; }
 
-    public MainFormPresenter(ILauncherLogger viewLogger, IProgressView progressView, GameFileStructure appContext, VersionsService versionsService) {
+    public MainFormPresenter(ILauncherLogger viewLogger, GameFileStructure appContext, VersionsService versionsService, IUsersRepository usersRepository) {
         _logger = viewLogger;
-        _progressView = progressView;
-        _usersRepository = new UsersRepository(appContext);
+        _usersRepository = usersRepository;
         _versionsService = versionsService;
-        AppContext = appContext;
+        GameFiles = appContext;
     }
 
-    public void ReloadUserManager() {
-        try {
-            UserManager = _usersRepository.Read();
-        }
-        catch (Exception ex) {
-            _logger.Error("Reading user list: an exception has occurred\n" + ex.Message);
-            UserManager = new UserManager();
-            _usersRepository.Save(UserManager);
-        }
+    public void SetProgressView(IProgressView progressView) {
+        _progressView = progressView;
     }
 
-    public void SelectUser(string nickname) {
-        SelectedUser = UserManager.Users[nickname];
-        UserManager.SelectedUsername = nickname;
+    public UserManager GetUserManager() {
+        return _usersRepository.Read();
+    }
+
+    public User GetUser(string userName) {
+        return _usersRepository.Find(userName);
+    }
+
+    public void SetSelectedUser(string nickname) {
+        var um = _usersRepository.Read();
+        um.SelectedUsername = nickname;
+        _usersRepository.Save(um);
     }
 
     public void SelectProfile(string name) {
@@ -67,37 +66,37 @@ public class MainFormPresenter {
     // TODO: Отделить Restore от Reload
     public void ReloadProfileManager() {
         try {
-            if (!File.Exists(AppContext.McLauncherProfiles) && !File.Exists(AppContext.LauncherProfiles)) {
-                ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
+            if (!File.Exists(GameFiles.McLauncherProfiles) && !File.Exists(GameFiles.LauncherProfiles)) {
+                ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
                 return;
             }
 
-            if (File.Exists(AppContext.McLauncherProfiles) && !File.Exists(AppContext.LauncherProfiles)) {
-                File.Copy(AppContext.McLauncherProfiles, AppContext.LauncherProfiles);
+            if (File.Exists(GameFiles.McLauncherProfiles) && !File.Exists(GameFiles.LauncherProfiles)) {
+                File.Copy(GameFiles.McLauncherProfiles, GameFiles.LauncherProfiles);
             }
 
-            ProfileManager = LauncherExtensions.ParseProfile(AppContext.LauncherProfiles);
+            ProfileManager = LauncherExtensions.ParseProfile(GameFiles.LauncherProfiles);
             if (!ProfileManager.Profiles.Any()) {
                 _logger.Error("Reading profile list: profiles missing. Creating default.");
-                ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
+                ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
             }
         }
         catch (Exception ex) {
             _logger.Error("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
 
             // save backup
-            if (File.Exists(AppContext.LauncherProfiles)) {
+            if (File.Exists(GameFiles.LauncherProfiles)) {
                 string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".broken.json";
                 _logger.Info("A copy of broken profiles file has been created: " + fileName);
-                File.Move(AppContext.LauncherProfiles, Path.Combine(AppContext.McLauncher, fileName));
+                File.Move(GameFiles.LauncherProfiles, Path.Combine(GameFiles.McLauncher, fileName));
             }
 
-            ProfileManager = ProfileManagerUtils.Init(AppContext.LauncherProfiles);
+            ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
         }
     }
 
     public void SaveProfiles() {
-        ProfileManager.Save(AppContext.LauncherProfiles);
+        ProfileManager.Save(GameFiles.LauncherProfiles);
     }
 
     public void CheckVersionAvailability() {
@@ -115,7 +114,7 @@ public class MainFormPresenter {
         _progressView.UpdateStageText($"Выполняется проверка доступности версии '{version}'");
         _logger.Info($"Checking '{version}' version availability...");
 
-        string versionDirectory = Path.Combine(AppContext.McVersions, version);
+        string versionDirectory = Path.Combine(GameFiles.McVersions, version);
         if (!Directory.Exists(versionDirectory)) {
             Directory.CreateDirectory(versionDirectory);
         }
@@ -135,7 +134,7 @@ public class MainFormPresenter {
         if (!File.Exists(Path.Combine(versionDirectory, version + ".jar")) && selectedVersion.InheritsFrom == null) {
             string filename = version + ".jar";
             _progressView.UpdateStageText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
-            downloader.DownloadFileAsync(new Uri(selectedVersion.Downloads.Client.Url), string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, version));
+            downloader.DownloadFileAsync(new Uri(selectedVersion.Downloads.Client.Url), string.Format("{0}/{1}/{1}.jar", GameFiles.McVersions, version));
         }
         else {
             state++;
@@ -148,29 +147,29 @@ public class MainFormPresenter {
         }
 
         // для Forge
-        versionDirectory = Path.Combine(AppContext.McVersions, selectedVersion.InheritsFrom + "\\");
+        versionDirectory = Path.Combine(GameFiles.McVersions, selectedVersion.InheritsFrom + "\\");
         if (!Directory.Exists(versionDirectory)) {
             Directory.CreateDirectory(versionDirectory);
         }
 
-        if (!File.Exists(string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, selectedVersion.InheritsFrom))) {
+        if (!File.Exists(string.Format("{0}/{1}/{1}.jar", GameFiles.McVersions, selectedVersion.InheritsFrom))) {
             string filename = selectedVersion.InheritsFrom + ".jar";
             _progressView.UpdateStageText("Downloading " + filename + "...", new StackFrame().GetMethod().Name);
             downloader.DownloadFileAsync(new Uri(string.Format(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.jar", selectedVersion.InheritsFrom)),
-                string.Format("{0}/{1}/{1}.jar", AppContext.McVersions, selectedVersion.InheritsFrom));
+                string.Format("{0}/{1}/{1}.jar", GameFiles.McVersions, selectedVersion.InheritsFrom));
         }
         else {
             state++;
         }
 
         while (state != 3) ;
-        if (!File.Exists(string.Format("{0}/{1}/{1}.json", AppContext.McVersions, selectedVersion.InheritsFrom))) {
+        if (!File.Exists(string.Format("{0}/{1}/{1}.json", GameFiles.McVersions, selectedVersion.InheritsFrom))) {
             string filename = selectedVersion.InheritsFrom + ".json";
             _progressView.UpdateStageText("Downloading " + filename + "...");
             downloader.DownloadFileAsync(new Uri(string.Format(
                     "https://s3.amazonaws.com/Minecraft.Download/versions/{0}/{0}.json", selectedVersion.InheritsFrom)),
-                string.Format("{0}/{1}/{1}.json", AppContext.McVersions, selectedVersion.InheritsFrom));
+                string.Format("{0}/{1}/{1}.json", GameFiles.McVersions, selectedVersion.InheritsFrom));
         }
         else {
             state++;
@@ -183,7 +182,7 @@ public class MainFormPresenter {
     public void CheckLibraries() {
         string libraries = string.Empty;
         var selectedVersion = Version.ParseVersion(
-            new DirectoryInfo(AppContext.McVersions + SelectedProfile.SelectedVersion));
+            new DirectoryInfo(GameFiles.McVersions + SelectedProfile.SelectedVersion));
         _progressView.SetProgressValue(0);
         _progressView.SetMaxProgressValue(selectedVersion.Libraries.Count(a => a.IsForWindows()) + 1);
         _progressView.UpdateStageText(CheckingLibrariesMessage);
@@ -191,25 +190,25 @@ public class MainFormPresenter {
         _logger.Info("Checking libraries...");
         foreach (Lib lib in selectedVersion.Libraries.Where(a => a.IsForWindows())) {
             _progressView.IncProgressValue();
-            if (!File.Exists(AppContext.McLibs + lib.ToPath())) {
+            if (!File.Exists(GameFiles.McLibs + lib.ToPath())) {
                 _progressView.UpdateStageText("Downloading " + lib.Name + "...");
                 _logger.Debug("Url: " + (lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath());
-                string directory = Path.GetDirectoryName(AppContext.McLibs + lib.ToPath());
+                string directory = Path.GetDirectoryName(GameFiles.McLibs + lib.ToPath());
                 if (!File.Exists(directory)) {
                     Directory.CreateDirectory(directory);
                 }
 
                 new WebClient().DownloadFile((lib.Url ?? @"https://libraries.minecraft.net/") + lib.ToPath(),
-                    AppContext.McLibs + lib.ToPath());
+                    GameFiles.McLibs + lib.ToPath());
             }
 
             if (lib.IsNative != null) {
                 _progressView.UpdateStageText("Unpacking " + lib.Name + "...");
-                using (ZipFile zip = ZipFile.Read(AppContext.McLibs + lib.ToPath())) {
+                using (ZipFile zip = ZipFile.Read(GameFiles.McLibs + lib.ToPath())) {
                     foreach (ZipEntry entry in zip.Where(entry => entry.FileName.EndsWith(".dll"))) {
                         _logger.Debug($"Unzipping {entry.FileName}");
                         try {
-                            entry.Extract(AppContext.McNatives, ExtractExistingFileAction.OverwriteSilently);
+                            entry.Extract(GameFiles.McNatives, ExtractExistingFileAction.OverwriteSilently);
                         }
                         catch (Exception ex) {
                             _logger.Error(ex.Message);
@@ -218,23 +217,23 @@ public class MainFormPresenter {
                 }
             }
             else {
-                libraries += AppContext.McLibs + lib.ToPath() + ";";
+                libraries += GameFiles.McLibs + lib.ToPath() + ";";
             }
 
             _progressView.UpdateStageText(CheckingLibrariesMessage);
         }
 
-        libraries += string.Format("{0}{1}\\{1}.jar", AppContext.McVersions,
+        libraries += string.Format("{0}{1}\\{1}.jar", GameFiles.McVersions,
             selectedVersion.InheritsFrom ?? SelectedProfile.SelectedVersion);
-        AppContext.Libraries = libraries;
+        GameFiles.Libraries = libraries;
         _logger.Info("Finished checking libraries.");
     }
 
     public void CheckGameResources() {
         _progressView.UpdateStageText("Checking game assets...");
         Version selectedVersion = Version.ParseVersion(
-            new DirectoryInfo(AppContext.McVersions + SelectedProfile.SelectedVersion));
-        string file = string.Format("{0}/indexes/{1}.json", AppContext.McAssets, selectedVersion.Assets ?? "legacy");
+            new DirectoryInfo(GameFiles.McVersions + SelectedProfile.SelectedVersion));
+        string file = string.Format("{0}/indexes/{1}.json", GameFiles.McAssets, selectedVersion.Assets ?? "legacy");
         if (!File.Exists(file)) {
             if (!Directory.Exists(Path.GetDirectoryName(file))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
@@ -247,11 +246,11 @@ public class MainFormPresenter {
         var something = jo["objects"].Cast<JProperty>()
             .Select(peep => jo["objects"][peep.Name]["hash"].ToString())
             .Select(c => c[0].ToString() + c[1].ToString() + "\\" + c)
-            .Where(filename => !File.Exists(AppContext.McObjectsAssets + filename)).ToList();
+            .Where(filename => !File.Exists(GameFiles.McObjectsAssets + filename)).ToList();
         _progressView.SetProgressValue(0);
         _progressView.SetMaxProgressValue(something.Count + 1);
         foreach (string resourseFile in something) {
-            string path = AppContext.McObjectsAssets + resourseFile[0] + resourseFile[1] + "\\";
+            string path = GameFiles.McObjectsAssets + resourseFile[0] + resourseFile[1] + "\\";
             if (!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
             }
@@ -259,7 +258,7 @@ public class MainFormPresenter {
             try {
                 _logger.Debug("Downloading " + resourseFile + "...");
                 new WebClient().DownloadFile(@"http://resources.download.minecraft.net/" + resourseFile,
-                    AppContext.McObjectsAssets + resourseFile);
+                    GameFiles.McObjectsAssets + resourseFile);
             }
             catch (Exception ex) {
                 _logger.Error(ex.ToString());
@@ -272,19 +271,19 @@ public class MainFormPresenter {
         if (selectedVersion.Assets == null) {
             _progressView.SetProgressValue(0);
             _progressView.SetMaxProgressValue(jo["objects"].Cast<JProperty>()
-                .Count(res => !File.Exists(AppContext.McLegacyAssets + res.Name)) + 1);
+                .Count(res => !File.Exists(GameFiles.McLegacyAssets + res.Name)) + 1);
             _progressView.UpdateStageText("Converting assets...");
             foreach (JProperty res in jo["objects"].Cast<JProperty>()
-                         .Where(res => !File.Exists(AppContext.McLegacyAssets + res.Name))) {
+                         .Where(res => !File.Exists(GameFiles.McLegacyAssets + res.Name))) {
                 try {
-                    FileInfo resFile = new FileInfo(AppContext.McLegacyAssets + res.Name);
+                    FileInfo resFile = new FileInfo(GameFiles.McLegacyAssets + res.Name);
                     if (!resFile.Directory.Exists) {
                         resFile.Directory.Create();
                     }
 
                     _logger.Debug(
                         $"Converting \"{"\\assets\\objects\\" + res.Value["hash"].ToString()[0] + res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"]}\" to \"{"\\assets\\legacy\\" + res.Name}\"");
-                    File.Copy(AppContext.McObjectsAssets + res.Value["hash"].ToString()[0] +
+                    File.Copy(GameFiles.McObjectsAssets + res.Value["hash"].ToString()[0] +
                               res.Value["hash"].ToString()[1] + "\\" + res.Value["hash"],
                         resFile.FullName);
                 }
@@ -301,7 +300,7 @@ public class MainFormPresenter {
 
     public string GetVersionLabel() {
         var selectedVersion = SelectedProfile.SelectedVersion;
-        string versionFilePath = Path.Combine(AppContext.McVersions, selectedVersion, $"{selectedVersion}.json");
+        string versionFilePath = Path.Combine(GameFiles.McVersions, selectedVersion, $"{selectedVersion}.json");
         if (!File.Exists(versionFilePath)) {
             return $"Готов к загрузке версии {selectedVersion}";
         }

@@ -6,6 +6,8 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    using NDimens.Minecraft.FreeLauncher.Core;
+
     public static class AuthService {
         // TODO: async?
         public static User? Login(string email, string password) {

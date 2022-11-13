@@ -20,21 +20,27 @@ using dotMCLauncher.Core.Data;
 using Launcher.Forms;
 using NDimens.Minecraft.FreeLauncher.Presenters;
 using global::FreeLauncher;
+using NDimens.Minecraft.FreeLauncher.Core;
 
 public partial class MainForm : Form, IProgressView {
+    private readonly FormFactory _formFactory;
     private readonly ILauncherLogger _logger;
     private readonly Localization _localization;
     private readonly GameFileStructure _gameFiles;
     private readonly MainFormPresenter _presenter;
 
-    public MainForm(GameFileStructure appContext, 
+    internal MainForm(
+        MainFormPresenter presenter,
+        FormFactory formFactory,
+        GameFileStructure appContext, 
         Localization localization, 
-        ILauncherLogger logger,
-        VersionsService versionsService) {
+        ILauncherLogger logger) {
+        _formFactory = formFactory;
         _gameFiles = appContext;
         _localization = localization;
         _logger = logger;
-        _presenter = new MainFormPresenter(logger, this, _gameFiles, versionsService);
+        _presenter = presenter;
+        _presenter.SetProgressView(this);
         logger.Changed += Logger_Changed;
         InitializeComponent();
 
@@ -45,8 +51,7 @@ public partial class MainForm : Form, IProgressView {
         _presenter.ReloadProfileManager();
         LoadProfilesList();
 
-        _presenter.ReloadUserManager();
-        LoadUsersList(_presenter.UserManager);
+        LoadUsersList(_presenter.GetUserManager());
     }
 
     private void Logger_Changed(object sender, string message) {
@@ -246,9 +251,8 @@ public partial class MainForm : Form, IProgressView {
     //}
 
     private void btnUsers_Click(object sender, EventArgs e) {
-        new UserManagerForm(_gameFiles).ShowDialog();
-        _presenter.ReloadUserManager();
-        LoadUsersList(_presenter.UserManager);
+        _formFactory.CreateUserManagerForm().ShowDialog();
+        LoadUsersList(_presenter.GetUserManager());
     }
 
     private void cbUsers_SelectedIndexChanged(object sender, EventArgs e) {
@@ -256,11 +260,11 @@ public partial class MainForm : Form, IProgressView {
             return;
         }
 
-        _presenter.SelectUser(cbUsers.SelectedItem.ToString());
+        _presenter.SetSelectedUser(cbUsers.SelectedItem.ToString());
     }
 
     public void btnLaunch_Click(object sender, EventArgs e) {
-        if (_presenter.SelectedUser == null) {
+        if (cbUsers.SelectedItem == null) {
             _logger.Error("Пользователь не выбран");
             return;
         }
@@ -292,14 +296,14 @@ public partial class MainForm : Form, IProgressView {
 
         var proc = ProcessInfoBuilder.Create(_gameFiles)
             .Profile(_presenter.SelectedProfile)
-            .User(_presenter.SelectedUser)
+            .User(_presenter.GetUser(cbUsers.SelectedItem.ToString()))
             .Version(selectedVersion)
             .Build();
 
         _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
         _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
 
-        GameSessionForm.Launch(_presenter.AppContext, _presenter.SelectedProfile, proc);
+        GameSessionForm.Launch(_presenter.GameFiles, _presenter.SelectedProfile, proc);
     }
 
     private void LoadUsersList(UserManager userManager) {
