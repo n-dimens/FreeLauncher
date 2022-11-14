@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net6.0-windows</TargetFramework>
+	  <LangVersion>10</LangVersion>
+	  <Nullable>disable</Nullable>
+	  <ImplicitUsings>disable</ImplicitUsings>
+	  <RootNamespace>NDimens.Minecraft.FreeLauncher.Presentation</RootNamespace>
+	  <AssemblyName>NDimens.Minecraft.FreeLauncher.Presentation</AssemblyName>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+</Project>

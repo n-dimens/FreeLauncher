@@ -221,10 +221,30 @@ public partial class MainForm : Form, IProgressView {
         };
         bgw.RunWorkerCompleted += (o, args) => {
             // запуск в UI потоке
-            _presenter.Launch(cbUsers.SelectedItem.ToString());
+            Launch(cbUsers.SelectedItem.ToString());            
             EnableControls();
         };
         bgw.RunWorkerAsync();
+    }
+
+    private void Launch(string selectedUserName) {
+        var selectedVersion = Version.ParseVersion(
+            new DirectoryInfo(_presenter.GameFiles.McVersions + _presenter.SelectedProfile.SelectedVersion));
+
+        if (_presenter.SelectedProfile.WorkingDirectory != null && !Directory.Exists(_presenter.SelectedProfile.WorkingDirectory)) {
+            Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);
+        }
+
+        var proc = ProcessInfoBuilder.Create(_presenter.GameFiles)
+            .Profile(_presenter.SelectedProfile)
+            .User(_presenter.GetUser(selectedUserName))
+            .Version(selectedVersion)
+            .Build();
+
+        _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
+        _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
+
+        GameSessionForm.Launch(_presenter.GameFiles, _presenter.SelectedProfile, proc);
     }
 
     private void LoadProfilesList(ProfileManager pm) {

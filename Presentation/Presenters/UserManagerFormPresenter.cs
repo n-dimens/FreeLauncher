@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using NDimens.Minecraft.FreeLauncher.Core;
 using NDimens.Minecraft.FreeLauncher.Core.Data;
 
-internal class UserManagerFormPresenter {
+public class UserManagerFormPresenter {
     private readonly IUsersRepository _usersRepository;
 
     public UserManagerFormPresenter(IUsersRepository usersRepository) {

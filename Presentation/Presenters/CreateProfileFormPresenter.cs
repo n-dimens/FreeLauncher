@@ -10,7 +10,7 @@ using dotMCLauncher.Core;
 
 using NDimens.Minecraft.FreeLauncher.Core.Data;
 
-internal class CreateProfileFormPresenter {
+public class CreateProfileFormPresenter {
     protected readonly IProfilesRepository _repository;
 
     // TODO: VersionsRepository

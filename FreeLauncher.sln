@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{541EFC44-9FDC-4B91-8745-0E91D5215DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "FreeLauncher\Launcher.csproj", "{10CD2F11-5E86-4DE7-BC1E-0BE9C6DE712B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Launcher", "FreeLauncher\Launcher.csproj", "{10CD2F11-5E86-4DE7-BC1E-0BE9C6DE712B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,22 @@ Global
 		{10CD2F11-5E86-4DE7-BC1E-0BE9C6DE712B}.Release|x64.Build.0 = Release|Any CPU
 		{10CD2F11-5E86-4DE7-BC1E-0BE9C6DE712B}.Release|x86.ActiveCfg = Release|Any CPU
 		{10CD2F11-5E86-4DE7-BC1E-0BE9C6DE712B}.Release|x86.Build.0 = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|x64.Build.0 = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Debug|x86.Build.0 = Debug|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|x64.ActiveCfg = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|x64.Build.0 = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|x86.ActiveCfg = Release|Any CPU
+		{3A7B07CC-65E9-4C5E-AA94-E5392AF2859C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

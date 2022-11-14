@@ -10,7 +10,7 @@ using dotMCLauncher.Core;
 
 using NDimens.Minecraft.FreeLauncher.Core.Data;
 
-internal class EditProfileFormPresenter : CreateProfileFormPresenter {
+public class EditProfileFormPresenter : CreateProfileFormPresenter {
     private readonly string _editingProfileName;
 
     public EditProfileFormPresenter(IProfilesRepository repository, Profile editingProfile) : base(repository) {

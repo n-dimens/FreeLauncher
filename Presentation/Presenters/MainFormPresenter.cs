@@ -86,26 +86,6 @@ public class MainFormPresenter {
         _usersRepository.Save(um);
     }
 
-    public void Launch(string selectedUserName) {
-        var selectedVersion = Version.ParseVersion(
-            new DirectoryInfo(GameFiles.McVersions + SelectedProfile.SelectedVersion));
-
-        if (SelectedProfile.WorkingDirectory != null && !Directory.Exists(SelectedProfile.WorkingDirectory)) {
-            Directory.CreateDirectory(SelectedProfile.WorkingDirectory);
-        }
-
-        var proc = ProcessInfoBuilder.Create(GameFiles)
-            .Profile(SelectedProfile)
-            .User(GetUser(selectedUserName))
-            .Version(selectedVersion)
-            .Build();
-
-        _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
-        _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
-
-        GameSessionForm.Launch(GameFiles, SelectedProfile, proc);
-    }
-
     public void CheckVersionAvailability() {
         long state = 0;
         var downloader = new WebClient();
