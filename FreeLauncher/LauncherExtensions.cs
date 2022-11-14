@@ -1,4 +1,4 @@
-﻿namespace NDimens.Minecraft.FreeLauncher; 
+﻿namespace NDimens.Minecraft.FreeLauncher;
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using dotMCLauncher.Core;
+
+using NDimens.Minecraft.FreeLauncher.Core;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

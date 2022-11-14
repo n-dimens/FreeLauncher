@@ -22,12 +22,13 @@ static class Program {
         var localization = new Localization();
         var versionsService = new VersionsService(logger, gameFiles);
         var usersRepository = new UsersRepository(new FileInfo(gameFiles.LauncherUsers));
-        var formFactory = new FormFactory(usersRepository);
+        var profilesRepository = new ProfilesRepository(new FileInfo(gameFiles.LauncherProfiles));
+        var formFactory = new FormFactory(usersRepository, profilesRepository);
 
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        var mainPresenter = new MainFormPresenter(logger, gameFiles, versionsService, usersRepository);
+        var mainPresenter = new MainFormPresenter(logger, gameFiles, versionsService, usersRepository, profilesRepository);
         var frmMain = new MainForm(mainPresenter, formFactory, gameFiles, localization, logger);
         Application.Run(frmMain);
     }

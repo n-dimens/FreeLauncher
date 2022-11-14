@@ -23,16 +23,7 @@ public class UsersRepository : IUsersRepository {
     }
 
     public UserManager Read() {
-        if (_store.Exists) {
-            var um = JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_store.FullName));
-            if (um != null) {
-                return um;
-            }
-        }
-
-        var newUserManager = new UserManager();
-        Save(newUserManager);
-        return newUserManager;
+        return JsonConvert.DeserializeObject<UserManager>(File.ReadAllText(_store.FullName));
     }
 
     public User Find(string userName) {

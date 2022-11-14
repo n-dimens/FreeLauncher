@@ -17,11 +17,13 @@ using NDimens.Minecraft.FreeLauncher.Core.Data;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using NDimens.Minecraft.FreeLauncher.Core;
+using global::FreeLauncher;
 
 public class MainFormPresenter {
     private readonly static string CheckingLibrariesMessage = "Выполняется проверка библиотек";
     private readonly ILauncherLogger _logger;
     private readonly IUsersRepository _usersRepository;
+    private readonly IProfilesRepository _profilesRepository;
     private readonly VersionsService _versionsService;
     private IProgressView _progressView;
 
@@ -29,15 +31,25 @@ public class MainFormPresenter {
 
     public GameFileStructure GameFiles { get; }
 
-    public ProfileManager ProfileManager { get; private set; }
+    // TODO: вернуть SelectedUser, поскольку это ViewModel основной формы, и это состояние должно храниться\синхронизироваться здесь
 
     public Profile SelectedProfile { get; private set; }
 
-    public MainFormPresenter(ILauncherLogger viewLogger, GameFileStructure appContext, VersionsService versionsService, IUsersRepository usersRepository) {
+    public MainFormPresenter(ILauncherLogger viewLogger,
+        GameFileStructure appContext,
+        VersionsService versionsService,
+        IUsersRepository usersRepository,
+        IProfilesRepository profilesRepository) {
         _logger = viewLogger;
         _usersRepository = usersRepository;
+        _profilesRepository = profilesRepository;
         _versionsService = versionsService;
         GameFiles = appContext;
+        SelectLastUsedProfile();
+    }
+
+    private void SelectLastUsedProfile() {
+        SelectProfile(_profilesRepository.Read().LastUsedProfile);
     }
 
     public void SetProgressView(IProgressView progressView) {
@@ -58,45 +70,40 @@ public class MainFormPresenter {
         _usersRepository.Save(um);
     }
 
+    public ProfileManager GetProfileManager() {
+        return _profilesRepository.Read();
+    }
+
     public void SelectProfile(string name) {
-        SelectedProfile = ProfileManager.Profiles[name];
-        ProfileManager.LastUsedProfile = name;
+        SelectedProfile = _profilesRepository.Read().Profiles[name];
     }
 
-    // TODO: Отделить Restore от Reload
-    public void ReloadProfileManager() {
-        try {
-            if (!File.Exists(GameFiles.McLauncherProfiles) && !File.Exists(GameFiles.LauncherProfiles)) {
-                ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
-                return;
-            }
+    public void SaveState() {
+        var pm = _profilesRepository.Read();
+        pm.LastUsedProfile = SelectedProfile.ProfileName;
+        _profilesRepository.Save(pm);
 
-            if (File.Exists(GameFiles.McLauncherProfiles) && !File.Exists(GameFiles.LauncherProfiles)) {
-                File.Copy(GameFiles.McLauncherProfiles, GameFiles.LauncherProfiles);
-            }
-
-            ProfileManager = LauncherExtensions.ParseProfile(GameFiles.LauncherProfiles);
-            if (!ProfileManager.Profiles.Any()) {
-                _logger.Error("Reading profile list: profiles missing. Creating default.");
-                ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
-            }
-        }
-        catch (Exception ex) {
-            _logger.Error("Reading profile list: an exception has occurred\n" + ex.Message + "\nCreating a new one.");
-
-            // save backup
-            if (File.Exists(GameFiles.LauncherProfiles)) {
-                string fileName = "launcher_profiles-" + DateTime.Now.ToString("hhmmss") + ".broken.json";
-                _logger.Info("A copy of broken profiles file has been created: " + fileName);
-                File.Move(GameFiles.LauncherProfiles, Path.Combine(GameFiles.McLauncher, fileName));
-            }
-
-            ProfileManager = ProfileManagerUtils.Init(GameFiles.LauncherProfiles);
-        }
+        // TODO: SelectedUser
     }
 
-    public void SaveProfiles() {
-        ProfileManager.Save(GameFiles.LauncherProfiles);
+    public void Launch(string selectedUserName) {
+        var selectedVersion = Version.ParseVersion(
+            new DirectoryInfo(GameFiles.McVersions + SelectedProfile.SelectedVersion));
+
+        if (SelectedProfile.WorkingDirectory != null && !Directory.Exists(SelectedProfile.WorkingDirectory)) {
+            Directory.CreateDirectory(SelectedProfile.WorkingDirectory);
+        }
+
+        var proc = ProcessInfoBuilder.Create(GameFiles)
+            .Profile(SelectedProfile)
+            .User(GetUser(selectedUserName))
+            .Version(selectedVersion)
+            .Build();
+
+        _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
+        _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
+
+        GameSessionForm.Launch(GameFiles, SelectedProfile, proc);
     }
 
     public void CheckVersionAvailability() {
@@ -300,6 +307,7 @@ public class MainFormPresenter {
 
     public string GetVersionLabel() {
         var selectedVersion = SelectedProfile.SelectedVersion;
+        // TODO: VersionsRepository + Presenter
         string versionFilePath = Path.Combine(GameFiles.McVersions, selectedVersion, $"{selectedVersion}.json");
         if (!File.Exists(versionFilePath)) {
             return $"Готов к загрузке версии {selectedVersion}";

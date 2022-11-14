@@ -1,4 +1,4 @@
-﻿namespace NDimens.Minecraft.FreeLauncher; 
+﻿namespace NDimens.Minecraft.FreeLauncher;
 
 using System;
 using System.Collections.Generic;
@@ -47,10 +47,7 @@ public partial class MainForm : Form, IProgressView {
         PrintAppInfo();           
 
         LoadConfiguration();
-
-        _presenter.ReloadProfileManager();
-        LoadProfilesList();
-
+        LoadProfilesList(_presenter.GetProfileManager());
         LoadUsersList(_presenter.GetUserManager());
     }
 
@@ -73,12 +70,6 @@ public partial class MainForm : Form, IProgressView {
         chbUseLogPrefix.Checked = _gameFiles.Configuration.ShowGamePrefix;
         chbCloseOutput.Checked = _gameFiles.Configuration.CloseTabAfterSuccessfulExitCode;
         txtInstallationDir.Text = _gameFiles.Configuration.InstallationDirectory;
-    }
-
-    private void LoadProfilesList() {
-        cbProfiles.Items.Clear();
-        cbProfiles.Items.AddRange(_presenter.ProfileManager.Profiles.Select(p => p.Key).ToArray());
-        cbProfiles.SelectedItem = _presenter.ProfileManager.LastUsedProfile;
     }
 
     private void DisableControls() {
@@ -106,11 +97,11 @@ public partial class MainForm : Form, IProgressView {
 
         _presenter.SelectProfile(cbProfiles.SelectedItem.ToString());
         lblSelectedVersion.Text = _presenter.GetVersionLabel();
-        // frmLauncher.profilesDropDownBox.SelectedItem = frmLauncher.profilesDropDownBox.FindItemExact(cbProfiles.SelectedItem.ToString(), true);
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
         SaveConfiguration();
+        _presenter.SaveState();
         // frmGameProcess.Close();
     }
 
@@ -182,73 +173,23 @@ public partial class MainForm : Form, IProgressView {
         }
     }
 
-    // TODO: Текстовая вкладка с редактированием Json?
     private void btnAddProfile_Click(object sender, EventArgs e) {
-        Profile editedProfile = Profile.ParseProfile(_presenter.SelectedProfile.ToString());
-        editedProfile.ProfileName = "Copy of '" + _presenter.SelectedProfile.ProfileName + "'(" +
-                                    DateTime.Now.ToString("HH:mm:ss") + ")";
-        var pf = new ProfileManagerForm(editedProfile) { 
-            Text = _localization.AddingProfileTitle 
-        };
+        var pf = _formFactory.CreateNewProfileManagerForm();
+        pf.Text = _localization.AddingProfileTitle;
         pf.ShowDialog();
         if (pf.DialogResult == DialogResult.OK) {
-            if (_presenter.ProfileManager.Profiles.ContainsKey(editedProfile.ProfileName)) {
-                MessageBox.Show(_localization.ProfileAlreadyExistsErrorText, _localization.Error,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            _presenter.ProfileManager.Profiles.Add(editedProfile.ProfileName, editedProfile);
-            _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+            LoadProfilesList(_presenter.GetProfileManager());
         }
-
-        _presenter.SaveProfiles();
-        UpdateProfileList();
     }
 
     private void btnEditProfile_Click(object sender, EventArgs e) {
-        var pf = new ProfileManagerForm(_presenter.SelectedProfile) {
-            Text = _localization.EditingProfileTitle
-        };
+        var pf = _formFactory.CreateEditProfileManagerForm(_presenter.SelectedProfile);
+        pf.Text = _localization.EditingProfileTitle;
         pf.ShowDialog();
         if (pf.DialogResult == DialogResult.OK) {
-            _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
-            if (_presenter.ProfileManager.Profiles.ContainsKey(pf.CurrentProfile.ProfileName)) {
-                MessageBox.Show(_localization.ProfileAlreadyExistsErrorText, _localization.Error,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                UpdateProfileList();
-                return;
-            }
-
-            _presenter.ProfileManager.Profiles.Add(pf.CurrentProfile.ProfileName, pf.CurrentProfile);
-            _presenter.ProfileManager.LastUsedProfile = pf.CurrentProfile.ProfileName;
+            LoadProfilesList(_presenter.GetProfileManager());
         }
-
-        _presenter.SaveProfiles();
-        UpdateProfileList();
     }
-
-    private void UpdateProfileList() {
-        _presenter.ReloadProfileManager();
-        // DeleteProfileButton.Enabled = _presenter.ProfileManager.Profiles.Count > 1;
-        LoadProfilesList();
-    }
-
-    //private void DeleteProfileButton_Click(object sender, EventArgs e) {
-    //    DialogResult dr =
-    //        RadMessageBox.Show(
-    //            string.Format(_applicationContext.ProgramLocalization.ProfileDeleteConfirmationText,
-    //                _presenter.ProfileManager.LastUsedProfile), _applicationContext.ProgramLocalization.DeleteConfirmationTitle,
-    //            MessageBoxButtons.YesNo, RadMessageIcon.Question);
-    //    if (dr != DialogResult.Yes) {
-    //        return;
-    //    }
-
-    //    _presenter.ProfileManager.Profiles.Remove(_presenter.ProfileManager.LastUsedProfile);
-    //    _presenter.ProfileManager.LastUsedProfile = _presenter.ProfileManager.Profiles.FirstOrDefault().Key;
-    //    _presenter.SaveProfiles();
-    //    UpdateProfileList();
-    //}
 
     private void btnUsers_Click(object sender, EventArgs e) {
         _formFactory.CreateUserManagerForm().ShowDialog();
@@ -280,32 +221,19 @@ public partial class MainForm : Form, IProgressView {
         };
         bgw.RunWorkerCompleted += (o, args) => {
             // запуск в UI потоке
-            Launch();
+            _presenter.Launch(cbUsers.SelectedItem.ToString());
             EnableControls();
         };
         bgw.RunWorkerAsync();
     }
 
-    private void Launch() {
-        var selectedVersion = Version.ParseVersion(
-            new DirectoryInfo(_gameFiles.McVersions + _presenter.SelectedProfile.SelectedVersion));
-
-        if (_presenter.SelectedProfile.WorkingDirectory != null && !Directory.Exists(_presenter.SelectedProfile.WorkingDirectory)) {
-            Directory.CreateDirectory(_presenter.SelectedProfile.WorkingDirectory);
-        }
-
-        var proc = ProcessInfoBuilder.Create(_gameFiles)
-            .Profile(_presenter.SelectedProfile)
-            .User(_presenter.GetUser(cbUsers.SelectedItem.ToString()))
-            .Version(selectedVersion)
-            .Build();
-
-        _logger.Info($"Command line: \"{proc.FileName}\" {proc.Arguments}");
-        _logger.Info($"Version {selectedVersion.Id} successfuly launched.");
-
-        GameSessionForm.Launch(_presenter.GameFiles, _presenter.SelectedProfile, proc);
+    private void LoadProfilesList(ProfileManager pm) {
+        cbProfiles.Items.Clear();
+        cbProfiles.Items.AddRange(pm.Profiles.Select(p => p.Key).ToArray());
+        cbProfiles.SelectedItem = pm.LastUsedProfile;
     }
 
+    // TODO: Почему разная логика?
     private void LoadUsersList(UserManager userManager) {
         cbUsers.Items.Clear();
         if (userManager.Users.Count == 0) {
