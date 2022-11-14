@@ -31,7 +31,7 @@ public class MainFormPresenter {
 
     public GameFileStructure GameFiles { get; }
 
-    // TODO: вернуть SelectedUser, поскольку это ViewModel основной формы, и это состояние должно храниться\синхронизироваться здесь
+    public User SelectedUser { get; private set; }
 
     public Profile SelectedProfile { get; private set; }
 
@@ -64,10 +64,8 @@ public class MainFormPresenter {
         return _usersRepository.Find(userName);
     }
 
-    public void SetSelectedUser(string nickname) {
-        var um = _usersRepository.Read();
-        um.SelectedUsername = nickname;
-        _usersRepository.Save(um);
+    public void SelectUser(string name) {
+        SelectedUser = _usersRepository.Read().Users[name];
     }
 
     public ProfileManager GetProfileManager() {
@@ -83,7 +81,9 @@ public class MainFormPresenter {
         pm.LastUsedProfile = SelectedProfile.ProfileName;
         _profilesRepository.Save(pm);
 
-        // TODO: SelectedUser
+        var um = _usersRepository.Read();
+        um.LastUserName = SelectedUser.Username;
+        _usersRepository.Save(um);
     }
 
     public void Launch(string selectedUserName) {

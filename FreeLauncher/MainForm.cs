@@ -201,7 +201,7 @@ public partial class MainForm : Form, IProgressView {
             return;
         }
 
-        _presenter.SetSelectedUser(cbUsers.SelectedItem.ToString());
+        _presenter.SelectUser(cbUsers.SelectedItem.ToString());
     }
 
     public void btnLaunch_Click(object sender, EventArgs e) {
@@ -229,19 +229,29 @@ public partial class MainForm : Form, IProgressView {
 
     private void LoadProfilesList(ProfileManager pm) {
         cbProfiles.Items.Clear();
-        cbProfiles.Items.AddRange(pm.Profiles.Select(p => p.Key).ToArray());
-        cbProfiles.SelectedItem = pm.LastUsedProfile;
-    }
-
-    // TODO: Почему разная логика?
-    private void LoadUsersList(UserManager userManager) {
-        cbUsers.Items.Clear();
-        if (userManager.Users.Count == 0) {
+        if (pm.Profiles.Count == 0) {
             return;
         }
 
-        cbUsers.Items.AddRange(userManager.Users.Keys.ToArray());
-        var itemIndex = cbUsers.FindStringExact(userManager.SelectedUsername);
+        cbProfiles.Items.AddRange(pm.Profiles.Keys.ToArray());
+        var itemIndex = cbProfiles.FindStringExact(pm.LastUsedProfile);
+        if (itemIndex == -1) {
+            cbProfiles.SelectedIndex = 0;
+        }
+        else {
+            cbProfiles.SelectedIndex = itemIndex;
+        }
+    }
+
+    // TODO: Почему разная логика?
+    private void LoadUsersList(UserManager um) {
+        cbUsers.Items.Clear();
+        if (um.Users.Count == 0) {
+            return;
+        }
+
+        cbUsers.Items.AddRange(um.Users.Keys.ToArray());
+        var itemIndex = cbUsers.FindStringExact(um.LastUserName);
         if (itemIndex == -1) {
             cbUsers.SelectedIndex = 0;
         }

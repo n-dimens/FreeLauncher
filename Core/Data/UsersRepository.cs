@@ -39,8 +39,8 @@ public class UsersRepository : IUsersRepository {
             um.Users.Add(user.Username, user);
         }
 
-        if (string.IsNullOrEmpty(um.SelectedUsername)) {
-            um.SelectedUsername = user.Username;
+        if (string.IsNullOrEmpty(um.LastUserName)) {
+            um.LastUserName = user.Username;
         }
 
         Save(um);
