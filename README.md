@@ -1,6 +1,7 @@
-Цели форка:
-- исследовательский рефакторинг
-- удаление ненужного мне функционала
+Р¦РµР»Рё С„РѕСЂРєР°:
+- РёСЃСЃР»РµРґРѕРІР°С‚РµР»СЊСЃРєРёР№ СЂРµС„Р°РєС‚РѕСЂРёРЅРі
+- СѓРґР°Р»РµРЅРёРµ РЅРµРЅСѓР¶РЅРѕРіРѕ РјРЅРµ С„СѓРЅРєС†РёРѕРЅР°Р»Р°
+- РїРѕСЂС‚РёСЂРѕРІР°РЅРёРµ РЅР° WPF
 
 
 # FreeLauncher
@@ -9,6 +10,5 @@ This is open source unofficial Minecraft launcher, based on dotMCLauncher. Feel 
 Requires **.NET Framework 6.0**
 
 ## Third-party assemblies used in this software
-* Telerik RadControls for WinForms - http://www.telerik.com/products/winforms.aspx
 * JSON.NET                         - http://james.newtonking.com/json
 * DotNetZip                        - https://github.com/haf/DotNetZip.Semverd
